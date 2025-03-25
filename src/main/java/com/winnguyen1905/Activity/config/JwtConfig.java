@@ -15,9 +15,9 @@ import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
-import org.springframework.security.oauth2.jwt.NimbusReactiveJwtDecoder;
-import org.springframework.security.oauth2.jwt.ReactiveJwtDecoder;
-import org.springframework.security.oauth2.server.resource.authentication.ReactiveJwtAuthenticationConverter;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 
 import com.nimbusds.jose.jwk.source.ImmutableSecret;
 import com.nimbusds.jose.util.Base64;
@@ -40,29 +40,28 @@ public class JwtConfig {
     return new NimbusJwtEncoder(new ImmutableSecret<>(secretKey()));
   }
 
-  @Bean
-  public JwtDecoder jwtDecoder() {
-    return NimbusJwtDecoder.withSecretKey(secretKey()).macAlgorithm(SecurityUtils.JWT_ALGORITHM).build();
-  }
-
   // @Bean
-  // @Order(0)
-  // ReactiveJwtDecoder jwtDecoder() {
-  //   NimbusReactiveJwtDecoder nimbusJwtDecoder = NimbusReactiveJwtDecoder
-  //       .withSecretKey(secretKey())
-  //       .macAlgorithm(SecurityUtils.JWT_ALGORITHM)
-  //       .build();
-  //   System.out.println(jwtKey);
-  //   return token -> {
-  //     try {
-  //       System.out.println(jwtKey);
-  //       return nimbusJwtDecoder.decode(token);
-  //     } catch (Exception e) {
-  //       System.out.println("Token error: " + token);
-  //       throw new BaseException("refresh token invalid", 401);
-  //     }
-  //   };
+  // public JwtDecoder jwtDecoder() {
+  //   return NimbusJwtDecoder.withSecretKey(secretKey()).macAlgorithm(SecurityUtils.JWT_ALGORITHM).build();
   // }
+
+  @Bean
+  JwtDecoder jwtDecoder() {
+    NimbusJwtDecoder nimbusJwtDecoder = NimbusJwtDecoder
+        .withSecretKey(secretKey())
+        .macAlgorithm(SecurityUtils.JWT_ALGORITHM)
+        .build();
+    System.out.println(jwtKey);
+    return token -> {
+      try {
+        System.out.println(jwtKey);
+        return nimbusJwtDecoder.decode(token);
+      } catch (Exception e) {
+        System.out.println("Token error: " + token);
+        throw new BaseException("refresh token invalid", 401);
+      }
+    };
+  }
 
   // @Bean
   // JwtUtils jwtUtils() {
@@ -82,8 +81,8 @@ public class JwtConfig {
   // }
 
   // @Bean
-  // public ReactiveJwtAuthenticationConverter jwtAuthenticationConverter() {
-  //   ReactiveJwtAuthenticationConverter converter = new ReactiveJwtAuthenticationConverter();
+  // public JwtAuthenticationConverter jwtAuthenticationConverter() {
+  //   JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
   //   converter.setJwtGrantedAuthoritiesConverter(jwt -> {
   //     List<String> roles = jwt.getClaimAsStringList("roles");
   //     return Flux.fromIterable(roles.stream()

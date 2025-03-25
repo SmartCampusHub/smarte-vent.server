@@ -9,9 +9,13 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -26,6 +30,7 @@ import jakarta.servlet.Filter;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
   public static final String[] whiteList = {
@@ -38,24 +43,45 @@ public class SecurityConfig {
     return new BCryptPasswordEncoder();
   }
 
+  // @Bean
+  // SecurityFilterChain securityFilterChain(
+  // HttpSecurity http,
+  // CustomServerAuthenticationEntryPoint serverAuthenticationEntryPoint) throws
+  // Exception {
+  // return http
+  // .csrf(csrf -> csrf.disable())
+  // .httpBasic(basic -> basic.disable())
+  // .formLogin(form -> form.disable())
+  // .sessionManagement(session -> session
+  // .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+  // .authorizeHttpRequests(auth -> auth
+  // .requestMatchers(whiteList).permitAll()
+  // .requestMatchers("/ws/events").permitAll()
+  // .requestMatchers("/auth/**", "/stripe/**", "/swagger-ui/**", "-docs/**",
+  // "/webjars/**").permitAll()
+  // .requestMatchers("/admin/**").hasAnyAuthority("ADMIN", "ROLE_ADMIN")
+  // .requestMatchers("/actuator/**").permitAll()
+  // .anyRequest().authenticated())
+
+  // .build();
+  // }
+
   @Bean
-  SecurityFilterChain securityFilterChain(
-      HttpSecurity http,
-      CustomServerAuthenticationEntryPoint serverAuthenticationEntryPoint) throws Exception {
+  public SecurityFilterChain filterChain(HttpSecurity http, AuthenticationManager authenticationManager)
+      throws Exception {
     return http
-        .csrf(csrf -> csrf.disable())
-        .httpBasic(basic -> basic.disable())
+        .cors(AbstractHttpConfigurer::disable)
+        .csrf(AbstractHttpConfigurer::disable)
         .formLogin(form -> form.disable())
-        .sessionManagement(session -> session
-            .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(auth -> auth
-            .requestMatchers(whiteList).permitAll()
-            .requestMatchers("/ws/events").permitAll()
-            .requestMatchers("/auth/**", "/stripe/**", "/swagger-ui/**", "-docs/**", "/webjars/**").permitAll()
-            .requestMatchers("/admin/**").hasAnyAuthority("ADMIN", "ROLE_ADMIN")
-            .requestMatchers("/actuator/**").permitAll()
+            // .requestMatchers(HttpMethod.GET, "/chima/**").hasRole("STUDENT")
+            .requestMatchers(HttpMethod.POST, "/auth/register/**").permitAll()
+            .requestMatchers(HttpMethod.POST, "/auth/login/**").permitAll()
+            .requestMatchers(HttpMethod.GET, "/authentication-docs/**").permitAll()
             .anyRequest().authenticated())
         .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
+        // .authenticationManager(authenticationManager)
         .build();
   }
 

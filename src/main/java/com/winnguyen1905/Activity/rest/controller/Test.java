@@ -11,10 +11,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 
 @RestController
-@RequestMapping("test")
+@RequestMapping("chima")
 public class Test {
   @GetMapping("/hahaha")
-  public String getMethodName(@AccountRequest TAccountRequest accountRequest) {
+  public String getMethodName() {
       return new String();
   }
   
