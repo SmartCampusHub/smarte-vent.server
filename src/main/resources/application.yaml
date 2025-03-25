@@ -1,0 +1,57 @@
+spring:
+  application:
+    name: PRODUCT-SERVICE
+  main:
+    allow-bean-definition-overriding: true
+  datasource:
+    url: jdbc:mysql://localhost:3306/activity
+    username: root
+    password: rootpassword
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+
+  jpa:
+    hibernate:
+      ddl-auto: create # Change this if needed (create, create-drop, validate, none)
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect # Correct dialect
+        enable_lazy_load_no_trans: false
+        format_sql: true
+    show-sql: false
+
+    web:
+      pageable:
+        size-parameter: size
+        max-page-size: 100
+        one-indexed-parameters: true
+        page-parameter: page
+      sort:
+        sort-parameter: sort
+
+  sql:
+    init:
+        mode: always
+        platform: mysql
+
+logging:
+  level:
+    org:
+      springframework:
+        web: DEBUG
+        data: DEBUG
+        security: DEBUG
+    com:
+      product:
+        service: DEBUG
+    hibernate:
+      SQL: DEBUG
+      type: TRACE
+
+jwt:
+  base64-secret: hl4gDqBxBgOSDWqBlvwFYQInjYRGAdS4lUT7Nf3Zk1nItoSQ9wSFDPU+kXHKcKUW/UKbpGv9bCsa9S/QsoFRHw==
+  access_token-validity-in-seconds: 90000000
+  refresh_token-validity-in-seconds: 100000000
