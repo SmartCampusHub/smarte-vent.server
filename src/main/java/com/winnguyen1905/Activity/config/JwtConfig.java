@@ -11,7 +11,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusReactiveJwtDecoder;
 import org.springframework.security.oauth2.jwt.ReactiveJwtDecoder;
@@ -19,10 +21,9 @@ import org.springframework.security.oauth2.server.resource.authentication.Reacti
 
 import com.nimbusds.jose.jwk.source.ImmutableSecret;
 import com.nimbusds.jose.util.Base64;
-import com.winnguyen1905.Activity.auth.SecurityUtils;
 import com.winnguyen1905.Activity.exception.BaseException;
+import com.winnguyen1905.Activity.utils.SecurityUtils;
 
-import reactor.core.publisher.Flux;
 
 @Configuration
 public class JwtConfig {
@@ -40,11 +41,8 @@ public class JwtConfig {
   }
 
   @Bean
-  public ReactiveJwtDecoder reactiveJwtDecoder() {
-    // Example with a symmetric key (for HMAC-signed JWTs)
-    String secret = "your-256-bit-secret-key-here"; // Must be at least 256 bits for HS256
-    // SecretKeySpec secretKey = new SecretKeySpec(secretKey(), "HmacSHA256");
-    return NimbusReactiveJwtDecoder.withSecretKey(secretKey()).macAlgorithm(SecurityUtils.JWT_ALGORITHM).build();
+  public JwtDecoder jwtDecoder() {
+    return NimbusJwtDecoder.withSecretKey(secretKey()).macAlgorithm(SecurityUtils.JWT_ALGORITHM).build();
   }
 
   // @Bean
@@ -83,15 +81,15 @@ public class JwtConfig {
   // return jwtAuthenticationConverter;
   // }
 
-  @Bean
-  public ReactiveJwtAuthenticationConverter jwtAuthenticationConverter() {
-    ReactiveJwtAuthenticationConverter converter = new ReactiveJwtAuthenticationConverter();
-    converter.setJwtGrantedAuthoritiesConverter(jwt -> {
-      List<String> roles = jwt.getClaimAsStringList("roles");
-      return Flux.fromIterable(roles.stream()
-          .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
-          .collect(Collectors.toList()));
-    });
-    return converter;
-  }
+  // @Bean
+  // public ReactiveJwtAuthenticationConverter jwtAuthenticationConverter() {
+  //   ReactiveJwtAuthenticationConverter converter = new ReactiveJwtAuthenticationConverter();
+  //   converter.setJwtGrantedAuthoritiesConverter(jwt -> {
+  //     List<String> roles = jwt.getClaimAsStringList("roles");
+  //     return Flux.fromIterable(roles.stream()
+  //         .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
+  //         .collect(Collectors.toList()));
+  //   });
+  //   return converter;
+  // }
 }

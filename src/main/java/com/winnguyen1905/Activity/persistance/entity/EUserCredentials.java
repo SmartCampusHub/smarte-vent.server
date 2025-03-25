@@ -6,9 +6,13 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
@@ -16,31 +20,39 @@ import lombok.experimental.SuperBuilder;
 @Setter
 @Entity
 @SuperBuilder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "account")
-public class EUserCredentials extends EBaseAudit {
+public class EUserCredentials  {
 
-  // @Column(name = "name")
-  // private String name;
+  
+  @Id
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  @Column(name = "id", updatable = false, nullable = false)
+  protected Long id;
 
-  @Column(name = "student_code") 
+  @Column(name = "full_name")
+  private String fullName;
+
+  @Column(name = "student_code")
   private String studentCode;
 
-  // @Column(name = "password")
-  // private String password;
+  @Column(name = "password")
+  private String password;
 
-  // @Column(name = "status")
-  // private Boolean isActive;
+  @Column(name = "is_active")
+  private Boolean isActive;
 
-  // @Column(name = "email")
-  // private String email;
+  @Column(name = "email")
+  private String email;
 
-  // @Column(name = "phone")
-  // private String phone;
+  @Column(name = "phone")
+  private String phone;
 
-  // @Column(name = "refresh_token")
-  // private String refreshToken;
+  @Column(name = "refresh_token", length = 1024)
+  private String refreshToken;
 
-  // @jakarta.persistence.Column(name = "role")
-  // @Enumerated(EnumType.STRING)
-  // private AccountRole role;
+  @jakarta.persistence.Column(name = "role")
+  @Enumerated(EnumType.STRING)
+  private AccountRole role;
 }

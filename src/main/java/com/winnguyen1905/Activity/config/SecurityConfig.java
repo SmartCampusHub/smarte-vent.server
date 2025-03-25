@@ -2,42 +2,36 @@ package com.winnguyen1905.Activity.config;
 
 import java.util.Arrays;
 
-import org.springframework.boot.autoconfigure.web.WebProperties;
-import org.springframework.boot.web.reactive.error.DefaultErrorAttributes;
-import org.springframework.boot.web.reactive.error.ErrorAttributes;
+import org.springframework.boot.autoconfigure.web.ErrorProperties;
+import org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController;
+import org.springframework.boot.web.servlet.error.ErrorController;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.ReactiveAuthenticationManager;
+import org.springframework.core.Ordered;
 import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
-import org.springframework.security.config.web.server.ServerHttpSecurity;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.server.SecurityWebFilterChain;
-import org.springframework.security.web.server.context.NoOpServerSecurityContextRepository;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
-import org.springframework.web.cors.reactive.CorsWebFilter;
+import jakarta.servlet.Filter;
 
 @Configuration
-@EnableWebFluxSecurity
+@EnableWebSecurity
 public class SecurityConfig {
 
-  @Bean
-  public ErrorAttributes errorAttributes() {
-    return new DefaultErrorAttributes();
-  }
-
   public static final String[] whiteList = {
-      "/**", "/auth/register", "/auth/**", "/v1/auth/login", "/v1/auth/refresh",
+      "/auth/register", "/auth/login", "/v1/auth/login", "/v1/auth/refresh",
       "/storage/**", "/v1/products/**"
   };
-
-  @Bean
-  WebProperties.Resources resources() {
-    return new WebProperties.Resources();
-  }
 
   @Bean
   PasswordEncoder passwordEncoder() {
@@ -45,31 +39,28 @@ public class SecurityConfig {
   }
 
   @Bean
-  SecurityWebFilterChain springWebFilterChain(
-      ServerHttpSecurity http,
-      CustomServerAuthenticationEntryPoint serverAuthenticationEntryPoint,
-      ReactiveAuthenticationManager reactiveAuthenticationManager) {
+  SecurityFilterChain securityFilterChain(
+      HttpSecurity http,
+      CustomServerAuthenticationEntryPoint serverAuthenticationEntryPoint) throws Exception {
     return http
-        .csrf(ServerHttpSecurity.CsrfSpec::disable)
-        .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)
-        .formLogin(ServerHttpSecurity.FormLoginSpec::disable)
-        .authenticationManager(reactiveAuthenticationManager)
-        .securityContextRepository(NoOpServerSecurityContextRepository.getInstance())
-        .authorizeExchange(authorizeExchangeSpec -> authorizeExchangeSpec
-            .pathMatchers(whiteList).permitAll()
-            .pathMatchers("/ws/events").permitAll()
-            .pathMatchers("/auth/**", "/stripe/**", "/swagger-ui/**", "-docs/**", "/webjars/**").permitAll()
-            .pathMatchers("/admin/**").hasAnyAuthority("ADMIN", "ROLE_ADMIN")
-            .pathMatchers("/actuator/**").permitAll() // Allow Actuator endpoints or restrict as needed
-            .anyExchange().authenticated())
-        .oauth2ResourceServer(oauth2 -> oauth2
-            .jwt(Customizer.withDefaults())
-            .authenticationEntryPoint(serverAuthenticationEntryPoint))
+        .csrf(csrf -> csrf.disable())
+        .httpBasic(basic -> basic.disable())
+        .formLogin(form -> form.disable())
+        .sessionManagement(session -> session
+            .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        .authorizeHttpRequests(auth -> auth
+            .requestMatchers(whiteList).permitAll()
+            .requestMatchers("/ws/events").permitAll()
+            .requestMatchers("/auth/**", "/stripe/**", "/swagger-ui/**", "-docs/**", "/webjars/**").permitAll()
+            .requestMatchers("/admin/**").hasAnyAuthority("ADMIN", "ROLE_ADMIN")
+            .requestMatchers("/actuator/**").permitAll()
+            .anyRequest().authenticated())
+        .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
         .build();
   }
 
   @Bean
-  CorsWebFilter corsWebFilter() {
+  public FilterRegistrationBean<Filter> corsFilter() {
     CorsConfiguration configuration = new CorsConfiguration();
     configuration.setAllowedOrigins(Arrays.asList("https://localhost:3000", "https://localhost:4173", "*"));
     configuration.setAllowedMethods(Arrays.asList("GET", "POST", "DELETE", "PUT", "PATCH", "OPTIONS"));
@@ -81,6 +72,10 @@ public class SecurityConfig {
 
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     source.registerCorsConfiguration("/**", configuration);
-    return new CorsWebFilter(source);
+
+    FilterRegistrationBean<Filter> bean = new FilterRegistrationBean<>();
+    bean.setFilter(new CorsFilter(source));
+    bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
+    return bean;
   }
 }

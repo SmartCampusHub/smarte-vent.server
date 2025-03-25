@@ -9,8 +9,8 @@ import org.springframework.stereotype.Component;
 @PropertySource("classpath:application.yaml")
 public class CookieUtils {
 
-  @Value("${jwt.refresh_token-validity-in-seconds}")
-  private static String jwtRefreshTokenExpiration;
+  // @Value("${jwt.refresh_token-validity-in-seconds}")
+  private static String jwtRefreshTokenExpiration = "100000000";
 
   public static ResponseCookie deleteCookie(String name) {
     return ResponseCookie

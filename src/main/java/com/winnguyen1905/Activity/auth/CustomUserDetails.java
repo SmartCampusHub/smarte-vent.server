@@ -14,12 +14,12 @@ import lombok.Builder;
 
 @Builder
 public record CustomUserDetails(
-    UUID id,
+    Long id,
     String type,
     String email,
     String phone,
     AccountRole role,
-    Boolean status,
+    // Boolean status,
     String lastName,
     String username,
     String password,
@@ -47,7 +47,7 @@ public record CustomUserDetails(
 
   @Override
   public boolean isAccountNonLocked() {
-    return this.status;
+    return true;
   }
 
   @Override

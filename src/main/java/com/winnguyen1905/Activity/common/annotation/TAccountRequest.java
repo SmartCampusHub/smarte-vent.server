@@ -9,7 +9,7 @@ import lombok.Builder;
 
 @Builder
 public record TAccountRequest(
-    UUID id,
+    Long id,
     AccountRole role,
     UUID socketClientId) implements Serializable {
 }

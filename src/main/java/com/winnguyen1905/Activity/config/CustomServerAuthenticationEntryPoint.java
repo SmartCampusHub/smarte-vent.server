@@ -1,52 +1,46 @@
 package com.winnguyen1905.Activity.config;
 
+import java.io.IOException;
 import java.util.Optional;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.oauth2.server.resource.web.server.BearerTokenServerAuthenticationEntryPoint;
-import org.springframework.security.web.server.ServerAuthenticationEntryPoint;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.oauth2.server.resource.web.BearerTokenAuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
-import org.springframework.web.server.ServerWebExchange;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.winnguyen1905.Activity.model.viewmodel.RestResponse;
 
 import lombok.RequiredArgsConstructor;
-import reactor.core.publisher.Mono;
 
 @RequiredArgsConstructor
-@Component("serverAuthenticationEntryPoint")
-public class CustomServerAuthenticationEntryPoint implements ServerAuthenticationEntryPoint {
-  private final ObjectMapper objectMapper;
-  private final ServerAuthenticationEntryPoint delegate = new BearerTokenServerAuthenticationEntryPoint();
+@Component("authenticationEntryPoint")
+public class CustomServerAuthenticationEntryPoint implements AuthenticationEntryPoint {
+    private final ObjectMapper objectMapper;
+    private final AuthenticationEntryPoint delegate = new BearerTokenAuthenticationEntryPoint();
 
-  @Override
-  public Mono<Void> commence(ServerWebExchange exchange, AuthenticationException authException) {
-    this.delegate.commence(exchange, authException);
-    exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
-    exchange.getResponse().getHeaders().setContentType(MediaType.APPLICATION_JSON);
+    @Override
+    public void commence(HttpServletRequest request, HttpServletResponse response, 
+            AuthenticationException authException) throws IOException, ServletException {
+        
+        delegate.commence(request, response, authException);
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
-    RestResponse<Object> res = RestResponse.builder()
-        .statusCode(HttpStatus.UNAUTHORIZED.value())
-        .message("Authentication failed, please check your token")
-        .error(
-            Optional.ofNullable(authException.getCause())
+        RestResponse<Object> res = RestResponse.builder()
+            .statusCode(HttpStatus.UNAUTHORIZED.value())
+            .message("Authentication failed, please check your token")
+            .error(Optional.ofNullable(authException.getCause())
                 .map(Throwable::getMessage)
                 .orElse(authException.getMessage()))
-        .build();
+            .build();
 
-    return exchange.getResponse().writeWith(
-        Mono.fromSupplier(() -> {
-          try {
-            return exchange.getResponse()
-                .bufferFactory()
-                .wrap(objectMapper.writeValueAsBytes(res));
-          } catch (JsonProcessingException e) {
-            throw new RuntimeException("Error writing authentication error response", e);
-          }
-        }));
-  }
+        objectMapper.writeValue(response.getOutputStream(), res);
+    }
 }

@@ -1,10 +1,31 @@
+server:
+  port: 8080
+  http2:
+    enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+        - health
+        - info
+        - env
+        - beans
+        - httptrace
+        - metrics
+        - loggers
+        - threaddump
+        - heapdump  
+      base-path: /actuator
+      
 spring:
   application:
-    name: PRODUCT-SERVICE
+    name: ACTIVITY-GROUP3
   main:
     allow-bean-definition-overriding: true
   datasource:
-    url: jdbc:mysql://localhost:3306/activity
+    url: jdbc:mysql://localhost:3306/activity_management
     username: root
     password: rootpassword
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -15,7 +36,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create # Change this if needed (create, create-drop, validate, none)
+      ddl-auto: update # Change this if needed (create, create-drop, validate, none)
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect # Correct dialect

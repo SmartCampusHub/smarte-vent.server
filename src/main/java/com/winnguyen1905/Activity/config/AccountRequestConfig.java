@@ -20,7 +20,7 @@ public class AccountRequestConfig {
           .id(principal.id())
           .role(principal.getAuthorities().stream().findFirst().get().getAuthority().equals("ROLE_ADMIN")
               ? AccountRole.ADMIN
-              : AccountRole.USER)
+              : AccountRole.STUDENT)
           .build();
     });
   }

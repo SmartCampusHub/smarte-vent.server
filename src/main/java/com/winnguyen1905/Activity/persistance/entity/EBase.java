@@ -21,10 +21,10 @@ public class EBase implements Serializable {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   @Column(name = "id", updatable = false, nullable = false)
-  protected UUID id;
+  protected Long id;
 
-  @Column(name = "is_deleted", updatable = true)
-  protected Boolean isDeleted;
+  // @Column(name = "is_deleted", updatable = true)
+  // protected Boolean isDeleted;
 
   @Override
   public boolean equals(Object o) {
