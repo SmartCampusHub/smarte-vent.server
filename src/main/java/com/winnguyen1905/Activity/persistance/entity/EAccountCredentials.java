@@ -61,19 +61,19 @@ public class EAccountCredentials {
   @Enumerated(EnumType.STRING)
   private AccountRole role;
 
-  @JsonIgnore
-  @Column(name = "created_by", nullable = true)
-  private String createdBy;
+  // @JsonIgnore
+  // @Column(name = "created_by", nullable = true)
+  // private String createdBy;
 
-  @JsonIgnore
-  @Column(name = "updated_by", nullable = true)
-  private String updatedBy;
+  // @JsonIgnore
+  // @Column(name = "updated_by", nullable = true)
+  // private String updatedBy;
 
-  @CreationTimestamp
-  @Column(name = "created_date", updatable = false)
-  private Instant createdDate;
+  // @CreationTimestamp
+  // @Column(name = "created_date", updatable = false)
+  // private Instant createdDate;
 
-  @UpdateTimestamp
-  @Column(name = "updated_date", updatable = true)
-  private Instant updatedDate;
+  // @UpdateTimestamp
+  // @Column(name = "updated_date", updatable = true)
+  // private Instant updatedDate;
 }

@@ -72,6 +72,12 @@ public class AuthService {
 
   private EAccountCredentials createNewUser(RegisterRequest request) {
     return EAccountCredentials.builder()
+        .email(request.email())
+        .phone(request.phone())
+        .fullName(request.fullName())
+        .isActive(true)
+        .refreshToken(null)
+        .role(AccountRole.STUDENT)
         .studentCode(request.studentCode())
         .password(passwordEncoder.encode(request.password()))
         .role(AccountRole.STUDENT) // Default role is STUDENT

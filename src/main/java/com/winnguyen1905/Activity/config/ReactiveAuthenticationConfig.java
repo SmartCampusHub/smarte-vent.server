@@ -57,7 +57,7 @@ public class ReactiveAuthenticationConfig {
   @Bean("userDetailsService")
   public UserDetailsService userDetailsService(AccountRepository userRepository) {
     return studentCode -> {
-      return userRepository.findByStudentCode(studentCode)
+      return userRepository.findByStudentCode(studentCode)  
           .map(user -> CustomUserDetails.builder()
               .id(user.getId())
               .role(user.getRole())
