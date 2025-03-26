@@ -36,7 +36,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update # Change this if needed (create, create-drop, validate, none)
+      ddl-auto: create-drop # Change this if needed (create, create-drop, validate, none)
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect # Correct dialect
