@@ -90,8 +90,6 @@ public class JwtUtils {
         return TokenPair.builder()
             .accessToken(accessToken)
             .refreshToken(refreshToken)
-            .tokenType("Bearer")
-            .expiresIn(Integer.parseInt(jwtAccessTokenExpiration))
             .build();
     }
 }

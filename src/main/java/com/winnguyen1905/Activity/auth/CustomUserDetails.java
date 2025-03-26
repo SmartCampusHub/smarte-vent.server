@@ -19,7 +19,7 @@ public record CustomUserDetails(
     String email,
     String phone,
     AccountRole role,
-    // Boolean status,
+    Boolean status,
     String lastName,
     String username,
     String password,

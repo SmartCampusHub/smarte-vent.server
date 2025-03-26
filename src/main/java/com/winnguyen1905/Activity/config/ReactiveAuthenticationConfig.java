@@ -18,7 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 
 import com.winnguyen1905.Activity.auth.CustomUserDetails;
-import com.winnguyen1905.Activity.persistance.repository.UserRepository;
+import com.winnguyen1905.Activity.persistance.repository.AccountRepository;
 
 @Configuration
 public class ReactiveAuthenticationConfig {
@@ -55,7 +55,7 @@ public class ReactiveAuthenticationConfig {
   }
 
   @Bean("userDetailsService")
-  public UserDetailsService userDetailsService(UserRepository userRepository) {
+  public UserDetailsService userDetailsService(AccountRepository userRepository) {
     return studentCode -> {
       return userRepository.findByStudentCode(studentCode)
           .map(user -> CustomUserDetails.builder()

@@ -2,10 +2,6 @@ package com.winnguyen1905.Activity.auth;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
@@ -16,15 +12,6 @@ import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Component;
 
 import com.winnguyen1905.Activity.model.viewmodel.TokenPair;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.security.oauth2.jwt.*;
-import org.springframework.stereotype.Component;
-
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-import java.util.List;
 
 @Component
 @PropertySource("classpath:application.yaml")
@@ -44,17 +31,11 @@ public class JwtService {
   }
 
   private JwtClaimsSet createJwtClaimsSet(CustomUserDetails userDetails, Instant now, Instant validity) {
-    // List<AuthPermission> permissions = userDetails.role() instanceof AuthRole role
-    //     ? role.getPermissions()
-    //     : List.of();
-
     return JwtClaimsSet.builder()
         .issuedAt(now)
         .expiresAt(validity)
-        .subject(userDetails.username() + "/" + userDetails.id())
-        .claim("user", userDetails)
-        .claim("permissions", null)
-        .build();
+        .subject(userDetails.id().toString())
+        .claim("user", userDetails).build();
   }
 
   public TokenPair createTokenPair(CustomUserDetails userDetails) {
@@ -73,8 +54,6 @@ public class JwtService {
     return TokenPair.builder()
         .accessToken(accessToken)
         .refreshToken(refreshToken)
-        .tokenType("Bearer")
-        .expiresIn(Integer.parseInt(jwtAccessTokenExpiration))
         .build();
   }
 }

@@ -1,5 +1,11 @@
 package com.winnguyen1905.Activity.persistance.entity;
 
+import java.time.Instant;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.winnguyen1905.Activity.common.constant.AccountRole;
 
 import jakarta.persistence.Column;
@@ -23,9 +29,8 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "account")
-public class EUserCredentials  {
+public class EAccountCredentials {
 
-  
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   @Column(name = "id", updatable = false, nullable = false)
@@ -55,4 +60,20 @@ public class EUserCredentials  {
   @jakarta.persistence.Column(name = "role")
   @Enumerated(EnumType.STRING)
   private AccountRole role;
+
+  @JsonIgnore
+  @Column(name = "created_by", nullable = true)
+  private String createdBy;
+
+  @JsonIgnore
+  @Column(name = "updated_by", nullable = true)
+  private String updatedBy;
+
+  @CreationTimestamp
+  @Column(name = "created_date", updatable = false)
+  private Instant createdDate;
+
+  @UpdateTimestamp
+  @Column(name = "updated_date", updatable = true)
+  private Instant updatedDate;
 }

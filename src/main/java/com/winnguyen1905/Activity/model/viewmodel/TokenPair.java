@@ -6,8 +6,6 @@ import lombok.*;
 
 @Builder
 public record TokenPair(
-    String tokenType,
-    Integer expiresIn,
     String accessToken,
     String refreshToken) {
 }

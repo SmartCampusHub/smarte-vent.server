@@ -4,5 +4,5 @@ import java.io.Serializable;
 import java.util.UUID;
 
 public record NotificationDto(
-    UUID receiverId, String title, String content) implements Serializable {
+    Long receiverId, String title, String content) implements Serializable {
 }

@@ -43,29 +43,6 @@ public class SecurityConfig {
     return new BCryptPasswordEncoder();
   }
 
-  // @Bean
-  // SecurityFilterChain securityFilterChain(
-  // HttpSecurity http,
-  // CustomServerAuthenticationEntryPoint serverAuthenticationEntryPoint) throws
-  // Exception {
-  // return http
-  // .csrf(csrf -> csrf.disable())
-  // .httpBasic(basic -> basic.disable())
-  // .formLogin(form -> form.disable())
-  // .sessionManagement(session -> session
-  // .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-  // .authorizeHttpRequests(auth -> auth
-  // .requestMatchers(whiteList).permitAll()
-  // .requestMatchers("/ws/events").permitAll()
-  // .requestMatchers("/auth/**", "/stripe/**", "/swagger-ui/**", "-docs/**",
-  // "/webjars/**").permitAll()
-  // .requestMatchers("/admin/**").hasAnyAuthority("ADMIN", "ROLE_ADMIN")
-  // .requestMatchers("/actuator/**").permitAll()
-  // .anyRequest().authenticated())
-
-  // .build();
-  // }
-
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http, AuthenticationManager authenticationManager)
       throws Exception {
