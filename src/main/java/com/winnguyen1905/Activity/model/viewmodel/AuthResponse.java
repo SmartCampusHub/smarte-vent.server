@@ -5,9 +5,7 @@ import com.winnguyen1905.Activity.model.dto.AbstractModel;
 
 import lombok.Builder;
 
-@Builder 
+@Builder
 public record AuthResponse(
-  @JsonProperty("user")
-  TokenPair tokens
-) implements AbstractModel {
+    TokenPair tokens) implements AbstractModel {
 }

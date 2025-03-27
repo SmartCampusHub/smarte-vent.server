@@ -108,7 +108,7 @@ public class AuthService {
     userRepository.save(user);
   }
 
-  public AuthResponse handleRefreshToken(String refreshToken) {
+  public AuthResponse refreshToken(String refreshToken) {
     EAccountCredentials user = userRepository.findByRefreshToken(refreshToken)
         .orElseThrow(() -> new UsernameNotFoundException("Not found user by refresh token"));
 

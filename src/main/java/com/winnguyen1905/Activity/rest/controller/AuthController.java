@@ -22,8 +22,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("auth")
+@RequiredArgsConstructor
 public class AuthController {
 
   private final AuthService authService;
@@ -52,7 +52,7 @@ public class AuthController {
     if (refreshToken.isEmpty()) {
       throw new ResourceNotFoundException("Not found refresh token");
     }
-    AuthResponse auth = this.authService.handleRefreshToken(refreshToken);
+    AuthResponse auth = this.authService.refreshToken(refreshToken);
     return ResponseEntity.ok()
         .header(HttpHeaders.SET_COOKIE,
             CookieUtils.createCookie(SystemConstant.REFRESH_TOKEN, auth.tokens().refreshToken())

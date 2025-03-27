@@ -25,23 +25,23 @@ public class ReactiveAuthenticationConfig {
 
   // @Bean
   // public JwtAuthenticationConverter jwtAuthenticationConverter() {
-  //   JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
-  //   converter.setJwtGrantedAuthoritiesConverter(jwt -> {
-  //     List<String> roles = Optional.ofNullable(jwt.getClaimAsStringList("roles"))
-  //         .filter(list -> !list.isEmpty())
-  //         .orElseGet(() -> { 
-  //           String roleString = jwt.getClaimAsString("roles");
-  //           return roleString != null && !roleString.isBlank()
-  //               ? List.of(roleString)
-  //               : List.of("ADMIN");
-  //         });
+  // JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
+  // converter.setJwtGrantedAuthoritiesConverter(jwt -> {
+  // List<String> roles = Optional.ofNullable(jwt.getClaimAsStringList("roles"))
+  // .filter(list -> !list.isEmpty())
+  // .orElseGet(() -> {
+  // String roleString = jwt.getClaimAsString("roles");
+  // return roleString != null && !roleString.isBlank()
+  // ? List.of(roleString)
+  // : List.of("ADMIN");
+  // });
 
-  //     return roles.stream()
-  //         .filter(Objects::nonNull)
-  //         .map(role -> new SimpleGrantedAuthority("ROLE_" + role.toUpperCase()))
-  //         .collect(Collectors.toList());
-  //   });
-  //   return converter;
+  // return roles.stream()
+  // .filter(Objects::nonNull)
+  // .map(role -> new SimpleGrantedAuthority("ROLE_" + role.toUpperCase()))
+  // .collect(Collectors.toList());
+  // });
+  // return converter;
   // }
 
   @Bean
@@ -57,7 +57,7 @@ public class ReactiveAuthenticationConfig {
   @Bean("userDetailsService")
   public UserDetailsService userDetailsService(AccountRepository userRepository) {
     return studentCode -> {
-      return userRepository.findByStudentCode(studentCode)  
+      return userRepository.findByStudentCode(studentCode)
           .map(user -> CustomUserDetails.builder()
               .id(user.getId())
               .role(user.getRole())
@@ -67,8 +67,7 @@ public class ReactiveAuthenticationConfig {
               .password(user.getPassword())
               .build())
           .orElseThrow(
-            () -> new UsernameNotFoundException("Not found user by username " + studentCode)
-            );
+              () -> new UsernameNotFoundException("Not found user by username " + studentCode));
     };
   }
 }
