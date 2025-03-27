@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,7 +25,7 @@ public class ActivityController {
   private final ActivityService activityService;
 
   @PostMapping("/create")
-  public ResponseEntity<Void> createActivity(@AccountRequest TAccountRequest accountRequest, ActivityDto activityDto) {
+  public ResponseEntity<Void> createActivity(@AccountRequest TAccountRequest accountRequest, @RequestBody ActivityDto activityDto) {
     this.activityService.createActivity(accountRequest, activityDto);
     return ResponseEntity.status(HttpStatus.CREATED).build();
   }

@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ActivityDto {
+public class ActivityDto implements AbstractModel{
   private String activityName;
   private String description;
   private LocalDateTime startDate;
