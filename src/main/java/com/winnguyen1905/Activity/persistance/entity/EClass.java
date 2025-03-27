@@ -1,13 +1,14 @@
 package com.winnguyen1905.Activity.persistance.entity;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.winnguyen1905.Activity.common.constant.AccountRole;
+import com.winnguyen1905.Activity.common.constant.ClassStatus;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -16,8 +17,6 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -32,56 +31,38 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "account")
-public class EAccountCredentials {
+@Table(name = "class")
+public class EClass {
+
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   @Column(name = "id", updatable = false, nullable = false)
   protected Long id;
 
-  @Column(name = "full_name")
-  private String fullName;
+  @Column(name = "class_name")
+  private String className; 
 
-  @Column(name = "student_code")
-  private String studentCode;
+  @OneToMany(mappedBy = "studentClass")
+  private List<EAccountCredentials> students;
 
-  @Column(name = "password")
-  private String password;
+  @Column(name = "academic_year")
+  private Integer academicYear;
 
-  @Column(name = "is_active")
-  private Boolean isActive;
+  @Column(name = "start_date")
+  private LocalDate startDate;
 
-  @Column(name = "email")
-  private String email;
+  @Column(name = "end_date")
+  private LocalDate endDate;
 
-  @Column(name = "phone")
-  private String phone;
+  @Column(name = "department")
+  private String department;
 
-  @Column(name = "refresh_token", length = 1024)
-  private String refreshToken;
+  @Column(name = "capacity")
+  private Integer capacity;
 
-  @jakarta.persistence.Column(name = "role")
   @Enumerated(EnumType.STRING)
-  private AccountRole role;
-
-  @ManyToOne
-  @JoinColumn(name = "class_id")
-  private EClass studentClass;
-
-  @OneToMany(mappedBy = "account")
-  private List<EParticipationDetail> participationDetails;
-
-  @OneToMany(mappedBy = "receiver")
-  private List<ENotification> myNotificationReceiveds;
-
-  @OneToMany(mappedBy = "sender")
-  private List<ENotification> myNotificationSents;
-
-  @OneToMany(mappedBy = "reporter")
-  private List<EReport> reports;
-
-  @OneToMany(mappedBy = "student")
-  private List<EStudentSemesterDetail> studentSemesterDetails;
+  @Column(name = "status")
+  private ClassStatus status;
 
   @JsonIgnore
   @Column(name = "created_by", nullable = true)

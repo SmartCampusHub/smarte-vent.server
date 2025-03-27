@@ -1,13 +1,15 @@
 package com.winnguyen1905.Activity.persistance.entity;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.winnguyen1905.Activity.common.constant.AccountRole;
+import com.winnguyen1905.Activity.common.constant.ActivityCategory;
+import com.winnguyen1905.Activity.common.constant.ActivityStatus;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -32,56 +34,54 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "account")
-public class EAccountCredentials {
+@Table(name = "activity")
+public class EActivity {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   @Column(name = "id", updatable = false, nullable = false)
   protected Long id;
 
-  @Column(name = "full_name")
-  private String fullName;
+  @Column(name = "attendance_score_unit")
+  private String attendanceScoreUnit;
 
-  @Column(name = "student_code")
-  private String studentCode;
+  @Column(name = "activity_name")
+  private String activityName;
 
-  @Column(name = "password")
-  private String password;
+  @Column(name = "description", columnDefinition = "TEXT")
+  private String description;
 
-  @Column(name = "is_active")
-  private Boolean isActive;
-
-  @Column(name = "email")
-  private String email;
-
-  @Column(name = "phone")
-  private String phone;
-
-  @Column(name = "refresh_token", length = 1024)
-  private String refreshToken;
-
-  @jakarta.persistence.Column(name = "role")
-  @Enumerated(EnumType.STRING)
-  private AccountRole role;
-
-  @ManyToOne
-  @JoinColumn(name = "class_id")
-  private EClass studentClass;
-
-  @OneToMany(mappedBy = "account")
-  private List<EParticipationDetail> participationDetails;
-
-  @OneToMany(mappedBy = "receiver")
-  private List<ENotification> myNotificationReceiveds;
-
-  @OneToMany(mappedBy = "sender")
-  private List<ENotification> myNotificationSents;
-
-  @OneToMany(mappedBy = "reporter")
+  @OneToMany(mappedBy = "activity")
   private List<EReport> reports;
 
-  @OneToMany(mappedBy = "student")
-  private List<EStudentSemesterDetail> studentSemesterDetails;
+  @ManyToOne
+  @JoinColumn(name = "representative_organizer_id")
+  private ERepresentativeOrganizer representativeOrganizer;
+
+  @Enumerated(EnumType.STRING)
+  @Column(name = "activity_category")
+  private ActivityCategory activityCategory;
+
+  @OneToMany(mappedBy = "activity")
+  private List<EParticipationDetail> participationDetails;
+
+  @OneToMany(mappedBy = "activity")
+  private List<EActivitySchedule> activitySchedules;
+
+  @Column(name = "start_date")
+  private LocalDateTime startDate;
+
+  @Column(name = "end_date")
+  private LocalDateTime endDate;
+
+  @Column(name = "activity_venue")
+  private String activityVenue;
+
+  @Column(name = "capacity")
+  private Integer capacity;
+
+  @Enumerated(EnumType.STRING)
+  @Column(name = "activity_status")
+  private ActivityStatus activityStatus;
 
   @JsonIgnore
   @Column(name = "created_by", nullable = true)
