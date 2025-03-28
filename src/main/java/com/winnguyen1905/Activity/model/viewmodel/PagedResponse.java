@@ -11,10 +11,10 @@ import lombok.Setter;
 
 @Builder
 public record PagedResponse<T>(
-  int maxPageItems,
-  int page,
-  int size,
-  List<T> results,
-  int totalElements,
-  int totalPages
-) implements AbstractModel { }
+    int maxPageItems,
+    int page,
+    int size,
+    List<T> results,
+    int totalElements,
+    int totalPages) implements AbstractModel {
+}
