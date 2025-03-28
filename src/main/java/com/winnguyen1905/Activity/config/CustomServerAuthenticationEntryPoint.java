@@ -40,7 +40,6 @@ public class CustomServerAuthenticationEntryPoint implements AuthenticationEntry
                 .map(Throwable::getMessage)
                 .orElse(authException.getMessage()))
             .build();
-
         objectMapper.writeValue(response.getOutputStream(), res);
     }
 }

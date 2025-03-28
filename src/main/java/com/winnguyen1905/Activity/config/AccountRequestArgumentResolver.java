@@ -19,7 +19,9 @@ public class AccountRequestArgumentResolver implements HandlerMethodArgumentReso
 
   public static enum AccountRequestArgument {
     ID("sub"), USERNAME("username"), ROLE("role");
+
     String value;
+
     AccountRequestArgument(String value) {
       this.value = value;
     }

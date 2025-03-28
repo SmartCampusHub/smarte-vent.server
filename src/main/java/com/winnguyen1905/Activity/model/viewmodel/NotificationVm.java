@@ -1,18 +1,19 @@
 package com.winnguyen1905.Activity.model.viewmodel;
 
 import java.time.Instant;
+
+import com.winnguyen1905.Activity.common.constant.NotificationType;
+
 import lombok.Builder;
 import lombok.Data;
 
 @Data
 @Builder
-public class ReportViewModel {
+public class NotificationVm {
     private Long id;
-    private Long activityId;
-    private String activityName;
-    private Long reportedById;
-    private String reportedByName;
-    private String description;
+    private Long receiverId;
+    private String message;
+    private NotificationType notificationType;
     private String createdBy;
     private Instant createdDate;
 }

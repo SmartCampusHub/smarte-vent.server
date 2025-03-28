@@ -84,12 +84,12 @@ public class EActivity {
   private ActivityStatus activityStatus;
 
   @JsonIgnore
-  @Column(name = "created_by", nullable = true)
-  private String createdBy;
+  @Column(name = "created_by_id", nullable = true)
+  private Long createdById;
 
   @JsonIgnore
-  @Column(name = "updated_by", nullable = true)
-  private String updatedBy;
+  @Column(name = "updated_by_id", nullable = true)
+  private Long updatedById;
 
   @CreationTimestamp
   @Column(name = "created_date", updatable = false)

@@ -8,14 +8,13 @@ import com.winnguyen1905.Activity.model.dto.AbstractModel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-@Builder
-@JsonInclude(JsonInclude.Include.NON_NULL)
 
+@Builder
 public record PagedResponse<T>(
   int maxPageItems,
   int page,
   int size,
-  T results,
+  List<T> results,
   int totalElements,
   int totalPages
 ) implements AbstractModel { }

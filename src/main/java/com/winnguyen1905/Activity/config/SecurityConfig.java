@@ -34,8 +34,9 @@ import jakarta.servlet.Filter;
 public class SecurityConfig {
 
   public static final String[] whiteList = {
-      "/auth/register", "/auth/login", "/v1/auth/login", "/v1/auth/refresh",
-      "/storage/**", "/v1/products/**"
+      "/auth/register", "/auth/login", "/v1/auth/login", "/v1/auth/refresh", // Auth 
+      "/storage/**", // Source
+      "/v1/products/**" // Product
   };
 
   @Bean

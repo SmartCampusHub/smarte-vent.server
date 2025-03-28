@@ -4,5 +4,5 @@ public record RepresentativeOrganizerDto(
     String studentId,
     String role,
     String status,
-    Long activityId
-) {} 
+    Long activityId) {
+}

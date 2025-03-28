@@ -1,7 +1,7 @@
 package com.winnguyen1905.Activity.rest.controller;
 
 import com.winnguyen1905.Activity.common.constant.ActivityCategory;
-import com.winnguyen1905.Activity.model.viewmodel.ActivityViewModel;
+import com.winnguyen1905.Activity.model.viewmodel.ActivityVm;
 import com.winnguyen1905.Activity.model.viewmodel.PagedResponse;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,57 +12,52 @@ import com.winnguyen1905.Activity.rest.service.ActivityService;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/activity")
+@RequestMapping("activities")
 public class ActivityController {
 
   private final ActivityService activityService;
 
   @PostMapping("/create")
-  public ResponseEntity<Void> createActivity(@AccountRequest TAccountRequest accountRequest,@RequestBody ActivityDto activityDto) {
-    this.activityService.createActivity(accountRequest, activityDto);
+  public ResponseEntity<Void> createActivity(
+      @AccountRequest TAccountRequest accountRequest,
+      @RequestBody ActivityDto activityDto) {
+    activityService.createActivity(accountRequest, activityDto);
     return ResponseEntity.status(HttpStatus.CREATED).build();
   }
 
-  @PostMapping("/{id}")
-  public ResponseEntity<Void> updateActivity (@AccountRequest TAccountRequest accountRequest,@RequestBody ActivityDto activityDto,@PathVariable Long id){
-    this.activityService.updateActivity(accountRequest,activityDto,id);
-    return ResponseEntity.status(HttpStatus.UPGRADE_REQUIRED).build();
+  @PutMapping("/{id}")
+  public ResponseEntity<ActivityVm> updateActivity(
+      @AccountRequest TAccountRequest accountRequest,
+      @RequestBody ActivityDto activityDto) {
+    activityService.updateActivity(accountRequest, activityDto);
+    return ResponseEntity.ok().build();
   }
 
   @DeleteMapping("/{id}")
-  public String deleteActivity (TAccountRequest tAccountRequest,@PathVariable Long id) {
-    activityService.deleteActivity(tAccountRequest,id);
-    return "Activity has been deleted";
+  public ResponseEntity<Void> deleteActivity(
+      @AccountRequest TAccountRequest accountRequest,
+      @PathVariable Long id) {
+    activityService.deleteActivity(accountRequest, id);
+    return ResponseEntity.noContent().build();
   }
 
-  @GetMapping("/{id}")
-  public PagedResponse<ActivityViewModel> getActivityById (@AccountRequest TAccountRequest accountRequest, @PathVariable Long id) {
-    return PagedResponse.<ActivityViewModel>builder()
-      .results(activityService.getActivityById(accountRequest,id))
-      .build();
+  // @GetMapping("/{id}")
+  // public ResponseEntity<ActivityVm> getActivityById(
+  // @AccountRequest TAccountRequest accountRequest,
+  // @PathVariable Long id) {
+  // ActivityVm activity = activityService.getActivityById(accountRequest, id);
+  // return ResponseEntity.ok(activity);
+  // }
+
+  @GetMapping("/")
+  public ResponseEntity<PagedResponse<ActivityVm>> getAllActivities(Pageable pageable) {
+    PagedResponse<ActivityVm> activities = activityService.getAllActivities(pageable);
+    return ResponseEntity.ok(activities);
   }
-
-  @GetMapping
-  public PagedResponse<List<ActivityViewModel>> getAllActivities() {
-    return PagedResponse.<List<ActivityViewModel>>builder()
-      .results(activityService.getAllActivities())
-      .build();
-  }
-
-//  @GetMapping("/category")
-//  public List<ActivityViewModel>  findByCategory (ActivityCategory activityCategory) {
-//    return activityService.getActivitiesByCategory(activityCategory);
-//  }
-
 }
-
-
-

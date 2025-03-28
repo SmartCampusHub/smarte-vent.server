@@ -27,7 +27,7 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3306/activity
     username: root
-    password: 818757
+    password: rootpassword
     driver-class-name: com.mysql.cj.jdbc.Driver
   servlet:
     multipart:
@@ -39,7 +39,7 @@ spring:
     hibernate:
       ddl-auto: create-drop # Change this if needed (create, create-drop, validate, none)
     show-sql: true
-
+  data:
     web:
       pageable:
         size-parameter: size

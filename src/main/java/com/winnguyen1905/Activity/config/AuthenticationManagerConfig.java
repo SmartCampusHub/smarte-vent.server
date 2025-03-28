@@ -21,7 +21,7 @@ import com.winnguyen1905.Activity.auth.CustomUserDetails;
 import com.winnguyen1905.Activity.persistance.repository.AccountRepository;
 
 @Configuration
-public class ReactiveAuthenticationConfig {
+public class AuthenticationManagerConfig {
 
   // @Bean
   // public JwtAuthenticationConverter jwtAuthenticationConverter() {

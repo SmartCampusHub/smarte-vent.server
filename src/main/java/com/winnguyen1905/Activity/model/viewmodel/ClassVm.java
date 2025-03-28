@@ -4,5 +4,5 @@ public record ClassVm(
     Long id,
     String className,
     String description,
-    String status
-) {} 
+    String status) {
+}

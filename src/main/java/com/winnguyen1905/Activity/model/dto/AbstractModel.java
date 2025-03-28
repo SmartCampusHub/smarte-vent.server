@@ -10,7 +10,7 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.Getter;
 import lombok.Setter;
 
-@JsonInclude(value = Include.NON_NULL)
+// @JsonInclude(value = Include.NON_NULL)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public interface AbstractModel extends Serializable {
 }
