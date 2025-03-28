@@ -12,5 +12,5 @@ public record ActivityVm(
     Integer maxParticipants,
     String status,
     Long categoryId,
-    Long classId
-) {} 
+    Long classId) {
+}
