@@ -27,7 +27,7 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3306/activity
     username: root
-    password: rootpassword
+    password: 818757
     driver-class-name: com.mysql.cj.jdbc.Driver
   servlet:
     multipart:
