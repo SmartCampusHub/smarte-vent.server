@@ -21,7 +21,7 @@ import com.winnguyen1905.Activity.rest.service.ActivityService;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
-import java.util.Optional;
+
 import java.util.stream.Collectors;
 import java.util.ArrayList;
 import com.winnguyen1905.Activity.persistance.entity.EActivitySchedule;
@@ -207,28 +207,28 @@ public class ActivityServiceImpl implements ActivityService {
 
   // return activityMapper.toViewModel(activity);
   // }
-
-  // @Override
-  // public PagedResponse<ActivityVm> getActivitiesByCategory(TAccountRequest
-  // accountRequest,
-  // ActivityCategory activityCategory) {
-  // validateAccountRequest(accountRequest);
-
-  // List<EActivity> activities =
-  // activityRepository.findByCategory(activityCategory);
-  // List<ActivityVm> activityVms = activities.stream()
-  // .map(activityMapper::toViewModel)
-  // .toList();
-
-  // return PagedResponse.<ActivityVm>builder()
-  // .maxPageItems(10)
-  // .page(1)
-  // .size(activityVms.size())
-  // .results(activityVms)
-  // .totalElements(activityVms.size())
-  // .totalPages(1)
-  // .build();
-  // }
+//
+//   @Override
+//   public PagedResponse<ActivityVm> getActivitiesByCategory(TAccountRequest
+//   accountRequest,
+//   ActivityCategory activityCategory) {
+//   validateAccountRequest(accountRequest);
+//
+//   List<EActivity> activities =
+//   activityRepository.findByCategory(activityCategory);
+//   List<ActivityVm> activityVms = activities.stream()
+//   .map(activityMapper::toViewModel)
+//   .toList();
+//
+//   return PagedResponse.<ActivityVm>builder()
+//   .maxPageItems(10)
+//   .page(1)
+//   .size(activityVms.size())
+//   .results(activityVms)
+//   .totalElements(activityVms.size())
+//   .totalPages(1)
+//   .build();
+//   }
 
   private void validateActivityDto(ActivityDto activityDto) {
     if (activityDto == null) {

@@ -1,5 +1,6 @@
 package com.winnguyen1905.Activity.model.dto; 
 
+import com.winnguyen1905.Activity.persistance.entity.EClass;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -19,6 +20,7 @@ public record RegisterRequest(
   String email,
 
   String phone,
+  EClass eClass,
 
   @NotBlank
   String fullName

@@ -8,9 +8,11 @@ import com.winnguyen1905.Activity.common.constant.AccountRole;
 import lombok.Builder;
 
 @Builder
+
 public record TAccountRequest(
     Long id,
     String username,
     AccountRole role,
-    UUID socketClientId) implements Serializable {
+    UUID socketClientId
+) implements Serializable {
 }
