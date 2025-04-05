@@ -7,5 +7,4 @@ import com.winnguyen1905.Activity.model.dto.AbstractModel;
 import lombok.Builder;
 
 @Builder
-public record AuthResponse(String accessToken, AccountVm account, @JsonIgnore String refreshToken) implements AbstractModel {
-}
+public record AuthResponse(String accessToken, AccountVm account, @JsonIgnore String refreshToken) implements AbstractModel {}

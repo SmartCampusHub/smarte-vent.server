@@ -35,4 +35,3 @@ public class ActivityVm implements AbstractModel{
   private Long representativeOrganizerId;
   private List<ActivityScheduleVm> activitySchedules;
 }
-
