@@ -10,7 +10,7 @@ import lombok.experimental.FieldDefaults;
 
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 
 @Data
@@ -26,7 +26,7 @@ public class ClassDto {
   private Integer capacity;
   private ClassStatus status;
   private String createdBy;
-  private LocalDateTime createdDate;
+  private Instant createdDate;
   private List<RegisterRequest> student;
 
 } 

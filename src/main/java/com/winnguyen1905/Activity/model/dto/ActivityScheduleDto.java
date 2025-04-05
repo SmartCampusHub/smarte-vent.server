@@ -1,6 +1,6 @@
 package com.winnguyen1905.Activity.model.dto;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import com.winnguyen1905.Activity.common.constant.ScheduleStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,10 +11,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ActivityScheduleDto {
+public class ActivityScheduleDto implements AbstractModel {
   private Long activityId;
-  private LocalDateTime startTime;
-  private LocalDateTime endTime;
+  private Instant startTime;
+  private Instant endTime;
   private String activityDescription;
   private ScheduleStatus status;
   private String location;

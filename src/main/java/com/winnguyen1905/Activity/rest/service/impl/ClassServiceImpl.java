@@ -27,15 +27,16 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ClassServiceImpl implements ClassService {
-    private final ClassRepository classRepository;
-    private final AccountRepository accountRepository;
 
-    @Override
-    public void createClass(TAccountRequest accountRequest, ClassDto classDto) {
+  private final ClassRepository classRepository;
+  private final AccountRepository accountRepository;
+
+  @Override
+  public void createClass(TAccountRequest accountRequest, ClassDto classDto) {
     // validateClassDto(classDto);
     // validateAccountRequest(accountRequest);
-      
-      EClass eClass = EClass.builder()
+
+    EClass eClass = EClass.builder()
         .className(classDto.getClassName())
         .academicYear(classDto.getAcademicYear())
         .startDate(classDto.getStartDate())
@@ -45,94 +46,100 @@ public class ClassServiceImpl implements ClassService {
         .status(classDto.getStatus())
         .createdBy(accountRequest.username())
         .build();
-      classRepository.save(eClass);
+    classRepository.save(eClass);
 
-      // If students are provided, set them
-//      if (classDto.getStudent() != null || !classDto.getStudent().isEmpty()) {
-//        for (RegisterRequest request : classDto.getStudent()) {
-//              EAccountCredentials student = accountRepository.findByStudentCode(request.studentCode())
-//              .orElseThrow(() -> new IllegalArgumentException("Student with code " + request.studentCode() + " not found"));
-//
-//          if (student.getRole() != AccountRole.STUDENT) {
-//            throw new IllegalArgumentException("Account with code " + request.studentCode() + " is not a student");
-//          }
-//            student.setStudentClass(eClass);
-//        }
-//      }
-    }
+    // If students are provided, set them
+    // if (classDto.getStudent() != null || !classDto.getStudent().isEmpty()) {
+    // for (RegisterRequest request : classDto.getStudent()) {
+    // EAccountCredentials student =
+    // accountRepository.findByStudentCode(request.studentCode())
+    // .orElseThrow(() -> new IllegalArgumentException("Student with code " +
+    // request.studentCode() + " not found"));
+    //
+    // if (student.getRole() != AccountRole.STUDENT) {
+    // throw new IllegalArgumentException("Account with code " +
+    // request.studentCode() + " is not a student");
+    // }
+    // student.setStudentClass(eClass);
+    // }
+    // }
+  }
 
-    @Override
-    public void updateClass(TAccountRequest accountRequest, ClassDto classDto, Long id) {
-       validateAccountRequest(accountRequest);
+  @Override
+  public void updateClass(TAccountRequest accountRequest, ClassDto classDto, Long id) {
+    validateAccountRequest(accountRequest);
 
-      EClass existingClass = classRepository.findById(id)
+    EClass existingClass = classRepository.findById(id)
         .orElseThrow(() -> new IllegalArgumentException("Class with ID " + id + " not found"));
-      
-        existingClass.setClassName(classDto.getClassName());
-        existingClass.setAcademicYear(classDto.getAcademicYear());
-        existingClass.setStartDate(classDto.getStartDate());
-        existingClass.setEndDate(classDto.getEndDate());
-        existingClass.setDepartment(classDto.getDepartment());
-        existingClass.setCapacity(classDto.getCapacity());
-        existingClass.setUpdatedBy(accountRequest.username());
-      classRepository.save(existingClass);
-      
-      // Update Student if provided
-//      if (classDto.getStudent() != null || !classDto.getStudent().isEmpty()) {
-//        for (RegisterRequest request : classDto.getStudent()) {
-//          EAccountCredentials student = accountRepository.findByStudentCode(request.studentCode())
-//            .orElseThrow(() -> new IllegalArgumentException("Student with code " + request.studentCode() + " not found"));
-//
-//          if (student.getRole() != AccountRole.STUDENT) {
-//            throw new IllegalArgumentException("Account with code " + request.studentCode() + " is not a student");
-//          }
-//          student.setStudentClass(existingClass);
-//        }
-//      }
-      
-    }
 
-    @Override
-    public void deleteClass(TAccountRequest accountRequest, Long id) {
-          classRepository.deleteById(id);
-    }
-    
-    private void validateDeleteRequest (TAccountRequest accountRequest, Long classId) {
-      EClass existingClass = classRepository.findById(classId)
+    existingClass.setClassName(classDto.getClassName());
+    existingClass.setAcademicYear(classDto.getAcademicYear());
+    existingClass.setStartDate(classDto.getStartDate());
+    existingClass.setEndDate(classDto.getEndDate());
+    existingClass.setDepartment(classDto.getDepartment());
+    existingClass.setCapacity(classDto.getCapacity());
+    existingClass.setUpdatedBy(accountRequest.username());
+    classRepository.save(existingClass);
+
+    // Update Student if provided
+    // if (classDto.getStudent() != null || !classDto.getStudent().isEmpty()) {
+    // for (RegisterRequest request : classDto.getStudent()) {
+    // EAccountCredentials student =
+    // accountRepository.findByStudentCode(request.studentCode())
+    // .orElseThrow(() -> new IllegalArgumentException("Student with code " +
+    // request.studentCode() + " not found"));
+    //
+    // if (student.getRole() != AccountRole.STUDENT) {
+    // throw new IllegalArgumentException("Account with code " +
+    // request.studentCode() + " is not a student");
+    // }
+    // student.setStudentClass(existingClass);
+    // }
+    // }
+
+  }
+
+  @Override
+  public void deleteClass(TAccountRequest accountRequest, Long id) {
+    classRepository.deleteById(id);
+  }
+
+  private void validateDeleteRequest(TAccountRequest accountRequest, Long classId) {
+    EClass existingClass = classRepository.findById(classId)
         .orElseThrow(() -> new IllegalArgumentException("Class with ID " + classId + " not found"));
-      
-      if (existingClass == null) 
-        throw new IllegalArgumentException("Class with ID " + classId + " not found");
-      
-      if (existingClass.getStatus() == ClassStatus.INACTIVE)
-        throw new BadRequestException("Class is Inactive");
-      
-      if (accountRequest.role() != AccountRole.ADMIN)
-        throw new BadRequestException("No authorization to delete this class");
-    }
 
-    @Override
-    public ClassVm getClassById(Long classId) {
-       EClass eClass = classRepository.findById(classId)
+    if (existingClass == null)
+      throw new IllegalArgumentException("Class with ID " + classId + " not found");
+
+    if (existingClass.getStatus() == ClassStatus.INACTIVE)
+      throw new BadRequestException("Class is Inactive");
+
+    if (accountRequest.role() != AccountRole.ADMIN)
+      throw new BadRequestException("No authorization to delete this class");
+  }
+
+  @Override
+  public ClassVm getClassById(Long classId) {
+    EClass eClass = classRepository.findById(classId)
         .orElseThrow(() -> new IllegalArgumentException("Class with ID " + classId + " not found"));
-        
-        return ClassVm.builder()
-          .className(eClass.getClassName())
-          .academicYear(eClass.getAcademicYear())
-          .startDate(eClass.getStartDate())
-          .endDate(eClass.getEndDate())
-          .department(eClass.getDepartment())
-          .capacity(eClass.getCapacity())
-          .status(eClass.getStatus())
-          .build();
-    }
 
-    @Override
-    public PagedResponse<ClassVm> getAllClasses(Pageable pageable) {
-        Page<EClass> classes = classRepository.findAll(pageable);
-        
-        List<ClassVm> classVms = classes.getContent().stream()
-          .map(EClass -> ClassVm.builder()
+    return ClassVm.builder()
+        .className(eClass.getClassName())
+        .academicYear(eClass.getAcademicYear())
+        .startDate(eClass.getStartDate())
+        .endDate(eClass.getEndDate())
+        .department(eClass.getDepartment())
+        .capacity(eClass.getCapacity())
+        .status(eClass.getStatus())
+        .build();
+  }
+
+  @Override
+  public PagedResponse<ClassVm> getAllClasses(Pageable pageable) {
+    Page<EClass> classes = classRepository.findAll(pageable);
+
+    List<ClassVm> classVms = classes.getContent().stream()
+        .map(EClass -> ClassVm.builder()
             .className(EClass.getClassName())
             .academicYear(EClass.getAcademicYear())
             .startDate(EClass.getStartDate())
@@ -141,62 +148,63 @@ public class ClassServiceImpl implements ClassService {
             .capacity(EClass.getCapacity())
             .status(EClass.getStatus())
             .build())
-          .collect(Collectors.toList());
-        
-        return PagedResponse.<ClassVm>builder()
-          .maxPageItems(pageable.getPageSize())
-          .page(pageable.getPageNumber())
-          .size(classVms.size())
-          .results(classVms)
-          .totalElements((int) classes.getTotalElements())
-          .totalPages(classes.getTotalPages())
-          .build();
-    }
+        .collect(Collectors.toList());
 
-//    @Override
-//    public PagedResponse<List<ClassVm>> getClassesByDepartment(String department) {
-//     
-//        List<EClass> classes = classRepository.findByDepartment(department);
-//        List<ClassVm> classVms = classes.stream().map(EClass -> ClassVm.builder()
-//          .className(EClass.getClassName())
-//          .academicYear(EClass.getAcademicYear())
-//          .startDate(EClass.getStartDate())
-//          .endDate(EClass.getEndDate())
-//          .department(EClass.getDepartment())
-//          .capacity(EClass.getCapacity())
-//          .status(EClass.getStatus())
-//          .build()).toList();
-//        
-//        return PagedResponse.<List<ClassVm>>builder()
-//          .maxPageItems(10)
-//          .page(1)
-//          .results(classVms)
-//          .totalElements(classVms.size())
-//          .totalPages(1)
-//          .build();
-//    }
+    return PagedResponse.<ClassVm>builder()
+        .maxPageItems(pageable.getPageSize())
+        .page(pageable.getPageNumber())
+        .size(classVms.size())
+        .results(classVms)
+        .totalElements((int) classes.getTotalElements())
+        .totalPages(classes.getTotalPages())
+        .build();
+  }
 
-  private void validateClassDto (ClassDto classDto) {
+  // @Override
+  // public PagedResponse<List<ClassVm>> getClassesByDepartment(String department)
+  // {
+  //
+  // List<EClass> classes = classRepository.findByDepartment(department);
+  // List<ClassVm> classVms = classes.stream().map(EClass -> ClassVm.builder()
+  // .className(EClass.getClassName())
+  // .academicYear(EClass.getAcademicYear())
+  // .startDate(EClass.getStartDate())
+  // .endDate(EClass.getEndDate())
+  // .department(EClass.getDepartment())
+  // .capacity(EClass.getCapacity())
+  // .status(EClass.getStatus())
+  // .build()).toList();
+  //
+  // return PagedResponse.<List<ClassVm>>builder()
+  // .maxPageItems(10)
+  // .page(1)
+  // .results(classVms)
+  // .totalElements(classVms.size())
+  // .totalPages(1)
+  // .build();
+  // }
+
+  private void validateClassDto(ClassDto classDto) {
     // Validate required fields
     if ((classDto == null))
       throw new BadRequestException("Class data can not be null");
-    
+
     if (classDto.getClassName() == null || classDto.getClassName().trim().isEmpty())
       throw new BadRequestException("Class name can not be null");
-      
+
     if (classDto.getStartDate() == null)
       throw new BadRequestException("Start date is required");
 
     if (classDto.getEndDate() == null)
       throw new BadRequestException("End date is required");
-    
+
     if (classDto.getStartDate().isAfter(classDto.getEndDate()))
       throw new BadRequestException("Start date must be before end date");
-    
-    if(classDto.getDepartment() == null || classDto.getDepartment().trim().isEmpty())
+
+    if (classDto.getDepartment() == null || classDto.getDepartment().trim().isEmpty())
       throw new BadRequestException("Department is required");
-    
-    if (classDto.getCapacity() == null || classDto.getCapacity() < 1) 
+
+    if (classDto.getCapacity() == null || classDto.getCapacity() < 1)
       throw new BadRequestException("Capacity is required");
   }
 

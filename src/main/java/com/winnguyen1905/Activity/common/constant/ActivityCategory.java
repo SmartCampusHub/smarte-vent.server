@@ -1,7 +1,7 @@
 package com.winnguyen1905.Activity.common.constant;
 
 public enum ActivityCategory {
-  CLUB("CLUB"), SCHOOL("SCHOOL"), THIRD_PARTY("THIRD_PARTY");
+  STUDENT_ORGANIZATION("STUDENT_ORGANIZATION"), UNIVERSITY("UNIVERSITY"), THIRD_PARTY("THIRD_PARTY");
 
   private final String value;
 

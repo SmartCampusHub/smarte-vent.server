@@ -25,6 +25,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import jakarta.servlet.Filter;
 
@@ -34,10 +36,20 @@ import jakarta.servlet.Filter;
 public class SecurityConfig {
 
   public static final String[] whiteList = {
-      "/auth/register", "/auth/login", "/v1/auth/login", "/v1/auth/refresh", // Auth 
+      "/auth/register", "/auth/login", "/v1/auth/login", "/v1/auth/refresh", // Auth
       "/storage/**", // Source
       "/v1/products/**" // Product
   };
+
+  // @Override
+  // public void addCorsMappings(CorsRegistry registry) {
+  // registry.addMapping("/**")
+  // .allowedOrigins("*") // Allow all origins for testing
+  // .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+  // .allowedHeaders("Authorization", "Content-Type")
+  // .allowCredentials(false) // Must be false with "*"
+  // .maxAge(3600);
+  // }
 
   @Bean
   PasswordEncoder passwordEncoder() {
@@ -53,6 +65,7 @@ public class SecurityConfig {
         .formLogin(form -> form.disable())
         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(auth -> auth.requestMatchers(whiteList).permitAll()
+            .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll() // Allow preflight requests
             // .requestMatchers(HttpMethod.GET, "/chima/**").hasRole("STUDENT")
             // .requestMatchers(HttpMethod.POST, "/auth/register/**").permitAll()
             // .requestMatchers(HttpMethod.POST, "/auth/login/**").permitAll()
@@ -63,23 +76,27 @@ public class SecurityConfig {
         .build();
   }
 
-  @Bean
-  public FilterRegistrationBean<Filter> corsFilter() {
-    CorsConfiguration configuration = new CorsConfiguration();
-    configuration.setAllowedOrigins(Arrays.asList("https://localhost:3000", "https://localhost:4173", "*"));
-    configuration.setAllowedMethods(Arrays.asList("GET", "POST", "DELETE", "PUT", "PATCH", "OPTIONS"));
-    configuration.setAllowCredentials(true);
-    configuration.addAllowedHeader("*");
-    configuration
-        .setAllowedHeaders(Arrays.asList("Content-Type", "Authorization", "Accept", "x-no-retry", "x-api-key"));
-    configuration.setMaxAge(3600L);
+  // @Bean
+  // public FilterRegistrationBean<Filter> corsFilter() {
+  // CorsConfiguration configuration = new CorsConfiguration();
+  // configuration.setAllowedOrigins(Arrays.asList("https://localhost:3000",
+  // "https://localhost:4173", "*"));
+  // configuration.setAllowedMethods(Arrays.asList("GET", "POST", "DELETE", "PUT",
+  // "PATCH", "OPTIONS"));
+  // configuration.setAllowCredentials(true);
+  // configuration.addAllowedHeader("*");
+  // configuration
+  // .setAllowedHeaders(Arrays.asList("Content-Type", "Authorization", "Accept",
+  // "x-no-retry", "x-api-key"));
+  // configuration.setMaxAge(3600L);
 
-    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-    source.registerCorsConfiguration("/**", configuration);
+  // UrlBasedCorsConfigurationSource source = new
+  // UrlBasedCorsConfigurationSource();
+  // source.registerCorsConfiguration("/**", configuration);
 
-    FilterRegistrationBean<Filter> bean = new FilterRegistrationBean<>();
-    bean.setFilter(new CorsFilter(source));
-    bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
-    return bean;
-  }
+  // FilterRegistrationBean<Filter> bean = new FilterRegistrationBean<>();
+  // bean.setFilter(new CorsFilter(source));
+  // bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
+  // return bean;
+  // }
 }

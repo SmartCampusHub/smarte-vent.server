@@ -1,7 +1,7 @@
 package com.winnguyen1905.Activity.persistance.entity;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -43,10 +43,10 @@ public class EActivitySchedule {
   private EActivity activity;
 
   @Column(name = "start_time")
-  private LocalDateTime startTime;
+  private Instant startTime;
 
   @Column(name = "end_time")
-  private LocalDateTime endTime;
+  private Instant endTime;
 
   @Column(name = "activity_description")
   private String activityDescription;

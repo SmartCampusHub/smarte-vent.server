@@ -1,8 +1,8 @@
 package com.winnguyen1905.Activity.model.dto;
 
 public record StudentSemesterDetailDto(
-    String studentId,
-    String semesterId,
+    Long id,
+    Long studentId,
     String classId,
-    String status
-) {} 
+    Integer attendanceScore, Float gpa) {
+}

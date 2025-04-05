@@ -35,7 +35,7 @@ public class AuthController {
         .ok()
         .header(
             HttpHeaders.SET_COOKIE, CookieUtils
-                .createCookie(SystemConstant.REFRESH_TOKEN, authResponse.tokens().refreshToken())
+                .createCookie(SystemConstant.REFRESH_TOKEN, authResponse.refreshToken())
                 .toString())
         .body(authResponse);
   }
@@ -55,7 +55,7 @@ public class AuthController {
     AuthResponse auth = this.authService.refreshToken(refreshToken);
     return ResponseEntity.ok()
         .header(HttpHeaders.SET_COOKIE,
-            CookieUtils.createCookie(SystemConstant.REFRESH_TOKEN, auth.tokens().refreshToken())
+            CookieUtils.createCookie(SystemConstant.REFRESH_TOKEN, auth.refreshToken())
                 .toString())
         .body(auth);
   }

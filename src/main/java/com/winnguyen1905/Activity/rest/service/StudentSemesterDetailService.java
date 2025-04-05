@@ -7,9 +7,10 @@ import com.winnguyen1905.Activity.model.viewmodel.StudentSemesterDetailVm;
 import java.util.List;
 
 public interface StudentSemesterDetailService {
-    void createDetail(TAccountRequest accountRequest, StudentSemesterDetailDto detailDto);
-    void updateDetail(TAccountRequest accountRequest, StudentSemesterDetailDto detailDto, Long id);
-    void deleteDetail(TAccountRequest accountRequest, Long id);
-    StudentSemesterDetailVm getDetailById(Long id);
-    List<StudentSemesterDetailVm> getDetailsByStudentId(Long studentId);
+  StudentSemesterDetailVm createDetail(TAccountRequest accountRequest, StudentSemesterDetailDto detailDto);
+  StudentSemesterDetailVm updateDetail(TAccountRequest accountRequest, StudentSemesterDetailDto detailDto);
+  void deleteDetail(TAccountRequest accountRequest, Long id);
+  StudentSemesterDetailVm getDetailById(Long id);
+  List<StudentSemesterDetailVm> getAllSemesterDetails(TAccountRequest accountRequest);
+  List<StudentSemesterDetailVm> getDetailsByStudentId(Long studentId);
 }

@@ -32,7 +32,6 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @Table(name = "student_semester_detail")
 public class EStudentSemesterDetail {
-
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   @Column(name = "id", updatable = false, nullable = false)
@@ -45,12 +44,12 @@ public class EStudentSemesterDetail {
   @Min(60)
   @Max(100)
   @Column(name = "attendance_score")
-  private Double attendanceScore;
+  private Integer attendanceScore;
 
   @Min(0)
   @Max(4)
   @Column(name = "gpa")
-  private Double gpa;
+  private Float gpa;
 
   @JsonIgnore
   @Column(name = "created_by", nullable = true)

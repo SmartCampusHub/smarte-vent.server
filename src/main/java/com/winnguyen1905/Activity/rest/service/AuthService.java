@@ -12,6 +12,7 @@ import com.winnguyen1905.Activity.auth.CustomUserDetails;
 import com.winnguyen1905.Activity.common.constant.AccountRole;
 import com.winnguyen1905.Activity.model.dto.LoginRequest;
 import com.winnguyen1905.Activity.model.dto.RegisterRequest;
+import com.winnguyen1905.Activity.model.viewmodel.AccountVm;
 import com.winnguyen1905.Activity.model.viewmodel.AuthResponse;
 import com.winnguyen1905.Activity.model.viewmodel.TokenPair;
 import com.winnguyen1905.Activity.persistance.entity.EAccountCredentials;
@@ -43,10 +44,12 @@ public class AuthService {
     userRepository.save(userCredentials);
 
     return AuthResponse.builder()
-        .tokens(TokenPair.builder()
-            .accessToken(tokenPair.accessToken())
-            .refreshToken(tokenPair.refreshToken())
-            .build())
+        .refreshToken(tokenPair.refreshToken())
+        .accessToken(tokenPair.accessToken())
+        .account(AccountVm.builder()
+            .studentCode(userCredentials.getStudentCode())
+            .name(userCredentials.getFullName())
+            .id(userCredentials.getId()).build())
         .build();
   }
 
@@ -94,10 +97,8 @@ public class AuthService {
         .build();
     TokenPair tokenPair = jwtUtils.createTokenPair(userDetails);
     return AuthResponse.builder()
-        .tokens(TokenPair.builder()
-            .accessToken(tokenPair.accessToken())
-            .refreshToken(tokenPair.refreshToken())
-            .build())
+    .refreshToken(tokenPair.refreshToken())
+        .accessToken(tokenPair.accessToken())
         .build();
   }
 
@@ -125,10 +126,8 @@ public class AuthService {
     userRepository.save(user);
 
     return AuthResponse.builder()
-        .tokens(TokenPair.builder()
-            .accessToken(tokenPair.accessToken())
-            .refreshToken(tokenPair.refreshToken())
-            .build())
+        .accessToken(tokenPair.accessToken())
+        .refreshToken(refreshToken)
         .build();
   }
 }

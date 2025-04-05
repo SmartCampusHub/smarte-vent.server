@@ -22,7 +22,7 @@ services:
       - "3306:3306"  # Expose MySQL port to the host (optional)
     environment:
       - MYSQL_ROOT_PASSWORD=rootpassword
-      - MYSQL_DATABASE=activity_management
+      - MYSQL_DATABASE=activity
     volumes:
       - mysql-data:/var/lib/mysql  # Persist MySQL data
     networks:

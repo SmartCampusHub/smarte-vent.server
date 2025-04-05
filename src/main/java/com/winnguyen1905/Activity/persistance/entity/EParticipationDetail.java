@@ -38,8 +38,8 @@ public class EParticipationDetail {
   protected Long id;
 
   @ManyToOne
-  @JoinColumn(name = "account_id")
-  private EAccountCredentials account;
+  @JoinColumn(name = "participant_id")
+  private EAccountCredentials participant;
 
   @ManyToOne
   @JoinColumn(name = "activity_id")
@@ -47,7 +47,7 @@ public class EParticipationDetail {
 
   @Enumerated(EnumType.STRING)
   @Column(name = "status")
-  private ParticipationStatus status;
+  private ParticipationStatus participationStatus;
 
   @Enumerated(EnumType.STRING)
   @Column(name = "participation_role")

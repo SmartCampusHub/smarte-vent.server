@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 
 @Data
@@ -26,6 +26,6 @@ public class  ClassVm implements AbstractModel {
   private Integer capacity;
   private ClassStatus status;
   private String createdBy;
-  private LocalDateTime createdDate;
+  private Instant createdDate;
   private List<EAccountCredentials>students; 
   }

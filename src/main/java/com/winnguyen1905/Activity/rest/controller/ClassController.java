@@ -18,38 +18,37 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class ClassController {
   private final ClassService classService;
-  
+
   @PostMapping("/create")
-  public ResponseEntity<Void> createClass(@AccountRequest TAccountRequest accountRequest, 
-                                           @RequestBody ClassDto classDto) {
-    classService.createClass(accountRequest,classDto);
+  public ResponseEntity<Void> createClass(@AccountRequest TAccountRequest accountRequest,
+      @RequestBody ClassDto classDto) {
+    classService.createClass(accountRequest, classDto);
     return ResponseEntity.status(HttpStatus.CREATED).build();
   }
 
   @PutMapping("/{id}")
   public ResponseEntity<ClassVm> updateClass(@AccountRequest TAccountRequest accountRequest,
-                                              @RequestBody ClassDto classDto,
-                                              @PathVariable Long id) {
-    classService.updateClass(accountRequest,classDto,id);
+      @RequestBody ClassDto classDto,
+      @PathVariable Long id) {
+    classService.updateClass(accountRequest, classDto, id);
     return ResponseEntity.ok().build();
   }
-  
+
   @DeleteMapping("/{id}")
-  public ResponseEntity<Void> deleteClass (@AccountRequest TAccountRequest accountRequest,@PathVariable Long id) {
-    classService.deleteClass(accountRequest,id);
+  public ResponseEntity<Void> deleteClass(@AccountRequest TAccountRequest accountRequest, @PathVariable Long id) {
+    classService.deleteClass(accountRequest, id);
     return ResponseEntity.noContent().build();
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<ClassVm> getClassById (@PathVariable Long id) {
+  public ResponseEntity<ClassVm> getClassById(@PathVariable Long id) {
     ClassVm classVm = classService.getClassById(id);
     return ResponseEntity.ok(classVm);
   }
-  
+
   @GetMapping
   public ResponseEntity<PagedResponse<ClassVm>> getAllClasses(Pageable pageable) {
     PagedResponse<ClassVm> classes = classService.getAllClasses(pageable);
     return ResponseEntity.ok(classes);
   }
 }
-

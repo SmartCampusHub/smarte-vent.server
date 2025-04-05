@@ -31,7 +31,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "class")
+@Table(name = "class", schema = "activity")
 public class EClass {
 
   @Id

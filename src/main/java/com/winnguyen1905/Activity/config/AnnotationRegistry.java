@@ -8,7 +8,6 @@ import java.util.List;
 
 @Configuration
 public class AnnotationRegistry implements WebMvcConfigurer {
-
   private final AccountRequestArgumentResolver currentUserArgumentResolver;
 
   public AnnotationRegistry(AccountRequestArgumentResolver currentUserArgumentResolver) {

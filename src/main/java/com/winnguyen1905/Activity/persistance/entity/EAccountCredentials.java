@@ -68,7 +68,7 @@ public class EAccountCredentials {
   @JoinColumn(name = "class_id")
   private EClass studentClass;
 
-  @OneToMany(mappedBy = "account")
+  @OneToMany(mappedBy = "participant")
   private List<EParticipationDetail> participationDetails;
 
   @OneToMany(mappedBy = "receiver")

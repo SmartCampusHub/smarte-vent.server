@@ -1,7 +1,6 @@
 package com.winnguyen1905.Activity.persistance.entity;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -11,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.winnguyen1905.Activity.common.constant.ActivityCategory;
 import com.winnguyen1905.Activity.common.constant.ActivityStatus;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -22,6 +22,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -36,13 +37,16 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @Table(name = "activity")
 public class EActivity {
+  @Version
+  private Long version;
+
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   @Column(name = "id", updatable = false, nullable = false)
   protected Long id;
 
   @Column(name = "attendance_score_unit")
-  private String attendanceScoreUnit;
+  private Integer attendanceScoreUnit;
 
   @Column(name = "activity_name")
   private String activityName;
@@ -60,18 +64,21 @@ public class EActivity {
   @Enumerated(EnumType.STRING)
   @Column(name = "activity_category")
   private ActivityCategory activityCategory;
+  
+  @Column(name = "activity_capacity_limit", columnDefinition = "TEXT")
+  private Integer capacityLimit;
 
-  @OneToMany(mappedBy = "activity")
+  @OneToMany(mappedBy = "activity", cascade = CascadeType.ALL)
   private List<EParticipationDetail> participationDetails;
 
-  @OneToMany(mappedBy = "activity")
+  @OneToMany(mappedBy = "activity", cascade = CascadeType.ALL)
   private List<EActivitySchedule> activitySchedules;
 
   @Column(name = "start_date")
-  private LocalDateTime startDate;
+  private Instant startDate;
 
   @Column(name = "end_date")
-  private LocalDateTime endDate;
+  private Instant endDate;
 
   @Column(name = "activity_venue")
   private String activityVenue;

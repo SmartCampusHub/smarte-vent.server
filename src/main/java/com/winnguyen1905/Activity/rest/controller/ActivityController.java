@@ -47,17 +47,29 @@ public class ActivityController {
     return ResponseEntity.noContent().build();
   }
 
-  // @GetMapping("/{id}")
-  // public ResponseEntity<ActivityVm> getActivityById(
-  // @AccountRequest TAccountRequest accountRequest,
-  // @PathVariable Long id) {
-  // ActivityVm activity = activityService.getActivityById(accountRequest, id);
-  // return ResponseEntity.ok(activity);
-  // }
+  @GetMapping("/{id}")
+  public ResponseEntity<ActivityVm> getActivityById(
+      @AccountRequest TAccountRequest accountRequest, @PathVariable Long id) {
+    ActivityVm activity = activityService.getActivityById(accountRequest, id);
+    return ResponseEntity.ok(activity);
+  }
 
-  @GetMapping("/")
+  @GetMapping
   public ResponseEntity<PagedResponse<ActivityVm>> getAllActivities(Pageable pageable) {
     PagedResponse<ActivityVm> activities = activityService.getAllActivities(pageable);
     return ResponseEntity.ok(activities);
+  }
+
+  @PostMapping("/{id}/join")
+  public ResponseEntity<Void> joinActivity(@AccountRequest TAccountRequest accountRequest,
+      @PathVariable Long id) {
+    activityService.joinActivity(accountRequest, id);
+    return ResponseEntity.status(HttpStatus.CREATED).build();
+  }
+
+  @GetMapping("/joined")
+  public ResponseEntity<PagedResponse<ActivityVm>> getJoinedActivitiess(@AccountRequest TAccountRequest accountRequest,
+      Pageable pageable) {
+    return ResponseEntity.ok().body(activityService.getJoinedActivities(accountRequest, pageable));
   }
 }

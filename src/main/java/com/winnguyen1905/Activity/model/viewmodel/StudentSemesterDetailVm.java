@@ -1,9 +1,12 @@
 package com.winnguyen1905.Activity.model.viewmodel;
 
+import lombok.Builder;
+
+@Builder
 public record StudentSemesterDetailVm(
     Long id,
-    String studentId,
-    String semesterId,
+    Long studentId,
     String classId,
-    String status
-) {} 
+    Integer attendanceScore,
+    Float gpa) {
+}
