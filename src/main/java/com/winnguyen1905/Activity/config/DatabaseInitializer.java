@@ -5,16 +5,20 @@ import java.time.ZonedDateTime;
 import java.util.List;
 
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.winnguyen1905.Activity.common.constant.AccountRole;
 import com.winnguyen1905.Activity.common.constant.ActivityCategory;
 import com.winnguyen1905.Activity.common.constant.ActivityStatus;
 import com.winnguyen1905.Activity.common.constant.ScheduleStatus;
 import com.winnguyen1905.Activity.persistance.entity.EAccountCredentials;
 import com.winnguyen1905.Activity.persistance.entity.EActivity;
 import com.winnguyen1905.Activity.persistance.entity.EActivitySchedule;
+import com.winnguyen1905.Activity.persistance.entity.EStudentSemesterDetail;
 import com.winnguyen1905.Activity.persistance.repository.AccountRepository;
 import com.winnguyen1905.Activity.persistance.repository.ActivityRepository;
+import com.winnguyen1905.Activity.persistance.repository.StudentSemesterDetailRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -22,12 +26,17 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class DatabaseInitializer implements CommandLineRunner {
 
+  private final PasswordEncoder passwordEncoder;
   private final AccountRepository accountRepository;
   private final ActivityRepository activityRepository;
+  private final StudentSemesterDetailRepository semesterDetailRepository;
 
   @Override
   public void run(String... args) throws Exception {
-    accountRepository.save(EAccountCredentials.builder().email("12345678").studentCode("12345678").build());
+    EAccountCredentials account = EAccountCredentials.builder().fullName("Nguyên Thắng Lợi").email("12345678")
+        .studentCode("12345678")
+        .role(AccountRole.STUDENT).password(passwordEncoder.encode("12345678")).build();
+    accountRepository.save(account);
     EActivity activity = EActivity.builder()
         .activityName("Tech Conference 2025 abc")
         .description("A conference on the latest trends in technology.")
@@ -60,6 +69,28 @@ public class DatabaseInitializer implements CommandLineRunner {
             .status(ScheduleStatus.WAITING_TO_START)
             .location("Conference Room B")
             .build()));
+
+    List<EStudentSemesterDetail> semesterDetails = List.of(
+        EStudentSemesterDetail.builder()
+            .semesterNumber(1)
+            .semesterYear("2025-2026")
+            .gpa(3.5f)
+            .attendanceScore(80)
+            .startDate(Instant.parse("2025-08-01T00:00:00Z"))
+            .endDate(Instant.parse("2025-12-15T23:59:59Z"))
+            .student(account)
+            .build(),
+        EStudentSemesterDetail.builder()
+            .gpa(3.7f)
+            .semesterYear("2025-2026")
+            .attendanceScore(83)
+            .student(account)
+            .semesterNumber(2)
+            .startDate(Instant.parse("2026-01-10T00:00:00Z"))
+            .endDate(Instant.parse("2026-05-15T23:59:59Z"))
+            .build());
+
+    semesterDetailRepository.saveAll(semesterDetails);
     activityRepository.save(activity);
   }
 

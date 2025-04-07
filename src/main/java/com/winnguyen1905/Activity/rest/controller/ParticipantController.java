@@ -25,7 +25,7 @@ public class ParticipantController {
 
   private final ParticipantService participantService;
 
-  @GetMapping
+  @GetMapping 
   public ResponseEntity<PagedResponse<ParticipationDetailVm>> getAllParticipants(
       @AccountRequest TAccountRequest accountRequest,
       @ModelAttribute(SystemConstant.MODEL) ParticipationDetailSearch searchJoinedActivities, Pageable pageable) {

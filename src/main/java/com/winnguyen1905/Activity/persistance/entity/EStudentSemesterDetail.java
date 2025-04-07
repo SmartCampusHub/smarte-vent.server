@@ -41,15 +41,28 @@ public class EStudentSemesterDetail {
   @JoinColumn(name = "student_id")
   private EAccountCredentials student;
 
+  @Column(name = "semester_year")
+  private String semesterYear;
+  
+
   @Min(60)
   @Max(100)
   @Column(name = "attendance_score")
   private Integer attendanceScore;
 
+  @Column(name = "semester_number")
+  private Integer semesterNumber;
+
   @Min(0)
   @Max(4)
   @Column(name = "gpa")
   private Float gpa;
+
+  @Column(name = "start_date")
+  private Instant startDate;
+
+  @Column(name = "end_date")
+  private Instant endDate;
 
   @JsonIgnore
   @Column(name = "created_by", nullable = true)

@@ -1,5 +1,6 @@
 package com.winnguyen1905.Activity.rest.controller;
 
+import com.winnguyen1905.Activity.common.annotation.AccountRequest;
 import com.winnguyen1905.Activity.common.annotation.TAccountRequest;
 import com.winnguyen1905.Activity.model.dto.StudentSemesterDetailDto;
 import com.winnguyen1905.Activity.model.viewmodel.StudentSemesterDetailVm;
@@ -18,13 +19,12 @@ public class SemesterDetailController {
   private final StudentSemesterDetailService studentSemesterDetailService;
 
   @GetMapping
-  public ResponseEntity<List<StudentSemesterDetailVm>> getAllSemesterDetails(
-      @RequestAttribute TAccountRequest accountRequest) {
+  public ResponseEntity<List<StudentSemesterDetailVm>> getAllSemesterDetails(@AccountRequest TAccountRequest accountRequest) {
     List<StudentSemesterDetailVm> semesterDetails = studentSemesterDetailService.getAllSemesterDetails(accountRequest);
     return ResponseEntity.ok(semesterDetails);
   }
 
-  @GetMapping("/{id}")
+  @GetMapping("/{id}/detail")
   public ResponseEntity<StudentSemesterDetailVm> getDetailById(@PathVariable Long id) {
     StudentSemesterDetailVm detail = studentSemesterDetailService.getDetailById(id);
     return ResponseEntity.ok(detail);
@@ -37,14 +37,14 @@ public class SemesterDetailController {
   }
 
   @PostMapping
-  public ResponseEntity<StudentSemesterDetailVm> createDetail(@RequestAttribute TAccountRequest accountRequest,
+  public ResponseEntity<StudentSemesterDetailVm> createDetail(@AccountRequest TAccountRequest accountRequest,
       @RequestBody StudentSemesterDetailDto detailDto) {
     StudentSemesterDetailVm createdDetail = studentSemesterDetailService.createDetail(accountRequest, detailDto);
     return ResponseEntity.ok(createdDetail);
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<StudentSemesterDetailVm> updateDetail(@RequestAttribute TAccountRequest accountRequest,
+  public ResponseEntity<StudentSemesterDetailVm> updateDetail(@AccountRequest TAccountRequest accountRequest,
       @PathVariable Long id,
       @RequestBody StudentSemesterDetailDto detailDto) {
     detailDto = new StudentSemesterDetailDto(id, detailDto.studentId(), detailDto.classId(),

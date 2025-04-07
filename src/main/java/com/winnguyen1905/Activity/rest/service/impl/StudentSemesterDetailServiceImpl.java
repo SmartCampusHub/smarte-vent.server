@@ -1,16 +1,20 @@
 package com.winnguyen1905.Activity.rest.service.impl;
 
 import com.winnguyen1905.Activity.common.annotation.TAccountRequest;
+import com.winnguyen1905.Activity.common.constant.ParticipationStatus;
 import com.winnguyen1905.Activity.model.dto.StudentSemesterDetailDto;
 import com.winnguyen1905.Activity.model.viewmodel.StudentSemesterDetailVm;
 import com.winnguyen1905.Activity.persistance.entity.EAccountCredentials;
+import com.winnguyen1905.Activity.persistance.entity.EParticipationDetail;
 import com.winnguyen1905.Activity.persistance.entity.EStudentSemesterDetail;
 import com.winnguyen1905.Activity.persistance.repository.AccountRepository;
+import com.winnguyen1905.Activity.persistance.repository.ParticipationDetailRepository;
 import com.winnguyen1905.Activity.persistance.repository.StudentSemesterDetailRepository;
 import com.winnguyen1905.Activity.rest.service.StudentSemesterDetailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -20,20 +24,39 @@ import java.util.stream.Collectors;
 public class StudentSemesterDetailServiceImpl implements StudentSemesterDetailService {
 
   private final AccountRepository accountRepository;
+  private final ParticipationDetailRepository participationDetailRepository;
   private final StudentSemesterDetailRepository studentSemesterDetailRepository;
 
   @Override
   public List<StudentSemesterDetailVm> getAllSemesterDetails(TAccountRequest accountRequest) {
+
     List<EStudentSemesterDetail> studentSemesterDetails = this.studentSemesterDetailRepository
-        .findAllByStudentId(accountRequest.id());
-    return studentSemesterDetails.stream()
-        .map(detail -> StudentSemesterDetailVm.builder()
-            .id(detail.getId())
-            .studentId(detail.getStudent().getId())
-            .attendanceScore(detail.getAttendanceScore())
-            .gpa(detail.getGpa())
-            .build())
-        .collect(Collectors.toList());
+        .findAllByStudentIdOrderBySemesterNumber(accountRequest.id());
+
+    List<EParticipationDetail> participationDetails = participationDetailRepository
+        .findVerifiedParticipationDetailsWithinDateRange(studentSemesterDetails.getFirst().getStartDate(),
+            studentSemesterDetails.getLast().getEndDate(), ParticipationStatus.VERIFIED);
+
+    List<StudentSemesterDetailVm> studentSemesterDetailVms = new ArrayList<>();
+    for (EStudentSemesterDetail detail : studentSemesterDetails) {
+      Integer collector = 0;
+      for (EParticipationDetail participationDetail : participationDetails) {
+        if (participationDetail.getActivity().getStartDate().isAfter(detail.getStartDate())
+            && participationDetail.getActivity().getEndDate()
+                .isBefore(detail.getEndDate())) {
+          collector += participationDetail.getActivity().getAttendanceScoreUnit();
+        }
+      }
+      studentSemesterDetailVms.add(StudentSemesterDetailVm.builder()
+          .id(detail.getId())
+          .studentId(detail.getStudent().getId())
+          .attendanceScore(collector)
+          .attendanceScoreFromActivity(collector)
+          .gpa(detail.getGpa())
+          .build());
+    }
+
+    return studentSemesterDetailVms;
   }
 
   @Override
@@ -86,13 +109,10 @@ public class StudentSemesterDetailServiceImpl implements StudentSemesterDetailSe
 
   @Override
   public List<StudentSemesterDetailVm> getDetailsByStudentId(Long studentId) {
-    List<EStudentSemesterDetail> studentSemesterDetails = studentSemesterDetailRepository.findAllByStudentId(studentId);
-    return studentSemesterDetails.stream()
-        .map(this::mapToViewModel)
-        .collect(Collectors.toList());
+    // List<EStudentSemesterDetail> studentSemesterDetails = studentSemesterDetailRepository.findAllByStudentId(studentId);
+    return null;
   }
 
-  
   private StudentSemesterDetailVm mapToViewModel(EStudentSemesterDetail detail) {
     return StudentSemesterDetailVm.builder()
         .id(detail.getId())
