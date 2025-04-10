@@ -17,7 +17,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class  ClassVm implements AbstractModel {
+public class ClassVm implements AbstractModel {
   private String className;
   private Integer academicYear;
   private LocalDate startDate;
@@ -27,5 +27,7 @@ public class  ClassVm implements AbstractModel {
   private ClassStatus status;
   private String createdBy;
   private Instant createdDate;
-  private List<EAccountCredentials>students; 
-  }
+  private List<StudentVm> students;
+
+  public static record StudentVm(String studentName, String studentCode, String studentEmail) {}
+}

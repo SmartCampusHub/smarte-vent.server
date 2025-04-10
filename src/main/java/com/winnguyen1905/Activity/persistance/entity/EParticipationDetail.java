@@ -61,6 +61,6 @@ public class EParticipationDetail {
   private String createdBy;
 
   @CreationTimestamp
-  @Column(name = "registered_at", updatable = false)
+  @Column(name = "registered_at", updatable = false, columnDefinition = "DATETIME(6)")
   private Instant registeredAt;
 }

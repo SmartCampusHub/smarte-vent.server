@@ -15,9 +15,11 @@ import com.winnguyen1905.Activity.common.constant.ScheduleStatus;
 import com.winnguyen1905.Activity.persistance.entity.EAccountCredentials;
 import com.winnguyen1905.Activity.persistance.entity.EActivity;
 import com.winnguyen1905.Activity.persistance.entity.EActivitySchedule;
+import com.winnguyen1905.Activity.persistance.entity.EClass;
 import com.winnguyen1905.Activity.persistance.entity.EStudentSemesterDetail;
 import com.winnguyen1905.Activity.persistance.repository.AccountRepository;
 import com.winnguyen1905.Activity.persistance.repository.ActivityRepository;
+import com.winnguyen1905.Activity.persistance.repository.ClassRepository;
 import com.winnguyen1905.Activity.persistance.repository.StudentSemesterDetailRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -26,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class DatabaseInitializer implements CommandLineRunner {
 
+  private final ClassRepository classRepository;
   private final PasswordEncoder passwordEncoder;
   private final AccountRepository accountRepository;
   private final ActivityRepository activityRepository;
@@ -38,10 +41,10 @@ public class DatabaseInitializer implements CommandLineRunner {
         .role(AccountRole.STUDENT).password(passwordEncoder.encode("12345678")).build();
     accountRepository.save(account);
     EActivity activity = EActivity.builder()
-        .activityName("Tech Conference 2025 abc")
+        .activityName("Tech Conference 2025 Sexy")
         .description("A conference on the latest trends in technology.")
-        .startDate(Instant.parse("2025-06-15T09:00:00Z"))
-        .endDate(Instant.parse("2025-06-15T17:00:00Z"))
+        .startDate(Instant.parse("2025-08-19T09:00:00Z"))
+        .endDate(Instant.parse("2025-08-20T17:00:00Z"))
         .activityVenue("Tech Park, Building A")
         .activityStatus(ActivityStatus.WAITING_TO_START)
         .capacityLimit(200)
@@ -76,7 +79,7 @@ public class DatabaseInitializer implements CommandLineRunner {
             .semesterYear("2025-2026")
             .gpa(3.5f)
             .attendanceScore(80)
-            .startDate(Instant.parse("2025-08-01T00:00:00Z"))
+            .startDate(Instant.parse("2025-02-01T00:00:00Z"))
             .endDate(Instant.parse("2025-12-15T23:59:59Z"))
             .student(account)
             .build(),
@@ -90,6 +93,18 @@ public class DatabaseInitializer implements CommandLineRunner {
             .endDate(Instant.parse("2026-05-15T23:59:59Z"))
             .build());
 
+    EClass studentClass = EClass.builder()
+        .className("CS101")
+        .academicYear(2025)
+        .startDate(ZonedDateTime.parse("2025-08-01T00:00:00Z").toLocalDate())
+        .endDate(ZonedDateTime.parse("2026-05-15T23:59:59Z").toLocalDate())
+        .department("Computer Science")
+        .capacity(50)
+        .status(com.winnguyen1905.Activity.common.constant.ClassStatus.ACTIVE)
+        .students(List.of(account))
+        .build();
+
+    classRepository.save(studentClass);
     semesterDetailRepository.saveAll(semesterDetails);
     activityRepository.save(activity);
   }

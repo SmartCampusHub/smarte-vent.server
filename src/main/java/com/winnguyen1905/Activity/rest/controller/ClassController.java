@@ -14,7 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/class")
+@RequestMapping("/classes")
 @RequiredArgsConstructor
 public class ClassController {
   private final ClassService classService;
@@ -50,5 +50,11 @@ public class ClassController {
   public ResponseEntity<PagedResponse<ClassVm>> getAllClasses(Pageable pageable) {
     PagedResponse<ClassVm> classes = classService.getAllClasses(pageable);
     return ResponseEntity.ok(classes);
+  }
+
+  @GetMapping("/my-class")
+  public ResponseEntity<ClassVm> getMyClass(@AccountRequest TAccountRequest accountRequest) {
+    ClassVm myClass = classService.getMyClassDetail(accountRequest);
+    return ResponseEntity.ok(myClass);
   }
 }

@@ -4,6 +4,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,6 +18,8 @@ import com.winnguyen1905.Activity.model.viewmodel.ParticipationDetailVm;
 import com.winnguyen1905.Activity.rest.service.ParticipantService;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 @RequiredArgsConstructor
@@ -25,13 +28,18 @@ public class ParticipantController {
 
   private final ParticipantService participantService;
 
-  @GetMapping 
+  @GetMapping
   public ResponseEntity<PagedResponse<ParticipationDetailVm>> getAllParticipants(
       @AccountRequest TAccountRequest accountRequest,
       @ModelAttribute(SystemConstant.MODEL) ParticipationDetailSearch searchJoinedActivities, Pageable pageable) {
     PagedResponse<ParticipationDetailVm> participants = participantService.getParticipantDetailHistories(accountRequest,
         searchJoinedActivities, pageable);
     return ResponseEntity.ok(participants);
+  }
+
+  @PostMapping("/{id}/verify")
+  public ResponseEntity<ParticipationDetailVm> postMethodName(@PathVariable Long id, @AccountRequest TAccountRequest accountRequest) {
+    return ResponseEntity.ok(participantService.verifyParticipation(accountRequest, id));
   }
 
 }

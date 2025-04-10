@@ -9,6 +9,8 @@ public record StudentSemesterDetailVm(
     Long id,
     Long studentId,
     String classId,
+    Integer semesterNumber,
+    String semesterYear,
     Integer attendanceScore,
     Integer attendanceScoreFromActivity,
     Float gpa) implements AbstractModel {

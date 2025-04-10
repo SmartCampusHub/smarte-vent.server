@@ -13,6 +13,7 @@ public interface ClassService {
     void updateClass(TAccountRequest accountRequest, ClassDto classDto, Long id);
     void deleteClass(TAccountRequest accountRequest, Long id);
     ClassVm getClassById(Long id);
+    ClassVm getMyClassDetail(TAccountRequest accountRequest);
     PagedResponse<ClassVm> getAllClasses(Pageable pageable);
  //   PagedResponse<List<ClassVm>> getClassesByDepartment(String department);
 }

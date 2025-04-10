@@ -1,6 +1,7 @@
 package com.winnguyen1905.Activity.auth;
 
 import java.time.Instant;
+import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -32,8 +33,8 @@ public class JwtService {
 
   private JwtClaimsSet createJwtClaimsSet(CustomUserDetails userDetails, Instant now, Instant validity) {
     return JwtClaimsSet.builder()
-        .issuedAt(now)
-        .expiresAt(validity)
+        .issuedAt(Instant.from(now))
+        .expiresAt(Instant.from(validity))
         .subject(userDetails.id().toString())
         .claim("user", userDetails).build();
   }

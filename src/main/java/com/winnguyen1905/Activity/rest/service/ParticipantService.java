@@ -22,7 +22,7 @@ public interface ParticipantService {
 
   ParticipationDetailVm getParticipantById(Long id);
 
-  void verifyParticipation(TAccountRequest accountRequest, Long participationId);
+  ParticipationDetailVm verifyParticipation(TAccountRequest accountRequest, Long participationId);
 
   // List<ParticipationDetailVm> getAllParticipantsByActivityId();
   List<ParticipationDetailVm> getParticipantsByActivityId(Long activityId);

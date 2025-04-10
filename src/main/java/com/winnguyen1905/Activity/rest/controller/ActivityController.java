@@ -3,11 +3,14 @@ package com.winnguyen1905.Activity.rest.controller;
 import com.winnguyen1905.Activity.common.constant.ActivityCategory;
 import com.winnguyen1905.Activity.model.viewmodel.ActivityVm;
 import com.winnguyen1905.Activity.model.viewmodel.PagedResponse;
+import com.winnguyen1905.Activity.model.viewmodel.ParticipationDetailVm;
+
 import org.springframework.web.bind.annotation.*;
 
 import com.winnguyen1905.Activity.common.annotation.AccountRequest;
 import com.winnguyen1905.Activity.common.annotation.TAccountRequest;
 import com.winnguyen1905.Activity.model.dto.ActivityDto;
+import com.winnguyen1905.Activity.model.dto.ParticipationDetailDto;
 import com.winnguyen1905.Activity.rest.service.ActivityService;
 
 import lombok.RequiredArgsConstructor;
@@ -60,11 +63,10 @@ public class ActivityController {
     return ResponseEntity.ok(activities);
   }
 
-  @PostMapping("/{id}/join")
-  public ResponseEntity<Void> joinActivity(@AccountRequest TAccountRequest accountRequest,
-      @PathVariable Long id) {
-    activityService.joinActivity(accountRequest, id);
-    return ResponseEntity.status(HttpStatus.CREATED).build();
+  @PostMapping("/join")
+  public ResponseEntity<ParticipationDetailVm> joinActivity(@AccountRequest TAccountRequest accountRequest,
+      @RequestBody ParticipationDetailDto participationDetailDto) {
+    return ResponseEntity.status(HttpStatus.CREATED).body(activityService.joinActivity(accountRequest, participationDetailDto));
   }
 
   @GetMapping("/joined")

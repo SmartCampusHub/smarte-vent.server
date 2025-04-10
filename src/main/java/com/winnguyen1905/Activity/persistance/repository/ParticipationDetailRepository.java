@@ -8,9 +8,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import com.winnguyen1905.Activity.common.constant.ParticipationRole;
 import com.winnguyen1905.Activity.common.constant.ParticipationStatus;
 import com.winnguyen1905.Activity.persistance.entity.EParticipationDetail;
 
+import java.time.Instant;
 import java.time.Instant;
 import java.util.List;
 
@@ -20,17 +22,18 @@ public interface ParticipationDetailRepository
   List<EParticipationDetail> findByActivityId(Long activityId);
 
   Boolean existsByParticipantIdAndActivityId(Long participantId, Long activityId);
+  Boolean existsByParticipantIdAndActivityIdAndParticipationRole(Long participantId, Long activityId, ParticipationRole participationRole);
 
   List<EParticipationDetail> findAllByParticipantId(Long participantId);
 
   @Query("SELECT e FROM EParticipationDetail e " +
       "WHERE e.registeredAt BETWEEN :startDate AND :endDate " +
-      "AND e.participationStatus = :status " +
+      "AND e.participationStatus = :status AND e.participant.id = :participantId " +
       "ORDER BY e.registeredAt ASC ")
-  List<EParticipationDetail> findVerifiedParticipationDetailsWithinDateRange(
+  List<EParticipationDetail> findVerifiedSpecificParticipationDetailsWithinDateRange(
       @Param("startDate") Instant startDate, 
       @Param("endDate") Instant endDate,
-      @Param("status") ParticipationStatus status);
+      @Param("status") ParticipationStatus status, Long participantId);
 
   // @Query("SELECT a FROM EParticipationDetail a WHERE a.id IN :ids")
   // Page<EParticipationDetail> findAllByIds(Long participantIds, Pageable

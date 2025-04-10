@@ -222,4 +222,30 @@ public class ClassServiceImpl implements ClassService {
       throw new BadRequestException("Account role is required");
     }
   }
+
+  @Override
+  public ClassVm getMyClassDetail(TAccountRequest accountRequest) {
+    EAccountCredentials account = accountRepository.findById(accountRequest.id())
+        .orElseThrow(() -> new IllegalArgumentException("Account with ID " + accountRequest.id() + " not found"));
+
+    if (account.getStudentClass() == null) {
+      throw new BadRequestException("No class found for this account");
+    }
+
+    EClass eClass = account.getStudentClass();
+
+    return ClassVm.builder()
+        .className(eClass.getClassName())
+        .academicYear(eClass.getAcademicYear())
+        .startDate(eClass.getStartDate())
+        .endDate(eClass.getEndDate())
+        .department(eClass.getDepartment())
+        .capacity(eClass.getCapacity())
+        .status(eClass.getStatus())
+        .students(eClass.getStudents().stream()
+            .map(student -> new ClassVm.StudentVm(student.getFullName(), student.getStudentCode(),
+                student.getEmail()))
+            .collect(Collectors.toList()))
+        .build();
+  }
 }

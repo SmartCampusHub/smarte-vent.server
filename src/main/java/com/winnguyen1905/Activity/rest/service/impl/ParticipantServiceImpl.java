@@ -1,6 +1,7 @@
 package com.winnguyen1905.Activity.rest.service.impl;
 
 import com.winnguyen1905.Activity.common.annotation.TAccountRequest;
+import com.winnguyen1905.Activity.common.constant.ParticipationRole;
 import com.winnguyen1905.Activity.common.constant.ParticipationStatus;
 import com.winnguyen1905.Activity.model.dto.ParticipationDetailDto;
 import com.winnguyen1905.Activity.model.dto.ParticipationDetailSearch;
@@ -20,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.repository.query.parser.Part;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -86,8 +88,35 @@ public class ParticipantServiceImpl implements ParticipantService {
   }
 
   @Override
-  public void verifyParticipation(TAccountRequest accountRequest, Long participationId) {
+  public ParticipationDetailVm verifyParticipation(TAccountRequest accountRequest, Long participationId) {
 
+    EParticipationDetail participationDetail = participantRepository.findById(participationId)
+        .orElseThrow(() -> new RuntimeException("Participation detail not found with id: " + participationId));
+
+    Boolean isContributor = this.participantRepository.existsByParticipantIdAndActivityIdAndParticipationRole(
+        accountRequest.id(), participationDetail.getActivity().getId(), ParticipationRole.CONTRIBUTOR);
+
+    if (!isContributor)
+      throw new RuntimeException("You are not allowed to verify this participation detail");
+
+    if (participationDetail.getParticipationStatus() == ParticipationStatus.UNVERIFIED) {
+      participationDetail.setParticipationStatus(ParticipationStatus.VERIFIED);
+      participantRepository.save(participationDetail);
+    } else {
+      throw new RuntimeException("Participation detail is already verified");
+    }
+
+    return ParticipationDetailVm.builder()
+        .activityId(participationDetail.getActivity().getId())
+        .activityName(participationDetail.getActivity().getActivityName())
+        .activityCategory(participationDetail.getActivity().getActivityCategory())
+        .activityStatus(participationDetail.getActivity().getActivityStatus())
+        .activityVenue(participationDetail.getActivity().getActivityVenue())
+        .startDate(participationDetail.getActivity().getStartDate())
+        .endDate(participationDetail.getActivity().getEndDate())
+        .registrationTime(participationDetail.getRegisteredAt())
+        .participationRole(participationDetail.getParticipationRole())
+        .build();
   }
 
   @Override
@@ -95,7 +124,8 @@ public class ParticipantServiceImpl implements ParticipantService {
       ParticipationDetailSearch pairticipationDetailSearch,
       Pageable pageable) {
 
-    Specification<EParticipationDetail> spec = EParticipationDetailSpecification.filterBy(pairticipationDetailSearch, accountRequest);
+    Specification<EParticipationDetail> spec = EParticipationDetailSpecification.filterBy(pairticipationDetailSearch,
+        accountRequest);
     Page<EParticipationDetail> participationDetails = participantRepository.findAll(spec, pageable);
 
     List<ParticipationDetailVm> participationDetailVms = participationDetails.getContent().stream()

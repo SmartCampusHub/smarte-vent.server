@@ -3,6 +3,7 @@ package com.winnguyen1905.Activity.rest.service.impl;
 import com.winnguyen1905.Activity.persistance.entity.EAccountCredentials;
 import com.winnguyen1905.Activity.persistance.entity.EActivity;
 
+import org.hibernate.mapping.Join;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -15,9 +16,11 @@ import com.winnguyen1905.Activity.common.constant.ParticipationStatus;
 import com.winnguyen1905.Activity.exception.BadRequestException;
 import com.winnguyen1905.Activity.model.dto.ActivityDto;
 import com.winnguyen1905.Activity.model.dto.ActivityScheduleDto;
+import com.winnguyen1905.Activity.model.dto.ParticipationDetailDto;
 import com.winnguyen1905.Activity.model.viewmodel.ActivityScheduleVm;
 import com.winnguyen1905.Activity.model.viewmodel.ActivityVm;
 import com.winnguyen1905.Activity.model.viewmodel.PagedResponse;
+import com.winnguyen1905.Activity.model.viewmodel.ParticipationDetailVm;
 import com.winnguyen1905.Activity.persistance.repository.AccountRepository;
 import com.winnguyen1905.Activity.persistance.repository.ActivityRepository;
 import com.winnguyen1905.Activity.persistance.repository.ActivityScheduleRepository;
@@ -264,7 +267,8 @@ public class ActivityServiceImpl implements ActivityService {
     if (activityDto.getStartDate().isAfter(activityDto.getEndDate())) {
       throw new BadRequestException("Start date must be before end date");
     }
-    if (activityDto.getCapacityLimit() != null && activityDto.getCapacityLimit() < 1) { // Changed from capacity to capacityLimit
+    if (activityDto.getCapacityLimit() != null && activityDto.getCapacityLimit() < 1) { // Changed from capacity to
+                                                                                        // capacityLimit
       throw new BadRequestException("Capacity limit must be greater than 0");
     }
   }
@@ -323,13 +327,14 @@ public class ActivityServiceImpl implements ActivityService {
 
   @Override
   @Transactional
-  public void joinActivity(TAccountRequest accountRequest, Long id) {
-    EActivity activity = activityRepository.findById(id)
+  public ParticipationDetailVm joinActivity(TAccountRequest accountRequest, ParticipationDetailDto participationDetailDto) {
+    EActivity activity = activityRepository.findById(participationDetailDto.activityId())
         .orElseThrow(() -> new EntityNotFoundException("Not found activity"));
+
     EAccountCredentials account = this.accountRepository.findById(accountRequest.id())
         .orElseThrow(() -> new EntityNotFoundException("Not found account request"));
 
-    if (participationDetailRepository.existsByParticipantIdAndActivityId(account.getId(), id))
+    if (participationDetailRepository.existsByParticipantIdAndActivityId(account.getId(), participationDetailDto.activityId()))
       throw new BadRequestException("Already joined activity");
 
     if (activity.getCapacity() == activity.getCapacityLimit())
@@ -337,13 +342,27 @@ public class ActivityServiceImpl implements ActivityService {
 
     EParticipationDetail participationDetail = EParticipationDetail.builder()
         .participant(account)
-        .activity(activity).participationStatus(ParticipationStatus.UNVERIFIED).participationRole(ParticipationRole.PARTICIPANT)
+        .activity(activity).participationStatus(ParticipationStatus.UNVERIFIED)
+        .participationRole(participationDetailDto.role())
         .registeredAt(Instant.now())
         .build();
 
     activity.setCapacity(activity.getCapacity() + 1);
-    activity.getParticipationDetails().add(participationDetail);
     activityRepository.save(activity);
+    EParticipationDetail savedParticipationDetail = participationDetailRepository.save(participationDetail);
+
+    return ParticipationDetailVm.builder()
+        .id(savedParticipationDetail.getId())
+        .activityId(savedParticipationDetail.getActivity().getId())
+        .activityName(savedParticipationDetail.getActivity().getActivityName())
+        .activityCategory(savedParticipationDetail.getActivity().getActivityCategory())
+        .activityStatus(savedParticipationDetail.getActivity().getActivityStatus())
+        .activityVenue(savedParticipationDetail.getActivity().getActivityVenue())
+        .startDate(savedParticipationDetail.getActivity().getStartDate())
+        .endDate(savedParticipationDetail.getActivity().getEndDate())
+        .registrationTime(savedParticipationDetail.getRegisteredAt())
+        .participationRole(savedParticipationDetail.getParticipationRole())
+        .build();
   }
 
   @Override

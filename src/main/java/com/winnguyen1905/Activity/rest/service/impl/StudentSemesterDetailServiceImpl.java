@@ -14,6 +14,8 @@ import com.winnguyen1905.Activity.rest.service.StudentSemesterDetailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -34,10 +36,12 @@ public class StudentSemesterDetailServiceImpl implements StudentSemesterDetailSe
         .findAllByStudentIdOrderBySemesterNumber(accountRequest.id());
 
     List<EParticipationDetail> participationDetails = participationDetailRepository
-        .findVerifiedParticipationDetailsWithinDateRange(studentSemesterDetails.getFirst().getStartDate(),
-            studentSemesterDetails.getLast().getEndDate(), ParticipationStatus.VERIFIED);
+        .findVerifiedSpecificParticipationDetailsWithinDateRange(
+            studentSemesterDetails.getFirst().getStartDate(),
+            studentSemesterDetails.getLast().getEndDate(), ParticipationStatus.VERIFIED, accountRequest.id());
 
     List<StudentSemesterDetailVm> studentSemesterDetailVms = new ArrayList<>();
+
     for (EStudentSemesterDetail detail : studentSemesterDetails) {
       Integer collector = 0;
       for (EParticipationDetail participationDetail : participationDetails) {
@@ -49,8 +53,10 @@ public class StudentSemesterDetailServiceImpl implements StudentSemesterDetailSe
       }
       studentSemesterDetailVms.add(StudentSemesterDetailVm.builder()
           .id(detail.getId())
+          .semesterNumber(detail.getSemesterNumber())
+          .semesterYear(detail.getSemesterYear())
           .studentId(detail.getStudent().getId())
-          .attendanceScore(collector)
+          .attendanceScore(detail.getAttendanceScore())
           .attendanceScoreFromActivity(collector)
           .gpa(detail.getGpa())
           .build());
@@ -109,7 +115,8 @@ public class StudentSemesterDetailServiceImpl implements StudentSemesterDetailSe
 
   @Override
   public List<StudentSemesterDetailVm> getDetailsByStudentId(Long studentId) {
-    // List<EStudentSemesterDetail> studentSemesterDetails = studentSemesterDetailRepository.findAllByStudentId(studentId);
+    // List<EStudentSemesterDetail> studentSemesterDetails =
+    // studentSemesterDetailRepository.findAllByStudentId(studentId);
     return null;
   }
 
