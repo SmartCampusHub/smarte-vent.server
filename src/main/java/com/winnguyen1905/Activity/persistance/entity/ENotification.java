@@ -40,6 +40,12 @@ public class ENotification {
   @JoinColumn(name = "receiver_id")
   private EAccountCredentials receiver;
 
+  @Column(name = "title")
+  private String title;
+
+  @Column(name = "is_read")
+  private Boolean isRead;
+
   @ManyToOne
   @JoinColumn(name = "sender_id")
   private EAccountCredentials sender;
@@ -48,8 +54,8 @@ public class ENotification {
   @Column(name = "notification_type")
   private NotificationType notificationType;
 
-  @Column(name = "message", columnDefinition = "TEXT")
-  private String message;
+  @Column(name = "content", columnDefinition = "TEXT")
+  private String content;
 
   @JsonIgnore
   @Column(name = "created_by", nullable = true)

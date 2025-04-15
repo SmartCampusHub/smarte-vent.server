@@ -1,5 +1,6 @@
 package com.winnguyen1905.Activity.persistance.repository;
 
+import java.time.Instant;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -16,4 +17,7 @@ import com.winnguyen1905.Activity.persistance.entity.EActivity;
 public interface ActivityRepository extends JpaRepository<EActivity, Long>, JpaSpecificationExecutor<EActivity> {
   @Query("SELECT a FROM EActivity a WHERE a.id IN :ids")
   Page<EActivity> findAllByIds(@Param("ids") List<Long> ids, Pageable pageable);
+
+  @Query("SELECT a FROM EActivity a WHERE a.startDate BETWEEN :start AND :end")
+  List<EActivity> findActivitiesStartingInRange(Instant start, Instant end);
 }

@@ -74,4 +74,5 @@ public class ActivityController {
       Pageable pageable) {
     return ResponseEntity.ok().body(activityService.getJoinedActivities(accountRequest, pageable));
   }
+
 }

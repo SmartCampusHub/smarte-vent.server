@@ -57,14 +57,15 @@ public class SecurityConfig {
   }
 
   @Bean
-  public SecurityFilterChain filterChain(HttpSecurity http, AuthenticationManager authenticationManager) throws Exception {
+  public SecurityFilterChain filterChain(HttpSecurity http, AuthenticationManager authenticationManager)
+      throws Exception {
     return http
         .cors(AbstractHttpConfigurer::disable)
         .csrf(AbstractHttpConfigurer::disable)
         .formLogin(form -> form.disable())
         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(auth -> auth.requestMatchers(whiteList).permitAll()
-            .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll() // Allow preflight requests
+            .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // Allow preflight requests
             // .requestMatchers(HttpMethod.GET, "/chima/**").hasRole("STUDENT")
             // .requestMatchers(HttpMethod.POST, "/auth/register/**").permitAll()
             // .requestMatchers(HttpMethod.POST, "/auth/login/**").permitAll()
@@ -77,25 +78,24 @@ public class SecurityConfig {
 
   // @Bean
   // public FilterRegistrationBean<Filter> corsFilter() {
-  // CorsConfiguration configuration = new CorsConfiguration();
-  // configuration.setAllowedOrigins(Arrays.asList("https://localhost:3000",
-  // "https://localhost:4173", "*"));
-  // configuration.setAllowedMethods(Arrays.asList("GET", "POST", "DELETE", "PUT",
-  // "PATCH", "OPTIONS"));
-  // configuration.setAllowCredentials(true);
-  // configuration.addAllowedHeader("*");
-  // configuration
-  // .setAllowedHeaders(Arrays.asList("Content-Type", "Authorization", "Accept",
-  // "x-no-retry", "x-api-key"));
-  // configuration.setMaxAge(3600L);
+  //   CorsConfiguration configuration = new CorsConfiguration();
+  //   configuration.setAllowedOrigins(Arrays.asList("https://localhost:3000",
+  //       "https://localhost:4173", "*"));
+  //   configuration.setAllowedMethods(Arrays.asList("GET", "POST", "DELETE", "PUT",
+  //       "PATCH", "OPTIONS"));
+  //   configuration.setAllowCredentials(true);
+  //   configuration.addAllowedHeader("*");
+  //   configuration
+  //       .setAllowedHeaders(Arrays.asList("Content-Type", "Authorization", "Accept",
+  //           "x-no-retry", "x-api-key"));
+  //   configuration.setMaxAge(3600L);
 
-  // UrlBasedCorsConfigurationSource source = new
-  // UrlBasedCorsConfigurationSource();
-  // source.registerCorsConfiguration("/**", configuration);
+  //   UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+  //   source.registerCorsConfiguration("/**", configuration);
 
-  // FilterRegistrationBean<Filter> bean = new FilterRegistrationBean<>();
-  // bean.setFilter(new CorsFilter(source));
-  // bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
-  // return bean;
+  //   FilterRegistrationBean<Filter> bean = new FilterRegistrationBean<>();
+  //   bean.setFilter(new CorsFilter(source));
+  //   bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
+  //   return bean;
   // }
 }

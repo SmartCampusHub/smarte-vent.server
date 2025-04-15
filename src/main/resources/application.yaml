@@ -20,6 +20,17 @@ management:
       base-path: /actuator
 
 spring:
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${GMAIL_USERNAME}
+    password: ${GMAIL_APP_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
   application:
     name: ACTIVITY-GROUP3
   main:
@@ -45,11 +56,11 @@ spring:
       ddl-auto: create-drop # Change this if needed (create, create-drop, validate, none)
     show-sql: true
     defer-datasource-initialization: true
-  flyway:
-    enabled: true
-    locations: classpath:db/migration
-    baseline-on-migrate: false
-    init-sqls: CREATE SCHEMA IF NOT EXISTS activity
+  # flyway:
+  #   enabled: true
+  #   locations: classpath:db/migration
+  #   baseline-on-migrate: false
+  #   init-sqls: CREATE SCHEMA IF NOT EXISTS activity
   data:
     web:
       pageable:

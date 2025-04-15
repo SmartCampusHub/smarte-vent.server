@@ -17,7 +17,6 @@
   <properties>
     <java.version>23</java.version>
   </properties>
-
   <dependencies>
     <!-- Core Spring Boot -->
     <dependency>
@@ -28,7 +27,10 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
     </dependency>
-
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-mail</artifactId>
+    </dependency>
     <!-- Database and JPA -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -64,14 +66,14 @@
 
     <!-- Utilities -->
     <dependency>
+      <groupId>io.github.cdimascio</groupId>
+      <artifactId>java-dotenv</artifactId>
+      <version>5.2.2</version> <!-- Check for the latest version -->
+    </dependency>
+    <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
       <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.mapstruct</groupId>
-      <artifactId>mapstruct</artifactId>
-      <version>1.5.5.Final</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -81,11 +83,6 @@
       <groupId>com.vladmihalcea</groupId>
       <artifactId>hibernate-types-60</artifactId>
       <version>2.21.1</version>
-    </dependency>
-    <dependency>
-      <groupId>redis.clients</groupId>
-      <artifactId>jedis</artifactId>
-      <version>5.0.0-beta2</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>

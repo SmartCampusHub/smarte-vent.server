@@ -3,15 +3,12 @@ package com.winnguyen1905.Activity.rest.service.impl;
 import com.winnguyen1905.Activity.persistance.entity.EAccountCredentials;
 import com.winnguyen1905.Activity.persistance.entity.EActivity;
 
-import org.hibernate.mapping.Join;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.winnguyen1905.Activity.common.annotation.TAccountRequest;
-import com.winnguyen1905.Activity.common.constant.ActivityCategory;
 import com.winnguyen1905.Activity.common.constant.ActivityStatus;
-import com.winnguyen1905.Activity.common.constant.ParticipationRole;
 import com.winnguyen1905.Activity.common.constant.ParticipationStatus;
 import com.winnguyen1905.Activity.exception.BadRequestException;
 import com.winnguyen1905.Activity.model.dto.ActivityDto;
@@ -26,6 +23,7 @@ import com.winnguyen1905.Activity.persistance.repository.ActivityRepository;
 import com.winnguyen1905.Activity.persistance.repository.ActivityScheduleRepository;
 import com.winnguyen1905.Activity.persistance.repository.ParticipationDetailRepository;
 import com.winnguyen1905.Activity.rest.service.ActivityService;
+import com.winnguyen1905.Activity.rest.service.EmailService;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -43,6 +41,7 @@ import com.winnguyen1905.Activity.persistance.entity.EParticipationDetail;
 @RequiredArgsConstructor
 public class ActivityServiceImpl implements ActivityService {
 
+  private final EmailService emailService;
   private final AccountRepository accountRepository;
   private final ActivityRepository activityRepository;
   private final ActivityScheduleRepository activityScheduleRepository;
@@ -327,14 +326,16 @@ public class ActivityServiceImpl implements ActivityService {
 
   @Override
   @Transactional
-  public ParticipationDetailVm joinActivity(TAccountRequest accountRequest, ParticipationDetailDto participationDetailDto) {
+  public ParticipationDetailVm joinActivity(TAccountRequest accountRequest,
+      ParticipationDetailDto participationDetailDto) {
     EActivity activity = activityRepository.findById(participationDetailDto.activityId())
         .orElseThrow(() -> new EntityNotFoundException("Not found activity"));
 
     EAccountCredentials account = this.accountRepository.findById(accountRequest.id())
         .orElseThrow(() -> new EntityNotFoundException("Not found account request"));
 
-    if (participationDetailRepository.existsByParticipantIdAndActivityId(account.getId(), participationDetailDto.activityId()))
+    if (participationDetailRepository.existsByParticipantIdAndActivityId(account.getId(),
+        participationDetailDto.activityId()))
       throw new BadRequestException("Already joined activity");
 
     if (activity.getCapacity() == activity.getCapacityLimit())
@@ -351,6 +352,14 @@ public class ActivityServiceImpl implements ActivityService {
     activityRepository.save(activity);
     EParticipationDetail savedParticipationDetail = participationDetailRepository.save(participationDetail);
 
+    try {
+      emailService.sendEmail(
+          account.getEmail(),
+          activity.getActivityName(),
+          "You have successfully joined as a " + participationDetailDto.role());
+    } catch (Exception e) {
+      System.err.println("Failed to send email to " + account.getEmail() + ": " + e.getMessage());
+    }
     return ParticipationDetailVm.builder()
         .id(savedParticipationDetail.getId())
         .activityId(savedParticipationDetail.getActivity().getId())

@@ -3,43 +3,52 @@ package com.winnguyen1905.Activity.rest.service.impl;
 import com.winnguyen1905.Activity.common.annotation.TAccountRequest;
 import com.winnguyen1905.Activity.model.dto.NotificationDto;
 import com.winnguyen1905.Activity.model.viewmodel.NotificationVm;
+import com.winnguyen1905.Activity.model.viewmodel.PagedResponse;
+import com.winnguyen1905.Activity.persistance.entity.ENotification;
+import com.winnguyen1905.Activity.persistance.repository.AccountRepository;
 import com.winnguyen1905.Activity.persistance.repository.NotificationRepository;
 import com.winnguyen1905.Activity.rest.service.NotificationService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class NotificationServiceImpl implements NotificationService {
-    private final NotificationRepository notificationRepository;
+  private final AccountRepository accountRepository;
+  private final NotificationRepository notificationRepository;
 
-    @Override
-    public void createNotification(TAccountRequest accountRequest, NotificationDto notificationDto) {
-        // TODO: Implement create notification logic
-    }
+  @Override
+  public void sendNotifaction(TAccountRequest accountRequest, NotificationDto notificationDto) {
+    ENotification notification = ENotification.builder()
+        .title(notificationDto.title())
+        .content(notificationDto.content())
+        .notificationType(notificationDto.notificationType())
+        .receiver(accountRepository.findById(notificationDto.receiverId())
+            .orElseThrow(() -> new RuntimeException("Receiver not found")))
+        .build();
+    notificationRepository.save(notification);
+  }
 
-    @Override
-    public void deleteNotification(TAccountRequest accountRequest, Long id) {
-        // TODO: Implement delete notification logic
-    }
+  @Override
+  public PagedResponse<NotificationVm> getNotifications(TAccountRequest accountRequest, Pageable pageable) {
+    Page<ENotification> notificationsPage = notificationRepository.findAllByParticipantId(accountRequest.id(),
+        pageable);
+    return PagedResponse.<NotificationVm>builder()
+        .results(notificationsPage.getContent().stream()
+            .map(notification -> NotificationVm.builder()
+                .title(notification.getTitle())
+                .content(notification.getContent())
+                .notificationType(notification.getNotificationType())
+                .build())
+            .toList())
+        .totalPages(notificationsPage.getTotalPages())
+        .totalElements(notificationsPage.getTotalElements())
+        .size(notificationsPage.getSize())
+        .page(notificationsPage.getNumber())
+        .build();
 
-    @Override
-    public NotificationVm getNotificationById(Long id) {
-        // TODO: Implement get notification by id logic
-        return null;
-    }
-
-    @Override
-    public List<NotificationVm> getNotificationsByReceiverId(Long receiverId) {
-        // TODO: Implement get notifications by receiver id logic
-        return null;
-    }
-
-    @Override
-    public List<NotificationVm> getNotificationsBySenderId(Long senderId) {
-        // TODO: Implement get notifications by sender id logic
-        return null;
-    }
+  }
 }

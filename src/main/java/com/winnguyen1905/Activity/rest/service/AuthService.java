@@ -48,6 +48,7 @@ public class AuthService {
         .accessToken(tokenPair.accessToken())
         .account(AccountVm.builder()
             .studentCode(userCredentials.getStudentCode())
+            .role(userCredentials.getRole())
             .name(userCredentials.getFullName())
             .id(userCredentials.getId()).build())
         .build();

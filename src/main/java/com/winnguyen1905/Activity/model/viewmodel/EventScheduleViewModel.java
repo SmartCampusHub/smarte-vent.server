@@ -9,16 +9,16 @@ import lombok.Data;
 @Data
 @Builder
 public class EventScheduleViewModel {
-    private Long id;
-    private Long activityId;
-    private String activityTitle;
-    private Instant startTime;
-    private Instant endTime;
-    private String activityDescription;
-    private ScheduleStatus status;
-    private String location;
-    private String createdBy;
-    private String updatedBy;
-    private Instant createdDate;
-    private Instant updatedDate;
+  private Long id;
+  private Long activityId;
+  private String activityTitle;
+  private Instant startTime;
+  private Instant endTime;
+  private String activityDescription;
+  private ScheduleStatus status;
+  private String location;
+  private String createdBy;
+  private String updatedBy;
+  private Instant createdDate;
+  private Instant updatedDate;
 }

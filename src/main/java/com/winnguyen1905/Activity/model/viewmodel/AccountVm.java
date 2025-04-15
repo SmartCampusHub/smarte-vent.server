@@ -14,5 +14,5 @@ public record AccountVm(
     String email,
     String phone,
     String studentCode,
-    AccountRole accountRole) implements AbstractModel {
+    AccountRole role) implements AbstractModel {
 }
