@@ -15,6 +15,7 @@ import lombok.Builder;
 public record ParticipationDetailVm(
     Long id,
     Long studentId,
+    String studentCode,
     Long activityId,
     String activityName,
     ActivityCategory activityCategory,

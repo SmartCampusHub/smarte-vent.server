@@ -5,7 +5,8 @@ import java.time.Instant;
 import com.winnguyen1905.Activity.common.constant.ParticipationRole;
 import com.winnguyen1905.Activity.common.constant.ParticipationStatus;
 
-public record ParticipationDetailSearch(
+public record ParticipationSearchParams(
+    Long activityId,
     Long participantId,
     ParticipationStatus participationStatus,
     ParticipationRole participationRole,

@@ -1,10 +1,11 @@
 package com.winnguyen1905.Activity.rest.service.impl;
 
 import com.winnguyen1905.Activity.common.annotation.TAccountRequest;
+import com.winnguyen1905.Activity.common.constant.AccountRole;
 import com.winnguyen1905.Activity.common.constant.ParticipationRole;
 import com.winnguyen1905.Activity.common.constant.ParticipationStatus;
-import com.winnguyen1905.Activity.model.dto.ParticipationDetailDto;
-import com.winnguyen1905.Activity.model.dto.ParticipationDetailSearch;
+import com.winnguyen1905.Activity.model.dto.ParticipationSearchParams;
+import com.winnguyen1905.Activity.model.dto.JoinActivityRequest;
 import com.winnguyen1905.Activity.model.viewmodel.ActivityVm;
 import com.winnguyen1905.Activity.model.viewmodel.PagedResponse;
 import com.winnguyen1905.Activity.model.viewmodel.ParticipationDetailVm;
@@ -35,7 +36,7 @@ public class ParticipantServiceImpl implements ParticipantService {
   private final ParticipationDetailRepository participantRepository;
 
   @Override
-  public void createParticipant(TAccountRequest accountRequest, ParticipationDetailDto participantDto) {
+  public void createParticipant(TAccountRequest accountRequest, ParticipationSearchParams participantDto) {
     // EAccountCredentials account = accountRepository.findById(accountRequest.id())
     // .orElseThrow(() -> new RuntimeException("Account not found with id: " +
     // accountRequest.id()));
@@ -62,13 +63,13 @@ public class ParticipantServiceImpl implements ParticipantService {
   }
 
   @Override
-  public void updateParticipant(TAccountRequest accountRequest, ParticipationDetailDto participantDto, Long id) {
+  public void updateParticipant(TAccountRequest accountRequest, ParticipationSearchParams participantDto, Long id) {
     // TODO: Implement update participant logic
   }
 
   @Override
   public void deleteParticipant(TAccountRequest accountRequest, Long id) {
-    // TODO: Implement delete participant logic
+    this.participantRepository.deleteById(id);
   }
 
   @Override
@@ -96,7 +97,7 @@ public class ParticipantServiceImpl implements ParticipantService {
     Boolean isContributor = this.participantRepository.existsByParticipantIdAndActivityIdAndParticipationRole(
         accountRequest.id(), participationDetail.getActivity().getId(), ParticipationRole.CONTRIBUTOR);
 
-    if (!isContributor)
+    if (!accountRequest.role().equals(AccountRole.ADMIN) && !isContributor)
       throw new RuntimeException("You are not allowed to verify this participation detail");
 
     if (participationDetail.getParticipationStatus() == ParticipationStatus.UNVERIFIED) {
@@ -121,11 +122,10 @@ public class ParticipantServiceImpl implements ParticipantService {
 
   @Override
   public PagedResponse<ParticipationDetailVm> getParticipantDetailHistories(TAccountRequest accountRequest,
-      ParticipationDetailSearch pairticipationDetailSearch,
+      ParticipationSearchParams participationSeachParams,
       Pageable pageable) {
 
-    Specification<EParticipationDetail> spec = EParticipationDetailSpecification.filterBy(pairticipationDetailSearch,
-        accountRequest);
+    Specification<EParticipationDetail> spec = EParticipationDetailSpecification.filterBy(participationSeachParams);
     Page<EParticipationDetail> participationDetails = participantRepository.findAll(spec, pageable);
 
     List<ParticipationDetailVm> participationDetailVms = participationDetails.getContent().stream()
@@ -140,7 +140,9 @@ public class ParticipantServiceImpl implements ParticipantService {
             .activityVenue(participationDetail.getActivity().getActivityVenue())
             .startDate(participationDetail.getActivity().getStartDate())
             .endDate(participationDetail.getActivity().getEndDate())
+            .participationStatus(participationDetail.getParticipationStatus())
             .registrationTime(participationDetail.getRegisteredAt())
+            .studentCode(participationDetail.getParticipant().getStudentCode())
             .participationRole(participationDetail.getParticipationRole())
             .build())
         .toList();

@@ -13,7 +13,8 @@ import com.winnguyen1905.Activity.common.constant.ParticipationStatus;
 import com.winnguyen1905.Activity.exception.BadRequestException;
 import com.winnguyen1905.Activity.model.dto.ActivityDto;
 import com.winnguyen1905.Activity.model.dto.ActivityScheduleDto;
-import com.winnguyen1905.Activity.model.dto.ParticipationDetailDto;
+import com.winnguyen1905.Activity.model.dto.JoinActivityRequest;
+import com.winnguyen1905.Activity.model.dto.ParticipationSearchParams;
 import com.winnguyen1905.Activity.model.viewmodel.ActivityScheduleVm;
 import com.winnguyen1905.Activity.model.viewmodel.ActivityVm;
 import com.winnguyen1905.Activity.model.viewmodel.PagedResponse;
@@ -327,15 +328,15 @@ public class ActivityServiceImpl implements ActivityService {
   @Override
   @Transactional
   public ParticipationDetailVm joinActivity(TAccountRequest accountRequest,
-      ParticipationDetailDto participationDetailDto) {
-    EActivity activity = activityRepository.findById(participationDetailDto.activityId())
+  JoinActivityRequest joinActivityRequest) {
+    EActivity activity = activityRepository.findById(joinActivityRequest.activityId())
         .orElseThrow(() -> new EntityNotFoundException("Not found activity"));
 
     EAccountCredentials account = this.accountRepository.findById(accountRequest.id())
         .orElseThrow(() -> new EntityNotFoundException("Not found account request"));
 
     if (participationDetailRepository.existsByParticipantIdAndActivityId(account.getId(),
-        participationDetailDto.activityId()))
+    joinActivityRequest.activityId()))
       throw new BadRequestException("Already joined activity");
 
     if (activity.getCapacity() == activity.getCapacityLimit())
@@ -343,8 +344,9 @@ public class ActivityServiceImpl implements ActivityService {
 
     EParticipationDetail participationDetail = EParticipationDetail.builder()
         .participant(account)
-        .activity(activity).participationStatus(ParticipationStatus.UNVERIFIED)
-        .participationRole(participationDetailDto.role())
+        .activity(activity)
+        .participationStatus(ParticipationStatus.UNVERIFIED)
+        .participationRole(joinActivityRequest.role())
         .registeredAt(Instant.now())
         .build();
 
@@ -352,14 +354,14 @@ public class ActivityServiceImpl implements ActivityService {
     activityRepository.save(activity);
     EParticipationDetail savedParticipationDetail = participationDetailRepository.save(participationDetail);
 
-    try {
-      emailService.sendEmail(
-          account.getEmail(),
-          activity.getActivityName(),
-          "You have successfully joined as a " + participationDetailDto.role());
-    } catch (Exception e) {
-      System.err.println("Failed to send email to " + account.getEmail() + ": " + e.getMessage());
-    }
+    // try {
+    //   emailService.sendEmail(
+    //       account.getEmail(),
+    //       activity.getActivityName(),
+    //       "You have successfully joined as a " + participationDetailDto.role());
+    // } catch (Exception e) {
+    //   System.err.println("Failed to send email to " + account.getEmail() + ": " + e.getMessage());
+    // }
     return ParticipationDetailVm.builder()
         .id(savedParticipationDetail.getId())
         .activityId(savedParticipationDetail.getActivity().getId())

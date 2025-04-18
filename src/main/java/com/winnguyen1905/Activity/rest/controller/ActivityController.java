@@ -10,7 +10,8 @@ import org.springframework.web.bind.annotation.*;
 import com.winnguyen1905.Activity.common.annotation.AccountRequest;
 import com.winnguyen1905.Activity.common.annotation.TAccountRequest;
 import com.winnguyen1905.Activity.model.dto.ActivityDto;
-import com.winnguyen1905.Activity.model.dto.ParticipationDetailDto;
+import com.winnguyen1905.Activity.model.dto.JoinActivityRequest;
+import com.winnguyen1905.Activity.model.dto.ParticipationSearchParams;
 import com.winnguyen1905.Activity.rest.service.ActivityService;
 
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -65,8 +67,8 @@ public class ActivityController {
 
   @PostMapping("/join")
   public ResponseEntity<ParticipationDetailVm> joinActivity(@AccountRequest TAccountRequest accountRequest,
-      @RequestBody ParticipationDetailDto participationDetailDto) {
-    return ResponseEntity.status(HttpStatus.CREATED).body(activityService.joinActivity(accountRequest, participationDetailDto));
+      @RequestBody JoinActivityRequest joinActivityRequest) {
+    return ResponseEntity.status(HttpStatus.CREATED).body(activityService.joinActivity(accountRequest, joinActivityRequest));
   }
 
   @GetMapping("/joined")
@@ -74,5 +76,6 @@ public class ActivityController {
       Pageable pageable) {
     return ResponseEntity.ok().body(activityService.getJoinedActivities(accountRequest, pageable));
   }
+  
 
 }

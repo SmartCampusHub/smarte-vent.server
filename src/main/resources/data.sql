@@ -1,17 +1,17 @@
--- -- Temporarily disable foreign key checks to allow independent inserts
--- SET FOREIGN_KEY_CHECKS = 0;
+-- Temporarily disable foreign key checks to allow independent inserts
+SET FOREIGN_KEY_CHECKS = 0;
 
--- -- Delete existing data
--- DELETE FROM `activity`.`notification`;
--- DELETE FROM `activity`.`event_schedule`;
--- DELETE FROM `activity`.`confirmation`;
--- DELETE FROM `activity`.`participation_detail`;
--- DELETE FROM `activity`.`activity`;
--- DELETE FROM `activity`.`representative_organizer`;
--- DELETE FROM `activity`.`account`;
--- DELETE FROM `activity`.`class`;
--- DELETE FROM `activity`.`report`;
--- DELETE FROM `activity`.`student_semester_detail`;
+-- Delete existing data
+DELETE FROM `activity`.`notification`;
+DELETE FROM `activity`.`event_schedule`;
+DELETE FROM `activity`.`confirmation`;
+DELETE FROM `activity`.`participation_detail`;
+DELETE FROM `activity`.`activity`;
+DELETE FROM `activity`.`representative_organizer`;
+DELETE FROM `activity`.`account`;
+DELETE FROM `activity`.`class`;
+DELETE FROM `activity`.`report`;
+DELETE FROM `activity`.`student_semester_detail`;
 
 -- -- 1. class table (IDs: 1000-1009)
 -- INSERT INTO `activity`.`class` (id, academic_year, capacity, end_date, start_date, created_date, updated_date, class_name, created_by, department, updated_by, status) VALUES

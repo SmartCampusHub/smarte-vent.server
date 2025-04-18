@@ -4,7 +4,8 @@ import org.springframework.data.domain.Pageable;
 
 import com.winnguyen1905.Activity.common.annotation.TAccountRequest;
 import com.winnguyen1905.Activity.model.dto.ActivityDto;
-import com.winnguyen1905.Activity.model.dto.ParticipationDetailDto;
+import com.winnguyen1905.Activity.model.dto.JoinActivityRequest;
+import com.winnguyen1905.Activity.model.dto.ParticipationSearchParams;
 import com.winnguyen1905.Activity.model.viewmodel.ActivityVm;
 import com.winnguyen1905.Activity.model.viewmodel.PagedResponse;
 import com.winnguyen1905.Activity.model.viewmodel.ParticipationDetailVm;
@@ -15,7 +16,7 @@ public interface ActivityService {
   void deleteActivity(TAccountRequest accountRequest, Long activityId);
   PagedResponse<ActivityVm> getAllActivities(Pageable pageable);
   PagedResponse<ActivityVm> getJoinedActivities(TAccountRequest accountRequest, Pageable pageable);
-  ParticipationDetailVm joinActivity(TAccountRequest accountRequest, ParticipationDetailDto participationDetailDto);
+  ParticipationDetailVm joinActivity(TAccountRequest accountRequest, JoinActivityRequest participationDetailDto);
   
   // PagedResponse<ActivityVm> getActivitiesByStudent(TAccountRequest accountRequest, Pageable pageable);
   ActivityVm getActivityById(TAccountRequest accountRequest, Long activityId);

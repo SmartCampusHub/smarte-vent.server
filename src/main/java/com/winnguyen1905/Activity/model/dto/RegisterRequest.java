@@ -20,6 +20,7 @@ public record RegisterRequest(
   String email,
 
   String phone,
+  
   EClass eClass,
 
   @NotBlank

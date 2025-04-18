@@ -3,7 +3,8 @@ package com.winnguyen1905.Activity.persistance.repository.specification;
 import org.springframework.data.jpa.domain.Specification;
 
 import com.winnguyen1905.Activity.common.annotation.TAccountRequest;
-import com.winnguyen1905.Activity.model.dto.ParticipationDetailSearch;
+import com.winnguyen1905.Activity.model.dto.JoinActivityRequest;
+import com.winnguyen1905.Activity.model.dto.ParticipationSearchParams;
 import com.winnguyen1905.Activity.persistance.entity.EParticipationDetail;
 
 import jakarta.persistence.criteria.Predicate;
@@ -12,12 +13,12 @@ import java.util.List;
 
 public class EParticipationDetailSpecification {
 
-  public static Specification<EParticipationDetail> filterBy(ParticipationDetailSearch searchDTO, TAccountRequest accountRequest) {
+  public static Specification<EParticipationDetail> filterBy(ParticipationSearchParams searchDTO) {
     return (root, query, criteriaBuilder) -> {
       List<Predicate> predicates = new ArrayList<>();
 
-      if (accountRequest.id() != null) {
-        predicates.add(criteriaBuilder.equal(root.get("participant").get("id"), accountRequest.id()));
+      if (searchDTO.participantId() != null) {
+        predicates.add(criteriaBuilder.equal(root.get("participant").get("id"), searchDTO.participantId()));
       }
 
       if (searchDTO.participationStatus() != null) {
