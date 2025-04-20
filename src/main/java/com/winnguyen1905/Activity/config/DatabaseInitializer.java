@@ -36,10 +36,10 @@ public class DatabaseInitializer implements CommandLineRunner {
 
   @Override
   public void run(String... args) throws Exception {
-    EAccountCredentials account = EAccountCredentials.builder().fullName("Nguyên Thắng Lợi").email("winnguyen1905.work@gmail.com")
+    EAccountCredentials account = EAccountCredentials.builder().isActive(true).fullName("Nguyên Thắng Lợi").email("winnguyen1905.work@gmail.com")
         .studentCode("1")
         .role(AccountRole.STUDENT).password(passwordEncoder.encode("1")).build();
-    EAccountCredentials account2 = EAccountCredentials.builder().fullName("Nguyên Thắng Lợi 2").email("winnguyen1905.work@gmail.com")
+    EAccountCredentials account2 = EAccountCredentials.builder().isActive(true).fullName("Nguyên Thắng Lợi 2").email("winnguyen1905.work@gmail.com")
         .studentCode("2")
         .role(AccountRole.ADMIN).password(passwordEncoder.encode("2")).build();
     accountRepository.saveAll(List.of(account, account2));

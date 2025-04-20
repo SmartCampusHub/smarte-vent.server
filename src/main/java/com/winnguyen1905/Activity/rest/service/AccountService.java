@@ -1,6 +1,7 @@
 package com.winnguyen1905.Activity.rest.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.winnguyen1905.Activity.common.annotation.AccountRequest;
 import com.winnguyen1905.Activity.common.annotation.TAccountRequest;
+import com.winnguyen1905.Activity.exception.BadRequestException;
 import com.winnguyen1905.Activity.model.viewmodel.AccountVm;
 import com.winnguyen1905.Activity.model.viewmodel.ActivityVm;
 import com.winnguyen1905.Activity.model.viewmodel.PagedResponse;
@@ -41,7 +43,7 @@ public class AccountService {
           .phone(account.getPhone()).build();
     }).toList();
 
-    return PagedResponse.<AccountVm>builder()
+    return PagedResponse.<AccountVm>builder()   
         .maxPageItems(pageable.getPageSize())
         .page(pageable.getPageNumber())
         .size(accountPage.getSize())
@@ -51,5 +53,17 @@ public class AccountService {
         .build();
   }
 
-  
+  public void changeStatus(Long id) {
+    Optional<EAccountCredentials> accountOptional = this.accountRepository.findById(id);
+
+    if (accountOptional.isPresent() && accountOptional.get() instanceof EAccountCredentials account) {
+      account.setIsActive(!account.getIsActive());
+      this.accountRepository.save(account);
+    } else
+      throw new BadRequestException("Not found user");
+  }
+
+  public void deleteAccount(Long id) {
+    this.accountRepository.deleteById(id);
+  }
 }

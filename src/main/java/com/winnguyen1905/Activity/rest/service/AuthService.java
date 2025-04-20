@@ -54,7 +54,7 @@ public class AuthService {
         .build();
   }
 
-  public void register(RegisterRequest registerRequest) {
+  public AccountVm register(RegisterRequest registerRequest) {
     validateRegisterRequest(registerRequest);
 
     Optional<EAccountCredentials> user = userRepository.findByStudentCode(registerRequest.studentCode());
@@ -66,6 +66,11 @@ public class AuthService {
     EAccountCredentials newUser = createNewUser(registerRequest);
 
     userRepository.save(newUser);
+
+    return AccountVm.builder()
+        .studentCode(newUser.getStudentCode()).role(newUser.getRole()).id(newUser.getId())
+        .name(newUser.getFullName()).email(newUser.getEmail()).isActive(newUser.getIsActive())
+        .phone(newUser.getPhone()).build();
   }
 
   private void validateRegisterRequest(RegisterRequest request) {
@@ -98,7 +103,7 @@ public class AuthService {
         .build();
     TokenPair tokenPair = jwtUtils.createTokenPair(userDetails);
     return AuthResponse.builder()
-    .refreshToken(tokenPair.refreshToken())
+        .refreshToken(tokenPair.refreshToken())
         .accessToken(tokenPair.accessToken())
         .build();
   }

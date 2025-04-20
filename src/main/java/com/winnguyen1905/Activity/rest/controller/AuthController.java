@@ -2,6 +2,7 @@ package com.winnguyen1905.Activity.rest.controller;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -15,6 +16,7 @@ import com.winnguyen1905.Activity.common.constant.SystemConstant;
 import com.winnguyen1905.Activity.exception.ResourceNotFoundException;
 import com.winnguyen1905.Activity.model.dto.LoginRequest;
 import com.winnguyen1905.Activity.model.dto.RegisterRequest;
+import com.winnguyen1905.Activity.model.viewmodel.AccountVm;
 import com.winnguyen1905.Activity.model.viewmodel.AuthResponse;
 import com.winnguyen1905.Activity.rest.service.AuthService;
 
@@ -41,9 +43,9 @@ public class AuthController {
   }
 
   @PostMapping("/register")
-  public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest registerRequest) {
-    authService.register(registerRequest);
-    return ResponseEntity.noContent().build();
+  public ResponseEntity<AccountVm> register(@RequestBody RegisterRequest registerRequest) {
+    AccountVm accountVm = authService.register(registerRequest);
+    return ResponseEntity.status(HttpStatus.CREATED).body(accountVm);
   }
 
   @PostMapping("/refresh")
