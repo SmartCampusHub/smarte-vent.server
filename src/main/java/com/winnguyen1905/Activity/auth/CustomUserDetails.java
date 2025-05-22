@@ -12,7 +12,6 @@ import com.winnguyen1905.Activity.common.constant.AccountRole;
 
 import lombok.Builder;
 
-@Builder
 public record CustomUserDetails(
     Long id,
     String type,
@@ -24,6 +23,29 @@ public record CustomUserDetails(
     String username,
     String password,
     String firstName) implements UserDetails {
+  @Builder
+  public CustomUserDetails(
+      Long id,
+      String type,
+      String email,
+      String phone,
+      AccountRole role,
+      Boolean status,
+      String lastName,
+      String username,
+      String password,
+      String firstName) {
+    this.id = id;
+    this.type = type;
+    this.email = email;
+    this.phone = phone;
+    this.role = role;
+    this.status = status;
+    this.lastName = lastName;
+    this.username = username;
+    this.password = password;
+    this.firstName = firstName;
+  }
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {

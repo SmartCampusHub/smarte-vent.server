@@ -30,7 +30,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "participation_detail")
+@Table(name = "attendance")
 public class EParticipationDetail {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
@@ -38,7 +38,7 @@ public class EParticipationDetail {
   protected Long id;
 
   @ManyToOne
-  @JoinColumn(name = "participant_id")
+  @JoinColumn(name = "attendee_id")
   private EAccountCredentials participant;
 
   @ManyToOne
@@ -46,15 +46,16 @@ public class EParticipationDetail {
   private EActivity activity;
 
   @Enumerated(EnumType.STRING)
-  @Column(name = "status")
+  @Column(name = "aattendance_status")
   private ParticipationStatus participationStatus;
 
   @Enumerated(EnumType.STRING)
-  @Column(name = "participation_role")
+  @Column(name = "attendee_role")
   private ParticipationRole participationRole;
 
-  @Column(name = "qr_code")
-  private String qrCode;
+  @ManyToOne
+  @JoinColumn(name = "verified_by")
+  private EAccountCredentials verifiedByAccount;
 
   @JsonIgnore
   @Column(name = "created_by", nullable = true)

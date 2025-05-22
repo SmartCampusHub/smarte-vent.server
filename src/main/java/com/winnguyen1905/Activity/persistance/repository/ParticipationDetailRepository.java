@@ -22,7 +22,9 @@ public interface ParticipationDetailRepository
   List<EParticipationDetail> findByActivityId(Long activityId);
 
   Boolean existsByParticipantIdAndActivityId(Long participantId, Long activityId);
-  Boolean existsByParticipantIdAndActivityIdAndParticipationRole(Long participantId, Long activityId, ParticipationRole participationRole);
+
+  Boolean existsByParticipantIdAndActivityIdAndParticipationRole(Long participantId, Long activityId,
+      ParticipationRole participationRole);
 
   List<EParticipationDetail> findAllByParticipantId(Long participantId);
 
@@ -31,9 +33,12 @@ public interface ParticipationDetailRepository
       "AND e.participationStatus = :status AND e.participant.id = :participantId " +
       "ORDER BY e.registeredAt ASC ")
   List<EParticipationDetail> findVerifiedSpecificParticipationDetailsWithinDateRange(
-      @Param("startDate") Instant startDate, 
+      @Param("startDate") Instant startDate,
       @Param("endDate") Instant endDate,
       @Param("status") ParticipationStatus status, Long participantId);
+
+  List<EParticipationDetail> findAllByParticipantIdAndParticipationRole(
+      Long participantId, ParticipationRole participationRole);
 
   // @Query("SELECT a FROM EParticipationDetail a WHERE a.id IN :ids")
   // Page<EParticipationDetail> findAllByIds(Long participantIds, Pageable

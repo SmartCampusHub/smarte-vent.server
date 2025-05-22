@@ -6,5 +6,17 @@ import com.winnguyen1905.Activity.model.dto.AbstractModel;
 
 import lombok.Builder;
 
-@Builder
-public record AuthResponse(String accessToken, AccountVm account, @JsonIgnore String refreshToken) implements AbstractModel {}
+public record AuthResponse(String accessToken, AccountVm account, @JsonIgnore String refreshToken)
+    implements AbstractModel {
+      
+  @Builder
+  public AuthResponse(
+      String accessToken,
+      AccountVm account,
+      String refreshToken) {
+    this.accessToken = accessToken;
+    this.account = account;
+    this.refreshToken = refreshToken;
+  }
+
+}

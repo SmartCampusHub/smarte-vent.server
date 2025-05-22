@@ -25,6 +25,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.repository.query.parser.Part;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -111,8 +112,8 @@ public class ParticipantServiceImpl implements ParticipantService {
         .activityId(participationDetail.getActivity().getId())
         .activityName(participationDetail.getActivity().getActivityName())
         .activityCategory(participationDetail.getActivity().getActivityCategory())
-        .activityStatus(participationDetail.getActivity().getActivityStatus())
-        .activityVenue(participationDetail.getActivity().getActivityVenue())
+        .activityStatus(participationDetail.getActivity().getStatus())
+        .activityVenue(participationDetail.getActivity().getVenue())
         .startDate(participationDetail.getActivity().getStartDate())
         .endDate(participationDetail.getActivity().getEndDate())
         .registrationTime(participationDetail.getRegisteredAt())
@@ -133,11 +134,12 @@ public class ParticipantServiceImpl implements ParticipantService {
             .participationStatus(participationDetail.getParticipationStatus())
             .studentId(participationDetail.getParticipant().getId())
             .id(participationDetail.getId())
+            .participantName(participationDetail.getParticipant().getFullName())
             .activityId(participationDetail.getActivity().getId())
             .activityName(participationDetail.getActivity().getActivityName())
             .activityCategory(participationDetail.getActivity().getActivityCategory())
-            .activityStatus(participationDetail.getActivity().getActivityStatus())
-            .activityVenue(participationDetail.getActivity().getActivityVenue())
+            .activityStatus(participationDetail.getActivity().getStatus())
+            .activityVenue(participationDetail.getActivity().getVenue())
             .startDate(participationDetail.getActivity().getStartDate())
             .endDate(participationDetail.getActivity().getEndDate())
             .participationStatus(participationDetail.getParticipationStatus())

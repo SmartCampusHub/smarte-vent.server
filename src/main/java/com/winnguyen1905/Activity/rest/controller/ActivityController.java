@@ -1,6 +1,6 @@
 package com.winnguyen1905.Activity.rest.controller;
 
-import com.winnguyen1905.Activity.common.constant.ActivityCategory;
+import com.winnguyen1905.Activity.common.constant.SystemConstant;
 import com.winnguyen1905.Activity.model.viewmodel.ActivityVm;
 import com.winnguyen1905.Activity.model.viewmodel.PagedResponse;
 import com.winnguyen1905.Activity.model.viewmodel.ParticipationDetailVm;
@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.*;
 import com.winnguyen1905.Activity.common.annotation.AccountRequest;
 import com.winnguyen1905.Activity.common.annotation.TAccountRequest;
 import com.winnguyen1905.Activity.model.dto.ActivityDto;
+import com.winnguyen1905.Activity.model.dto.ActivitySearchRequest;
 import com.winnguyen1905.Activity.model.dto.JoinActivityRequest;
-import com.winnguyen1905.Activity.model.dto.ParticipationSearchParams;
 import com.winnguyen1905.Activity.rest.service.ActivityService;
 
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 @RequiredArgsConstructor
@@ -59,16 +61,26 @@ public class ActivityController {
     return ResponseEntity.ok(activity);
   }
 
-  @GetMapping
-  public ResponseEntity<PagedResponse<ActivityVm>> getAllActivities(Pageable pageable) {
-    PagedResponse<ActivityVm> activities = activityService.getAllActivities(pageable);
+  @GetMapping("/search")
+  public ResponseEntity<PagedResponse<ActivityVm>> getAllActivities(Pageable pageable,
+      @ModelAttribute(SystemConstant.MODEL) ActivitySearchRequest activitySearchRequest,
+      @AccountRequest TAccountRequest accountRequest) {
+    PagedResponse<ActivityVm> activities = activityService.getAllActivities(activitySearchRequest, pageable);
+    return ResponseEntity.ok(activities);
+  }
+
+  @GetMapping("/my-contributor")
+  public ResponseEntity<PagedResponse<ActivityVm>> getMyActivityContributors(Pageable pageable,
+      @AccountRequest TAccountRequest accountRequest) {
+    PagedResponse<ActivityVm> activities = activityService.getMyActivityContributors(accountRequest);
     return ResponseEntity.ok(activities);
   }
 
   @PostMapping("/join")
   public ResponseEntity<ParticipationDetailVm> joinActivity(@AccountRequest TAccountRequest accountRequest,
       @RequestBody JoinActivityRequest joinActivityRequest) {
-    return ResponseEntity.status(HttpStatus.CREATED).body(activityService.joinActivity(accountRequest, joinActivityRequest));
+    return ResponseEntity.status(HttpStatus.CREATED)
+        .body(activityService.joinActivity(accountRequest, joinActivityRequest));
   }
 
   @GetMapping("/joined")
@@ -76,6 +88,17 @@ public class ActivityController {
       Pageable pageable) {
     return ResponseEntity.ok().body(activityService.getJoinedActivities(accountRequest, pageable));
   }
-  
 
+  @PostMapping("/approve")
+  public String postMethodName(@PathVariable Long id) {
+    return null;
+  }
+
+  // @GetMapping("/statistical")
+  // public ResponseEntity<StatisticalResponse> getStatisticalData(@AccountRequest
+  // TAccountRequest accountRequest) {
+  // StatisticalResponse statisticalData =
+  // activityService.getStatisticalData(accountRequest);
+  // return ResponseEntity.ok(statisticalData);
+  // }
 }

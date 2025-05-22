@@ -9,6 +9,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.winnguyen1905.Activity.common.constant.AccountRole;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -19,6 +20,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -35,37 +37,40 @@ import lombok.experimental.SuperBuilder;
 @Table(name = "account")
 public class EAccountCredentials {
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
-  @Column(name = "id", updatable = false, nullable = false)
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "id")
   protected Long id;
 
-  @Column(name = "full_name")
+  @Column(name = "account_name")
   private String fullName;
 
   @Column(name = "student_code")
   private String studentCode;
 
-  @Column(name = "password")
+  @Column(name = "account_password")
   private String password;
 
-  @Column(name = "is_active")
-  private Boolean isActive; 
+  @Column(name = "account_status")
+  private Boolean isActive;
 
-  @Column(name = "email")
+  @Column(name = "account_email")
   private String email;
 
-  @Column(name = "phone")
+  @Column(name = "account_phone")
   private String phone;
 
   @Column(name = "refresh_token", length = 1024)
   private String refreshToken;
 
-  @jakarta.persistence.Column(name = "role")
+  @Column(name = "account_role")
   @Enumerated(EnumType.STRING)
   private AccountRole role;
 
+  @OneToOne(cascade = CascadeType.ALL, mappedBy = "account")
+  private EOrganization organization;
+
   @ManyToOne
-  @JoinColumn(name = "class_id")
+  @JoinColumn(name = "class_id", nullable = true)
   private EClass studentClass;
 
   @OneToMany(mappedBy = "participant")

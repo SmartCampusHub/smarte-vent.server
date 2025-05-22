@@ -53,7 +53,7 @@ public class ActivityReminderService {
               detail.getParticipant().getFullName(),
               activity.getActivityName(),
               activity.getStartDate(),
-              activity.getActivityVenue(),
+              activity.getVenue(),
               activity.getDescription());
           try {
             emailService.sendEmail(participantEmail, subject, body);

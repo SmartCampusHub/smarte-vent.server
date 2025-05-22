@@ -6,7 +6,7 @@ public enum ActivityCategory {
   private final String value;
 
   ActivityCategory(String value) {
-      this.value = value;
+    this.value = value;
   }
 
   public String getValue() {

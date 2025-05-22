@@ -40,7 +40,7 @@ public class AuthService {
     EAccountCredentials userCredentials = userRepository.findById(userDetails.id())
         .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-    userCredentials.setRefreshToken(tokenPair.refreshToken());
+    // userCredentials.setRefreshToken(tokenPair.refreshToken());
     userRepository.save(userCredentials);
 
     return AuthResponse.builder()
@@ -85,7 +85,7 @@ public class AuthService {
         .phone(request.phone())
         .fullName(request.fullName())
         .isActive(true)
-        .refreshToken(null)
+        // .refreshToken(null)
         .role(AccountRole.STUDENT)
         .studentCode(request.studentCode())
         .password(passwordEncoder.encode(request.password()))
@@ -111,7 +111,7 @@ public class AuthService {
   public void logout(String studentCode) {
     EAccountCredentials user = userRepository.findByStudentCode(studentCode)
         .orElseThrow(() -> new UsernameNotFoundException("Not found user by studentCode " + studentCode));
-    user.setRefreshToken(null);
+    // user.setRefreshToken(null);
     userRepository.save(user);
   }
 
@@ -128,7 +128,7 @@ public class AuthService {
         .build();
 
     TokenPair tokenPair = jwtUtils.createTokenPair(userDetails);
-    user.setRefreshToken(tokenPair.refreshToken());
+    // user.setRefreshToken(tokenPair.refreshToken());
     userRepository.save(user);
 
     return AuthResponse.builder()

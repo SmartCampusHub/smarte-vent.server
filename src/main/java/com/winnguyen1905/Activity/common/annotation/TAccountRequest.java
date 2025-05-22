@@ -8,11 +8,20 @@ import com.winnguyen1905.Activity.model.dto.AbstractModel;
 
 import lombok.Builder;
 
-@Builder
-
 public record TAccountRequest(
     Long id,
     String username,
     AccountRole role,
     UUID socketClientId) implements Serializable {
+  @Builder
+  public TAccountRequest(
+      Long id,
+      String username,
+      AccountRole role,
+      UUID socketClientId) {
+    this.id = id;
+    this.username = username;
+    this.role = role;
+    this.socketClientId = socketClientId;
+  }
 }

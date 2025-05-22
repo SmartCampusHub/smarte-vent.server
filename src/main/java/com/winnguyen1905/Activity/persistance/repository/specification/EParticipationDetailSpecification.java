@@ -21,6 +21,24 @@ public class EParticipationDetailSpecification {
         predicates.add(criteriaBuilder.equal(root.get("participant").get("id"), searchDTO.participantId()));
       }
 
+      if (searchDTO.participantName() != null && !searchDTO.participantName().isBlank()) {
+        predicates.add(criteriaBuilder.like(
+            root.get("participant").get("fullName"),
+            "%" + searchDTO.participantName() + "%"));
+      }
+
+      if (searchDTO.studentCode() != null) {
+        predicates.add(criteriaBuilder.equal(
+            root.get("participant").get("studentCode"),
+            searchDTO.studentCode()));
+      }
+
+      if (searchDTO.participantName() != null && !searchDTO.participantName().isBlank()) {
+        predicates.add(criteriaBuilder.like(
+            root.get("participant").get("fullName"),
+            "%" + searchDTO.participantName() + "%"));
+      }
+
       if (searchDTO.participationStatus() != null) {
         predicates.add(criteriaBuilder.equal(root.get("participationStatus"), searchDTO.participationStatus()));
       }

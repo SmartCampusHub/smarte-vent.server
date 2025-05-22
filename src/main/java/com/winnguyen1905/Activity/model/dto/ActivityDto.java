@@ -15,21 +15,31 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ActivityDto implements AbstractModel{
+public class ActivityDto implements AbstractModel {
   private Long id;
   private String activityName;
   private String description;
   private Instant startDate;
   private Instant endDate;
   private String activityVenue;
-  private ActivityStatus activityStatus;
   private Integer capacityLimit;
   private String activityType;
   private ActivityCategory activityCategory;
   private String activityDescription;
-  private String activityImage;
+  private String imageUrl;
   private String activityLink;
   private Integer attendanceScoreUnit;
-  private Long representativeOrganizerId;
   private List<ActivityScheduleDto> activitySchedules;
+
+  private String shortDescription;
+  private List<String> tags;
+  private Integer currentParticipants;
+  private String address;
+  private Double latitude;
+  private Double longitude;
+  private Double fee;
+  private Boolean isFeatured;
+  private Boolean isApproved;
+  private int likes;
+  private Instant registrationDeadline;
 }

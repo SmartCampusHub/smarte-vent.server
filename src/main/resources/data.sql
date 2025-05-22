@@ -4,10 +4,11 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- Delete existing data
 DELETE FROM `activity`.`notification`;
 DELETE FROM `activity`.`event_schedule`;
-DELETE FROM `activity`.`confirmation`;
-DELETE FROM `activity`.`participation_detail`;
+DELETE FROM `activity`.`department`;
+DELETE FROM `activity`.`feedback`;
+DELETE FROM `activity`.`attendance`;
 DELETE FROM `activity`.`activity`;
-DELETE FROM `activity`.`representative_organizer`;
+DELETE FROM `activity`.`organization`;
 DELETE FROM `activity`.`account`;
 DELETE FROM `activity`.`class`;
 DELETE FROM `activity`.`report`;

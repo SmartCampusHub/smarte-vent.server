@@ -28,7 +28,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "confirmation")
+@Table(name = "feedback")
 public class EConfirmation {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
@@ -36,26 +36,19 @@ public class EConfirmation {
   protected Long id;
 
   @ManyToOne
-  @JoinColumn(name = "participation_id")
+  @JoinColumn(name = "attendance_id")
   private EParticipationDetail participation;
 
   @Min(0)
   @Max(10)
-  @Column(name = "rating")
+  @Column(name = "feedback_rating")
   private Double rating;
 
   @Column(name = "feedback_description", columnDefinition = "TEXT")
-  private String feedbackDescription;
+  private String description;
 
-  @Column(name = "confirmed_at")
-  private Instant confirmedAt;
-
-  @ManyToOne
-  @JoinColumn(name = "confirmed_by_account_id")
-  private EAccountCredentials confirmedByAccount;
-
-  @Column(name = "feedback_created_at")
-  private Instant feedbackCreatedAt;
+  @Column(name = "feedback_at")
+  private Instant feedbackAt;
 
   @JsonIgnore
   @Column(name = "created_by", nullable = true)

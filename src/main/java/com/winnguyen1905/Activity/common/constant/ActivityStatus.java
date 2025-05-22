@@ -1,15 +1,15 @@
 package com.winnguyen1905.Activity.common.constant;
 
 public enum ActivityStatus {
-  IN_PROGRESS("IN_PROGRESS"), COMPLETED("COMPLETED"), WAITING_TO_START("WAITING_TO_START"), CANCELLED("CANCELLED");
+  IN_PROGRESS("IN_PROGRESS"), COMPLETED("COMPLETED"), PUBLISHED("PUBLISHED"), CANCELLED("CANCELLED");
 
-    private final String status;
+  private final String status;
 
-    ActivityStatus(String status) {
-        this.status = status;
-    }
+  ActivityStatus(String status) {
+    this.status = status;
+  }
 
-    public String getStatus() {
-        return status;
-    }
-} 
+  public String getStatus() {
+    return status;
+  }
+}

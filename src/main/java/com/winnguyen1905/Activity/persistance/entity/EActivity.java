@@ -12,6 +12,7 @@ import com.winnguyen1905.Activity.common.constant.ActivityStatus;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -38,35 +39,46 @@ import lombok.experimental.SuperBuilder;
 @Table(name = "activity")
 public class EActivity {
   @Version
+  @Column(name = "version")
   private Long version;
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
-  @Column(name = "id", updatable = false, nullable = false)
+  @Column(name = "id")
   protected Long id;
 
-  @Column(name = "attendance_score_unit")
+  @Column(name = "attendance_score")
   private Integer attendanceScoreUnit;
 
-  @Column(name = "activity_name")
+  @Column(name = "name")
   private String activityName;
 
   @Column(name = "description", columnDefinition = "TEXT")
   private String description;
 
+  @Column(name = "short_description ", columnDefinition = "TEXT")
+  private String shortDescription;
+
+  @ElementCollection
+  @Column(name = "tags")
+  private List<String> tags;
+
   @OneToMany(mappedBy = "activity")
   private List<EReport> reports;
 
   @ManyToOne
-  @JoinColumn(name = "representative_organizer_id")
-  private ERepresentativeOrganizer representativeOrganizer;
+  @JoinColumn(name = "organization_id")
+  private EOrganization organization;
 
   @Enumerated(EnumType.STRING)
-  @Column(name = "activity_category")
+  @Column(name = "category")
   private ActivityCategory activityCategory;
-  
-  @Column(name = "activity_capacity_limit", columnDefinition = "TEXT")
+
+  @Column(name = "max_attendees")
   private Integer capacityLimit;
+
+  @Column(name = "current_participants")
+  private Integer currentParticipants;
 
   @OneToMany(mappedBy = "activity", cascade = CascadeType.ALL)
   private List<EParticipationDetail> participationDetails;
@@ -80,15 +92,45 @@ public class EActivity {
   @Column(name = "end_date")
   private Instant endDate;
 
-  @Column(name = "activity_venue")
-  private String activityVenue;
+  @Column(name = "venue")
+  private String venue;
 
-  @Column(name = "capacity")
-  private Integer capacity;
+  @Column(name = "address")
+  private String address;
 
+  private Double latitude;
+
+  private Double longitude;
+
+  @Column(name = "online_link")
+  private String onlineLink;
+
+  @Column(name = "fee")
+  private Double fee;
+
+  @Column(name = "is_featured")
+  private Boolean isFeatured;
+
+  @Column(name = "is_approved")
+  private Boolean isApproved;
+
+  @Column(name = "image_url")
+  private String imageUrl;
+
+  // @Column(name = "attachments")
+  // private Instant attachments;
+
+  @Column(name = "likes")
+  private Integer likes;
+
+  @Column(name = "registration_deadline ", updatable = true)
+  private Instant registrationDeadline;
+
+  @Column(name = "status")
   @Enumerated(EnumType.STRING)
-  @Column(name = "activity_status")
-  private ActivityStatus activityStatus;
+  private ActivityStatus status;
+
+  // TODO: commentsEnabled
 
   @JsonIgnore
   @Column(name = "created_by_id", nullable = true)

@@ -14,7 +14,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ActivityVm implements AbstractModel{
+public class ActivityVm implements AbstractModel {
   private Long id;
   private String activityName;
   private String description;
@@ -24,7 +24,6 @@ public class ActivityVm implements AbstractModel{
   private Instant endDate;
   private String activityVenue;
   private Integer capacityLimit;
-  private Integer capacity;
   private ActivityStatus activityStatus;
   private String activityType;
   private ActivityCategory activityCategory;
@@ -34,4 +33,17 @@ public class ActivityVm implements AbstractModel{
   private String attendanceScoreUnit;
   private Long representativeOrganizerId;
   private List<ActivityScheduleVm> activitySchedules;
+
+  private OrganizationVm organization;
+  private String shortDescription;
+  private List<String> tags;
+  private Integer currentParticipants;
+  private String address;
+  private Double latitude;
+  private Double longitude;
+  private Double fee;
+  private Boolean isFeatured;
+  private Boolean isApproved;
+  private int likes;
+  private Instant registrationDeadline;
 }

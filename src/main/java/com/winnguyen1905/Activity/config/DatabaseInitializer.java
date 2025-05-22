@@ -11,15 +11,18 @@ import org.springframework.stereotype.Service;
 import com.winnguyen1905.Activity.common.constant.AccountRole;
 import com.winnguyen1905.Activity.common.constant.ActivityCategory;
 import com.winnguyen1905.Activity.common.constant.ActivityStatus;
+import com.winnguyen1905.Activity.common.constant.OrganizationType;
 import com.winnguyen1905.Activity.common.constant.ScheduleStatus;
 import com.winnguyen1905.Activity.persistance.entity.EAccountCredentials;
 import com.winnguyen1905.Activity.persistance.entity.EActivity;
 import com.winnguyen1905.Activity.persistance.entity.EActivitySchedule;
 import com.winnguyen1905.Activity.persistance.entity.EClass;
+import com.winnguyen1905.Activity.persistance.entity.EOrganization;
 import com.winnguyen1905.Activity.persistance.entity.EStudentSemesterDetail;
 import com.winnguyen1905.Activity.persistance.repository.AccountRepository;
 import com.winnguyen1905.Activity.persistance.repository.ActivityRepository;
 import com.winnguyen1905.Activity.persistance.repository.ClassRepository;
+import com.winnguyen1905.Activity.persistance.repository.OrganizationRepository;
 import com.winnguyen1905.Activity.persistance.repository.StudentSemesterDetailRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -32,32 +35,59 @@ public class DatabaseInitializer implements CommandLineRunner {
   private final PasswordEncoder passwordEncoder;
   private final AccountRepository accountRepository;
   private final ActivityRepository activityRepository;
+  private final OrganizationRepository organizationRepository;
   private final StudentSemesterDetailRepository semesterDetailRepository;
 
   @Override
   public void run(String... args) throws Exception {
-    EAccountCredentials account = EAccountCredentials.builder().isActive(true).fullName("Nguyên Thắng Lợi").email("winnguyen1905.work@gmail.com")
+    EAccountCredentials account = EAccountCredentials.builder().isActive(true).fullName("Nguyên Thắng Lợi 1")
+        .email("winnguyen1905.work@gmail.com")
         .studentCode("1")
         .role(AccountRole.STUDENT).password(passwordEncoder.encode("1")).build();
-    EAccountCredentials account2 = EAccountCredentials.builder().isActive(true).fullName("Nguyên Thắng Lợi 2").email("winnguyen1905.work@gmail.com")
+    EAccountCredentials account2 = EAccountCredentials.builder().isActive(true).fullName("Nguyên Thắng Lợi 2")
+        .email("winnguyen1905.work@gmail.com")
         .studentCode("2")
         .role(AccountRole.ADMIN).password(passwordEncoder.encode("2")).build();
-    accountRepository.saveAll(List.of(account, account2));
+
+    EOrganization organization = EOrganization.builder()
+        .name("Student Technology Club")
+        .phone("0123456789")
+        .email("techclub@university.edu")
+        .type(OrganizationType.CLUB)
+        .build();
+    EAccountCredentials account3 = EAccountCredentials.builder().isActive(true).fullName("Nguyên Thắng Lợi 3")
+        .email("winnguyen1905.work@gmail.com")
+        .studentCode("3")
+        .role(AccountRole.ORGANIZATION).password(passwordEncoder.encode("3"))
+        .organization(organization)
+        .build();
+    organization.setAccount(account3);
+
+    accountRepository.saveAll(List.of(account, account2, account3));
     EActivity activity = EActivity.builder()
-        .activityName("Tech Conference 2025 Sexy")
-        .description("A conference on the latest trends in technology.")
+        .activityName("Tech Conference 2025")
+        .description("A comprehensive tech conference featuring industry experts")
         .startDate(Instant.parse("2025-08-19T09:00:00Z"))
         .endDate(Instant.parse("2025-08-20T17:00:00Z"))
-        .activityVenue("Tech Park, Building A")
-        .activityStatus(ActivityStatus.WAITING_TO_START)
+        .venue("Tech Innovation Center")
         .capacityLimit(200)
-        .capacity(0)
+        .status(ActivityStatus.PUBLISHED)
         .activityCategory(ActivityCategory.STUDENT_ORGANIZATION)
-        .description("An event featuring keynote speakers and networking opportunities.")
-        // .activityImage("https://example.com/images/tech-conference.jpg")
-        // .activityLink("https://example.com/tech-conference")
+        .imageUrl("https://example.com/images/techconf2025.jpg")
+        .shortDescription("Join us for the biggest tech event of 2025")
+        .tags(List.of("technology,innovation,networking"))
+        .currentParticipants(0)
+        .address("123 Tech Street, Innovation District")
+        .latitude(10.762622)
+        .longitude(106.660172)
+        .fee(50.00)
+        .isFeatured(false)
+        .isApproved(false)
+        .likes(0)
+        .registrationDeadline(Instant.parse("2025-08-01T23:59:59Z"))
         .attendanceScoreUnit(5)
-        // .representativeOrganizerId(101)
+        .organization(this.organizationRepository.findById(1L).orElse(null))
+        .createdById(1L)
         .build();
     activity.setActivitySchedules(List.of(EActivitySchedule.builder()
         .activity(activity)

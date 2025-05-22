@@ -8,8 +8,10 @@ import com.winnguyen1905.Activity.common.constant.ParticipationStatus;
 public record ParticipationSearchParams(
     Long activityId,
     Long participantId,
+    String participantName,
+    String studentCode,
     ParticipationStatus participationStatus,
     ParticipationRole participationRole,
     Instant registeredAfter,
-    Instant registeredBefore) {
+    Instant registeredBefore) implements AbstractModel {
 }

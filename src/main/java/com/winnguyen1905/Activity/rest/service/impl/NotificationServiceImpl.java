@@ -21,14 +21,14 @@ public class NotificationServiceImpl implements NotificationService {
   private final NotificationRepository notificationRepository;
 
   @Override
-  public void sendNotifaction(TAccountRequest accountRequest, NotificationDto notificationDto) {
+  public void sendNotification(TAccountRequest accountRequest, NotificationDto notificationDto) {
     ENotification notification = ENotification.builder()
         .title(notificationDto.title())
         .content(notificationDto.content())
+        .isRead(false)
         .notificationType(notificationDto.notificationType())
         .receiver(accountRepository.findById(notificationDto.receiverId())
-            .orElseThrow(() -> new RuntimeException("Receiver not found")))
-        .build();
+            .orElseGet(null)).build();
     notificationRepository.save(notification);
   }
 
@@ -50,5 +50,13 @@ public class NotificationServiceImpl implements NotificationService {
         .page(notificationsPage.getNumber())
         .build();
 
+  }
+
+  @Override
+  public void readNotification(TAccountRequest accountRequest, Long id) {
+    ENotification notification = notificationRepository.findById(id)
+        .orElseThrow(() -> new RuntimeException("Notification not found"));
+    notification.setIsRead(true);
+    notificationRepository.save(notification);
   }
 }

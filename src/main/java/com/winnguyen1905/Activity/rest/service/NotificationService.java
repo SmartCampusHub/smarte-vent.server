@@ -8,6 +8,7 @@ import com.winnguyen1905.Activity.model.viewmodel.PagedResponse;
 import org.springframework.data.domain.Pageable;
 
 public interface NotificationService {
-  void sendNotifaction(TAccountRequest accountRequest, NotificationDto notificationDto);
+  void sendNotification(TAccountRequest accountRequest, NotificationDto notificationDto);
   PagedResponse<NotificationVm> getNotifications(TAccountRequest accountRequest, Pageable pageable);
+  void readNotification(TAccountRequest accountRequest, Long id);
 }

@@ -47,7 +47,7 @@ public class ENotification {
   private Boolean isRead;
 
   @ManyToOne
-  @JoinColumn(name = "sender_id")
+  @JoinColumn(name = "sender_id", nullable = true)
   private EAccountCredentials sender;
 
   @Enumerated(EnumType.STRING)
@@ -56,10 +56,6 @@ public class ENotification {
 
   @Column(name = "content", columnDefinition = "TEXT")
   private String content;
-
-  @JsonIgnore
-  @Column(name = "created_by", nullable = true)
-  private String createdBy;
 
   @CreationTimestamp
   @Column(name = "created_date", updatable = false)
