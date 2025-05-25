@@ -7,7 +7,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class EventScheduleDto {
+public class EventScheduleDto  implements AbstractModel {
     private Long activityId;
     private Instant startTime;
     private Instant endTime;

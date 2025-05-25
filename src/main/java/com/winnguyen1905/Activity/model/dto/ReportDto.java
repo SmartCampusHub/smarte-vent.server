@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class ReportDto {
+public class ReportDto  implements AbstractModel {
     private Long activityId;
     private String description;
 }

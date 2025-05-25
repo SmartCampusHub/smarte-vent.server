@@ -20,10 +20,10 @@ public class StatisticsFilterDto implements AbstractModel {
     private TimePeriod timePeriod;
     private Instant startDate;
     private Instant endDate;
-    
+
     // Category filter
     private ActivityCategory activityType;
-    
+
     // Status filter
     private ActivityStatus status;
 }

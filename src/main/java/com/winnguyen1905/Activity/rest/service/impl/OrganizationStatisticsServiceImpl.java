@@ -63,7 +63,8 @@ public class OrganizationStatisticsServiceImpl implements OrganizationStatistics
         Long upcomingActivities = activityRepository.countUpcomingActivitiesByOrganization(organizationId);
         Long ongoingActivities = activityRepository.countOngoingActivitiesByOrganization(organizationId);
         Long completedActivities = activityRepository.countCompletedActivitiesByOrganization(organizationId);
-        Long canceledActivities = activityRepository.countActivitiesByStatusAndOrganization(organizationId, ActivityStatus.CANCELLED);
+        Long canceledActivities = activityRepository.countActivitiesByStatusAndOrganization(organizationId,
+                ActivityStatus.CANCELLED);
 
         statistics.setTotalActivities(totalActivities != null ? totalActivities : 0L);
         statistics.setUpcomingActivities(upcomingActivities != null ? upcomingActivities : 0L);

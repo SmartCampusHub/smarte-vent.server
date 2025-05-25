@@ -4,5 +4,5 @@ public record StudentSemesterDetailDto(
     Long id,
     Long studentId,
     String classId,
-    Integer attendanceScore, Float gpa) {
+    Integer attendanceScore, Float gpa)  implements AbstractModel {
 }

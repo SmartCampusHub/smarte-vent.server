@@ -3,12 +3,14 @@ package com.winnguyen1905.Activity.model.viewmodel;
 import java.time.Instant;
 import java.time.Instant;
 import com.winnguyen1905.Activity.common.constant.ScheduleStatus;
+import com.winnguyen1905.Activity.model.dto.AbstractModel;
+
 import lombok.Builder;
 import lombok.Data;
 
 @Data
 @Builder
-public class EventScheduleViewModel {
+public class EventScheduleViewModel  implements AbstractModel {
   private Long id;
   private Long activityId;
   private String activityTitle;
