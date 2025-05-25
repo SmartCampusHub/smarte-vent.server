@@ -68,6 +68,10 @@ public class EActivitySpecification {
         predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("capacity"), searchRequest.maxCapacityLimit()));
       }
 
+      if (searchRequest.isApproved() != null) {
+        predicates.add(criteriaBuilder.equal(root.get("isApproved"), searchRequest.isApproved()));
+      }
+
       if (searchRequest.activityVenue() != null && !searchRequest.activityVenue().isBlank()) {
         predicates.add(criteriaBuilder.like(
             criteriaBuilder.lower(root.get("activityVenue")),

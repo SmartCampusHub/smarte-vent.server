@@ -1,0 +1,639 @@
+{
+  "info": {
+    "_postman_id": "c3d4e5f6-g7h8-i9j0-k1l2-m3n4o5p6q7r8",
+    "name": "Activity Management - Organizations & Statistics",
+    "description": "Organization management and statistics endpoints",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{access_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "Organization Management",
+      "item": [
+        {
+          "name": "Get All Organizations",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/organizations?page=0&size=10&sort=id,desc",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "organizations"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "10"
+                },
+                {
+                  "key": "sort",
+                  "value": "id,desc"
+                }
+              ]
+            },
+            "description": "Get a paginated list of all organizations"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Organization by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/organizations/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "organizations",
+                "1"
+              ]
+            },
+            "description": "Get details of a specific organization"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Organization",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Computer Science Club\",\n    \"description\": \"A club for computer science enthusiasts\",\n    \"shortDescription\": \"CS Club\",\n    \"email\": \"csclub@example.com\",\n    \"phone\": \"1234567890\",\n    \"website\": \"https://csclub.example.com\",\n    \"address\": \"123 University Street\",\n    \"logoUrl\": \"https://example.com/logo.png\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/organizations",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "organizations"
+              ]
+            },
+            "description": "Create a new organization"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Organization",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"id\": 1,\n    \"name\": \"Updated Computer Science Club\",\n    \"description\": \"An updated club for computer science enthusiasts\",\n    \"short_description\": \"Updated CS Club\",\n    \"email\": \"csclub@example.com\",\n    \"phone\": \"1234567890\",\n    \"website\": \"https://csclub.example.com\",\n    \"address\": \"123 University Street\",\n    \"logo_url\": \"https://example.com/logo.png\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/organizations/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "organizations",
+                "1"
+              ]
+            },
+            "description": "Update an existing organization"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Organization",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/organizations/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "organizations",
+                "1"
+              ]
+            },
+            "description": "Delete an organization"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "General Statistics",
+      "item": [
+        {
+          "name": "Get Overall Statistics",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/statistics",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "statistics"
+              ]
+            },
+            "description": "Get overall statistics for all activities"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Daily Statistics",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/statistics/daily",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "statistics",
+                "daily"
+              ]
+            },
+            "description": "Get daily statistics"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Weekly Statistics",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/statistics/weekly",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "statistics",
+                "weekly"
+              ]
+            },
+            "description": "Get weekly statistics"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Monthly Statistics",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/statistics/monthly",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "statistics",
+                "monthly"
+              ]
+            },
+            "description": "Get monthly statistics"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Statistics by Category",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/statistics/by-category?category=WORKSHOP",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "statistics",
+                "by-category"
+              ],
+              "query": [
+                {
+                  "key": "category",
+                  "value": "WORKSHOP"
+                }
+              ]
+            },
+            "description": "Get statistics filtered by activity category"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Statistics by Date Range",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/statistics/by-date-range?startDate=2025-01-01T00:00:00Z&endDate=2025-05-25T00:00:00Z",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "statistics",
+                "by-date-range"
+              ],
+              "query": [
+                {
+                  "key": "startDate",
+                  "value": "2025-01-01T00:00:00Z"
+                },
+                {
+                  "key": "endDate",
+                  "value": "2025-05-25T00:00:00Z"
+                }
+              ]
+            },
+            "description": "Get statistics for a custom date range"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Organization Statistics",
+      "item": [
+        {
+          "name": "Get Organization Statistics",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/organization-statistics/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "organization-statistics",
+                "1"
+              ]
+            },
+            "description": "Get comprehensive statistics for a specific organization"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Organization Activities by Month",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/organization-statistics/1/activities-by-month?startDate=2025-01-01T00:00:00Z&endDate=2025-12-31T23:59:59Z",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "organization-statistics",
+                "1",
+                "activities-by-month"
+              ],
+              "query": [
+                {
+                  "key": "startDate",
+                  "value": "2025-01-01T00:00:00Z"
+                },
+                {
+                  "key": "endDate",
+                  "value": "2025-12-31T23:59:59Z"
+                }
+              ]
+            },
+            "description": "Get monthly activity statistics for an organization"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Organization Activities by Category",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/organization-statistics/1/activities-by-category",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "organization-statistics",
+                "1",
+                "activities-by-category"
+              ]
+            },
+            "description": "Get activity statistics by category for an organization"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Top Activities by Participation",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/organization-statistics/1/top-activities?limit=5",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "organization-statistics",
+                "1",
+                "top-activities"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "5"
+                }
+              ]
+            },
+            "description": "Get top activities by participation for an organization"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Organization Participation Rate",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/organization-statistics/1/participation-rate",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "organization-statistics",
+                "1",
+                "participation-rate"
+              ]
+            },
+            "description": "Get participation rate statistics for an organization"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Student Statistics",
+      "item": [
+        {
+          "name": "Get My Statistics",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/student-statistics/my-statistics",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "student-statistics",
+                "my-statistics"
+              ]
+            },
+            "description": "Get personal statistics for the current student"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Student Statistics by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/student-statistics/student/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "student-statistics",
+                "student",
+                "1"
+              ]
+            },
+            "description": "Get statistics for a specific student (admin only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Student Participation Trends",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/student-statistics/my-statistics/trends?startDate=2025-01-01T00:00:00Z&endDate=2025-05-25T00:00:00Z",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "student-statistics",
+                "my-statistics",
+                "trends"
+              ],
+              "query": [
+                {
+                  "key": "startDate",
+                  "value": "2025-01-01T00:00:00Z"
+                },
+                {
+                  "key": "endDate",
+                  "value": "2025-05-25T00:00:00Z"
+                }
+              ]
+            },
+            "description": "Get participation trends for the current student"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Student Activity Breakdown",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/student-statistics/my-statistics/breakdown-by-category",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "student-statistics",
+                "my-statistics",
+                "breakdown-by-category"
+              ]
+            },
+            "description": "Get activity breakdown by category for the current student"
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "access_token",
+      "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
+      "type": "string"
+    }
+  ]
+}

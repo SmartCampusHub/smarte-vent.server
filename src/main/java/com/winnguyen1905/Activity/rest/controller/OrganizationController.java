@@ -9,6 +9,8 @@ import com.winnguyen1905.Activity.model.dto.OrganizationSearchRequest;
 import com.winnguyen1905.Activity.model.viewmodel.OrganizationVm;
 import com.winnguyen1905.Activity.model.viewmodel.PagedResponse;
 import com.winnguyen1905.Activity.rest.service.OrganizerService;
+import com.winnguyen1905.Activity.common.annotation.AccountRequest;
+import com.winnguyen1905.Activity.common.annotation.TAccountRequest;
 import com.winnguyen1905.Activity.common.constant.SystemConstant;
 import com.winnguyen1905.Activity.model.dto.ActivityDto;
 
@@ -42,13 +44,12 @@ public class OrganizationController {
   // return ResponseEntity.ok(organizationService.create(organizationDto));
   // }
 
-  // @PutMapping("/{id}")
-  // public ResponseEntity<OrganizationDto> updateOrganization(
-  // @PathVariable Long id,
-  // @RequestBody OrganizationDto organizationDto) {
-  // organizationDto.setI(id);
-  // return ResponseEntity.ok(organizationService.update(organizationDto));
-  // }
+  @PostMapping("/update")
+  public ResponseEntity<Void> updateOrganization(
+      @RequestBody OrganizationDto organizationDto, @AccountRequest TAccountRequest accountRequest) {
+    organizationService.updateOrganizer(accountRequest, organizationDto);
+    return ResponseEntity.ok().build();
+  }
 
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> deleteOrganization(@PathVariable Long id) {
@@ -64,16 +65,16 @@ public class OrganizationController {
 
   // @PostMapping("/{id}/members")
   // public ResponseEntity<MemberDto> addMember(
-  //     @PathVariable Long id,
-  //     @RequestBody MemberDto memberDto) {
-  //   return ResponseEntity.ok(organizationService.addMember(id, memberDto));
+  // @PathVariable Long id,
+  // @RequestBody MemberDto memberDto) {
+  // return ResponseEntity.ok(organizationService.addMember(id, memberDto));
   // }
 
   // @DeleteMapping("/{id}/members/{memberId}")
   // public ResponseEntity<Void> removeMember(
-  //     @PathVariable Long id,
-  //     @PathVariable Long memberId) {
-  //   organizationService.removeMember(id, memberId);
-  //   return ResponseEntity.noContent().build();
+  // @PathVariable Long id,
+  // @PathVariable Long memberId) {
+  // organizationService.removeMember(id, memberId);
+  // return ResponseEntity.noContent().build();
   // }
 }

@@ -14,7 +14,7 @@ import org.springframework.data.domain.Pageable;
 
 public interface OrganizerService {
     void createOrganizer(TAccountRequest accountRequest, OrganizationDto organizerDto);
-    void updateOrganizer(TAccountRequest accountRequest, OrganizationDto organizerDto, Long id);
+    void updateOrganizer(TAccountRequest accountRequest, OrganizationDto organizerDto);
     void deleteOrganizer(TAccountRequest accountRequest, Long id);
 
     PagedResponse<OrganizationVm> getAllOrganizers(OrganizationSearchRequest organizationSearchRequest, Pageable pageable);

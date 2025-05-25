@@ -1,0 +1,596 @@
+{
+  "info": {
+    "_postman_id": "b2c3d4e5-f6g7-h8i9-j0k1-l2m3n4o5p6q7",
+    "name": "Activity Management - Activities",
+    "description": "Activity management and statistics endpoints",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{access_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "Activity Management",
+      "item": [
+        {
+          "name": "Create Activity",
+          "request": {
+            "method": "POST",
+            "header": [
+
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"activity_name\": \"Workshop on Machine Learning\",\n    \"description\": \"A comprehensive workshop on machine learning fundamentals\",\n    \"short_description\": \"ML Workshop\",\n    \"activity_category\": \"WORKSHOP\",\n    \"capacity_limit\": 50,\n    \"start_date\": \"2025-06-15T09:00:00Z\",\n    \"end_date\": \"2025-06-15T17:00:00Z\",\n    \"venue\": \"Main Campus\",\n    \"address\": \"123 University Street\",\n    \"latitude\": 10.762622,\n    \"longitude\": 106.660172,\n    \"fee\": 0,\n    \"is_featured\": true,\n    \"organization_id\": 1,\n    \"tags\": [\"machine learning\", \"workshop\", \"technology\"],\n    \"registration_deadline\": \"2025-06-10T23:59:59Z\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/activities/create",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "activities",
+                "create"
+              ]
+            },
+            "description": "Create a new activity"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Activity",
+          "request": {
+            "method": "POST",
+            "header": [
+
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"id\": 1,\n    \"activityName\": \"Updated Workshop on Machine Learning\",\n    \"description\": \"An updated comprehensive workshop on machine learning fundamentals\",\n    \"shortDescription\": \"Updated ML Workshop\",\n    \"activityCategory\": \"WORKSHOP\",\n    \"capacityLimit\": 60,\n    \"startDate\": \"2025-06-15T09:00:00Z\",\n    \"endDate\": \"2025-06-15T17:00:00Z\",\n    \"venue\": \"Main Campus\",\n    \"address\": \"123 University Street\",\n    \"latitude\": 10.762622,\n    \"longitude\": 106.660172,\n    \"fee\": 0,\n    \"isFeatured\": true,\n    \"organizationId\": 1,\n    \"tags\": [\"machine learning\", \"workshop\", \"technology\", \"AI\"],\n    \"registrationDeadline\": \"2025-06-10T23:59:59Z\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/activities/update",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "activities",
+                "update"
+              ]
+            },
+            "description": "Update an existing activity"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Activity",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/activities/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "activities",
+                "1"
+              ]
+            },
+            "description": "Delete an activity"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Activity by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/activities/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "activities",
+                "1"
+              ]
+            },
+            "description": "Get details of a specific activity"
+          },
+          "response": []
+        },
+        {
+          "name": "Search Activities",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/activities/search?page=0&size=10&sort=startDate,desc&activityName=workshop&activityCategory=WORKSHOP&startDateFrom=2025-01-01T00:00:00Z&startDateTo=2025-12-31T23:59:59Z",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "activities",
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "10"
+                },
+                {
+                  "key": "sort",
+                  "value": "startDate,desc"
+                },
+                {
+                  "key": "activityName",
+                  "value": "workshop"
+                },
+                {
+                  "key": "activityCategory",
+                  "value": "WORKSHOP"
+                },
+                {
+                  "key": "startDateFrom",
+                  "value": "2025-01-01T00:00:00Z"
+                },
+                {
+                  "key": "startDateTo",
+                  "value": "2025-12-31T23:59:59Z"
+                }
+              ]
+            },
+            "description": "Search activities with various filters"
+          },
+          "response": []
+        },
+        {
+          "name": "Get My Activity Contributions",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/activities/my-contributor?page=0&size=10",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "activities",
+                "my-contributor"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Get activities where the user is a contributor"
+          },
+          "response": []
+        },
+        {
+          "name": "Join Activity",
+          "request": {
+            "method": "POST",
+            "header": [
+
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"activityId\": 1,\n    \"participationRole\": \"PARTICIPANT\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/activities/join",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "activities",
+                "join"
+              ]
+            },
+            "description": "Join an activity as a participant or volunteer"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Joined Activities",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/activities/joined?page=0&size=10",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "activities",
+                "joined"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Get activities that the user has joined"
+          },
+          "response": []
+        },
+        {
+          "name": "Approve Activity",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/activities/1/approve",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "activities",
+                "1",
+                "approve"
+              ]
+            },
+            "description": "Approve an activity (admin only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Disapprove Activity",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/activities/1/disapprove",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "activities",
+                "1",
+                "disapprove"
+              ]
+            },
+            "description": "Disapprove an activity (admin only)"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Activity Statistics",
+      "item": [
+        {
+          "name": "Get Activity Statistics",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/activity-statistics/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "activity-statistics",
+                "1"
+              ]
+            },
+            "description": "Get comprehensive statistics for a specific activity"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Activity Statistics in Time Range",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/activity-statistics/1/time-range?startDate=2025-01-01T00:00:00Z&endDate=2025-05-25T00:00:00Z",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "activity-statistics",
+                "1",
+                "time-range"
+              ],
+              "query": [
+                {
+                  "key": "startDate",
+                  "value": "2025-01-01T00:00:00Z"
+                },
+                {
+                  "key": "endDate",
+                  "value": "2025-05-25T00:00:00Z"
+                }
+              ]
+            },
+            "description": "Get statistics for an activity within a specific time range"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Participation Trend",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/activity-statistics/1/participation-trend",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "activity-statistics",
+                "1",
+                "participation-trend"
+              ]
+            },
+            "description": "Get participation trend data for an activity"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Feedback Analysis",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/activity-statistics/1/feedback-analysis",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "activity-statistics",
+                "1",
+                "feedback-analysis"
+              ]
+            },
+            "description": "Get feedback analysis for an activity"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Comparative Analysis",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/activity-statistics/1/comparative-analysis",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "activity-statistics",
+                "1",
+                "comparative-analysis"
+              ]
+            },
+            "description": "Get comparative analysis for an activity compared to similar activities"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Time Series Analysis",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/activity-statistics/1/time-series",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "activity-statistics",
+                "1",
+                "time-series"
+              ]
+            },
+            "description": "Get time series analysis for an activity"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Effectiveness Metrics",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/activity-statistics/1/effectiveness-metrics?estimatedCost=1000&estimatedValue=2000",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "activity-statistics",
+                "1",
+                "effectiveness-metrics"
+              ],
+              "query": [
+                {
+                  "key": "estimatedCost",
+                  "value": "1000"
+                },
+                {
+                  "key": "estimatedValue",
+                  "value": "2000"
+                }
+              ]
+            },
+            "description": "Get effectiveness metrics for an activity including ROI, cost per participant"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Improvement Recommendations",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/activity-statistics/1/improvement-recommendations",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "activity-statistics",
+                "1",
+                "improvement-recommendations"
+              ]
+            },
+            "description": "Get improvement recommendations for an activity based on historical data"
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "access_token",
+      "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
+      "type": "string"
+    }
+  ]
+}

@@ -1,6 +1,7 @@
 package com.winnguyen1905.Activity.persistance.entity;
 
 import java.time.Instant;
+import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -17,6 +18,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -48,6 +50,9 @@ public class EParticipationDetail {
   @Enumerated(EnumType.STRING)
   @Column(name = "aattendance_status")
   private ParticipationStatus participationStatus;
+
+  @OneToMany(mappedBy = "participation")
+  private List<EFeedback> feedbacks;
 
   @Enumerated(EnumType.STRING)
   @Column(name = "attendee_role")

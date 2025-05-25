@@ -38,7 +38,7 @@ public class ActivityController {
     return ResponseEntity.status(HttpStatus.CREATED).build();
   }
 
-  @PutMapping("/{id}")
+  @PostMapping("/update")
   public ResponseEntity<ActivityVm> updateActivity(
       @AccountRequest TAccountRequest accountRequest,
       @RequestBody ActivityDto activityDto) {
@@ -89,9 +89,23 @@ public class ActivityController {
     return ResponseEntity.ok().body(activityService.getJoinedActivities(accountRequest, pageable));
   }
 
-  @PostMapping("/approve")
-  public String postMethodName(@PathVariable Long id) {
-    return null;
+  @PostMapping("/{id}/approve")
+  public ResponseEntity<Void> approveActivity(@AccountRequest TAccountRequest accountRequest, @PathVariable("id") Long id) {
+    activityService.approveActivity(accountRequest, id);
+    return ResponseEntity.ok().build();
+  }
+
+  @PostMapping("/{id}/disapprove")
+  public ResponseEntity<Void> disapproveActivity(@AccountRequest TAccountRequest accountRequest,
+      @PathVariable("id") Long id) {
+    activityService.disapproveActivity(accountRequest, id);
+    return ResponseEntity.ok().build();
+  }
+
+  @PostMapping("/change-status")
+  public String postMethodName(@RequestBody String entity) {
+    // TODO: process POST request
+    return entity;
   }
 
   // @GetMapping("/statistical")

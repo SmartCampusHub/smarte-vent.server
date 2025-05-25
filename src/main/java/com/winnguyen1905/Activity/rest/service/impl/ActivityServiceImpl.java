@@ -73,6 +73,7 @@ public class ActivityServiceImpl implements ActivityService {
         .description(activityDto.getActivityDescription())
         .startDate(activityDto.getStartDate())
         .endDate(activityDto.getEndDate())
+        .status(ActivityStatus.PUBLISHED) // Set to null initially
         .imageUrl(activityDto.getImageUrl())
         .shortDescription(activityDto.getShortDescription())
         .tags(activityDto.getTags())
@@ -117,6 +118,7 @@ public class ActivityServiceImpl implements ActivityService {
   }
 
   @Override
+  @Transactional
   public void updateActivity(TAccountRequest accountRequest, ActivityDto activityDto) {
     validateActivityDto(activityDto);
     validateAccountRequest(accountRequest);
@@ -535,5 +537,37 @@ public class ActivityServiceImpl implements ActivityService {
         .totalElements((int) activityVms.size())
         .totalPages(3)
         .build();
+  }
+
+  @Override
+  public void approveActivity(TAccountRequest accountRequest, Long activityId) {
+    EActivity activity = activityRepository.findById(activityId)
+        .orElseThrow(() -> new EntityNotFoundException("Not found activity"));
+    if (activity.getIsApproved() == true) {
+      throw new BadRequestException("Activity is already approved");
+    }
+
+    if (activity.getStatus() == ActivityStatus.PUBLISHED) {
+      activity.setIsApproved(true);
+      activityRepository.save(activity);
+    } else {
+      throw new BadRequestException("Activity is not in pending status");
+    }
+  }
+
+  @Override
+  public void disapproveActivity(TAccountRequest accountRequest, Long activityId) {
+    EActivity activity = activityRepository.findById(activityId)
+        .orElseThrow(() -> new EntityNotFoundException("Not found activity"));
+    if (activity.getIsApproved() == false) {
+      throw new BadRequestException("Activity is already disapproved");
+    }
+
+    if (activity.getStatus() == ActivityStatus.PUBLISHED) {
+      activity.setIsApproved(false);
+      activityRepository.save(activity);
+    } else {
+      throw new BadRequestException("Activity is not in pending status");
+    }
   }
 }

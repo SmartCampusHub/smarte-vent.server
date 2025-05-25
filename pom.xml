@@ -88,14 +88,18 @@
       <artifactId>jackson-databind</artifactId>
       <version>2.15.1</version>
     </dependency>
-
+    <!-- https://mvnrepository.com/artifact/io.swagger/swagger-annotations -->
+    <dependency>
+      <groupId>io.swagger</groupId>
+      <artifactId>swagger-annotations</artifactId>
+      <version>1.6.16</version>
+    </dependency>
     <!-- Actuator for monitoring -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-actuator</artifactId>
     </dependency>
   </dependencies>
-
   <build>
     <plugins>
       <plugin>

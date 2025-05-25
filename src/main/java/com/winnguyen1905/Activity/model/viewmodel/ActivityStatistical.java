@@ -2,6 +2,8 @@ package com.winnguyen1905.Activity.model.viewmodel;
 
 import java.time.Instant;
 
+import com.winnguyen1905.Activity.model.dto.AbstractModel;
+
 public record ActivityStatistical(
     
 ) {
@@ -14,6 +16,6 @@ public record ActivityStatistical(
       String location,
       Integer totalParticipants,
       Integer totalActivities
-  ) {
+  )implements AbstractModel {
   }
 }

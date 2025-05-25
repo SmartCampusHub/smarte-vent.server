@@ -1,0 +1,294 @@
+{
+  "info": {
+    "_postman_id": "a1b2c3d4-e5f6-g7h8-i9j0-k1l2m3n4o5p6",
+    "name": "Activity Management - Statistics",
+    "description": "Activity statistics endpoints",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{access_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "Basic Statistics",
+      "item": [
+        {
+          "name": "Get Activity Statistics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/activity-statistics/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "activity-statistics",
+                "1"
+              ]
+            },
+            "description": "Get comprehensive statistics for a specific activity"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Activity Statistics in Time Range",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/activity-statistics/1/time-range?startDate=2025-01-01T00:00:00Z&endDate=2025-05-25T00:00:00Z",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "activity-statistics",
+                "1",
+                "time-range"
+              ],
+              "query": [
+                {
+                  "key": "startDate",
+                  "value": "2025-01-01T00:00:00Z"
+                },
+                {
+                  "key": "endDate",
+                  "value": "2025-05-25T00:00:00Z"
+                }
+              ]
+            },
+            "description": "Get statistics for an activity within a specific time range"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Participation Trend",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/activity-statistics/1/participation-trend",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "activity-statistics",
+                "1",
+                "participation-trend"
+              ]
+            },
+            "description": "Get participation trend data for an activity"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Feedback Analysis",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/activity-statistics/1/feedback-analysis",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "activity-statistics",
+                "1",
+                "feedback-analysis"
+              ]
+            },
+            "description": "Get feedback analysis for an activity"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Participant Performance",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/activity-statistics/1/participant-performance",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "activity-statistics",
+                "1",
+                "participant-performance"
+              ]
+            },
+            "description": "Get detailed participant performance for an activity"
+          },
+          "response": []
+        }
+      ],
+      "description": "Basic activity statistics endpoints"
+    },
+    {
+      "name": "Advanced Analytics",
+      "item": [
+        {
+          "name": "Get Comparative Analysis",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/activity-statistics/1/comparative-analysis",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "activity-statistics",
+                "1",
+                "comparative-analysis"
+              ]
+            },
+            "description": "Get comparative analysis for an activity compared to similar activities"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Time Series Analysis",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/activity-statistics/1/time-series",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "activity-statistics",
+                "1",
+                "time-series"
+              ]
+            },
+            "description": "Get time series analysis for an activity"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Effectiveness Metrics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/activity-statistics/1/effectiveness-metrics?estimatedCost=1000&estimatedValue=2000",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "activity-statistics",
+                "1",
+                "effectiveness-metrics"
+              ],
+              "query": [
+                {
+                  "key": "estimatedCost",
+                  "value": "1000"
+                },
+                {
+                  "key": "estimatedValue",
+                  "value": "2000"
+                }
+              ]
+            },
+            "description": "Get effectiveness metrics for an activity including ROI, cost per participant"
+          },
+          "response": []
+        },
+        {
+          "name": "Find Similar Activities",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/activity-statistics/1/similar-activities?limit=5",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "activity-statistics",
+                "1",
+                "similar-activities"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "5"
+                }
+              ]
+            },
+            "description": "Find similar activities to the specified activity"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Improvement Recommendations",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/activity-statistics/1/improvement-recommendations",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "activity-statistics",
+                "1",
+                "improvement-recommendations"
+              ]
+            },
+            "description": "Get improvement recommendations for an activity based on historical data"
+          },
+          "response": []
+        }
+      ],
+      "description": "Advanced analytics endpoints for objective data analysis"
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8080",
+      "type": "string"
+    }
+  ]
+}

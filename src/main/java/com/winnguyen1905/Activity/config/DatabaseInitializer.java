@@ -86,9 +86,10 @@ public class DatabaseInitializer implements CommandLineRunner {
         .likes(0)
         .registrationDeadline(Instant.parse("2025-08-01T23:59:59Z"))
         .attendanceScoreUnit(5)
-        .organization(this.organizationRepository.findById(1L).orElse(null))
+        .organization(organization)
         .createdById(1L)
         .build();
+
     activity.setActivitySchedules(List.of(EActivitySchedule.builder()
         .activity(activity)
         .startTime(Instant.parse("2025-05-15T09:30:00Z"))

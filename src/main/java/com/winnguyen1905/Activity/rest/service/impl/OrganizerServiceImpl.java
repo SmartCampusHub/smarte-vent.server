@@ -33,9 +33,15 @@ public class OrganizerServiceImpl implements OrganizerService {
   }
 
   @Override
-  public void updateOrganizer(TAccountRequest accountRequest, OrganizationDto organizerDto, Long id) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'updateOrganizer'");
+  public void updateOrganizer(TAccountRequest accountRequest, OrganizationDto organizerDto) {
+    EOrganization organizer = organizerRepository.findById(organizerDto.id())
+        .orElseThrow(() -> new RuntimeException("Organizer not found with id: " + organizerDto.id()));
+
+    organizer.setName(organizerDto.organizationName());
+    organizer.setEmail(organizerDto.representativeEmail());
+    organizer.setPhone(organizerDto.representativePhone());
+    organizer.setType(organizerDto.organizationType());
+    organizerRepository.save(organizer);
   }
 
   @Override

@@ -23,7 +23,7 @@ public class ActivityScheduleVm implements AbstractModel {
   private String activityName;
   @JsonFormat(shape = JsonFormat.Shape.STRING)
   private Instant startTime;
-  @JsonFormat(shape = JsonFormat.Shape.STRING)  
+  @JsonFormat(shape = JsonFormat.Shape.STRING)
   private Instant endTime;
   private String activityDescription;
   private ScheduleStatus status;

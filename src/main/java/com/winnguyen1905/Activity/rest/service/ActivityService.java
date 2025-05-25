@@ -19,7 +19,8 @@ public interface ActivityService {
   PagedResponse<ActivityVm> getMyActivityContributors(TAccountRequest accountRequest);
   PagedResponse<ActivityVm> getJoinedActivities(TAccountRequest accountRequest, Pageable pageable);
   ParticipationDetailVm joinActivity(TAccountRequest accountRequest, JoinActivityRequest participationDetailDto);
-  
+  void approveActivity(TAccountRequest accountRequest, Long activityId);
+  void disapproveActivity(TAccountRequest accountRequest, Long activityId);
   // PagedResponse<ActivityVm> getActivitiesByStudent(TAccountRequest accountRequest, Pageable pageable);
   ActivityVm getActivityById(TAccountRequest accountRequest, Long activityId);
   // PagedResponse<ActivityVm> getActivitiesByCategory(TAccountRequest accountRequest, ActivityCategory activityCategory, Pageable pageable);

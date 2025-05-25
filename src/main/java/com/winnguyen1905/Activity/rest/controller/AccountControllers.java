@@ -15,13 +15,12 @@ import com.winnguyen1905.Activity.rest.service.AccountService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 @Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("accounts")
-public class AccountControllerss {
+public class AccountControllers {
 
   private final AccountService accountService;
 

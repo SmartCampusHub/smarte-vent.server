@@ -86,6 +86,9 @@ public class EActivity {
   @OneToMany(mappedBy = "activity", cascade = CascadeType.ALL)
   private List<EActivitySchedule> activitySchedules;
 
+  @OneToMany(mappedBy = "activity", cascade = CascadeType.ALL)
+  private List<EFeedback> feedbacks;
+
   @Column(name = "start_date")
   private Instant startDate;
 
