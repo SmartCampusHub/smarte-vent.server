@@ -13,21 +13,21 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PreviousRunMetricsVm  implements AbstractModel  {
-    private Long activityId;
-    private String activityName;
-    private Instant startDate;
-    private Instant endDate;
-    
-    // Key metrics for comparison
-    private Integer participantCount;
-    private Double participationRate;
-    private Double averageRating;
-    private Double costPerParticipant;
-    
-    // Change metrics
-    private Double participantCountChange; // % change from this run
-    private Double participationRateChange; // % change from this run
-    private Double averageRatingChange; // % change from this run
-    private Double costPerParticipantChange; // % change from this run
+public class PreviousRunMetricsVm implements AbstractModel {
+  private Long activityId;
+  private String activityName;
+  private Instant startDate;
+  private Instant endDate;
+
+  // Key metrics for comparison
+  private Integer participantCount;
+  private Double participationRate;
+  private Double averageRating;
+  private Double costPerParticipant;
+
+  // Change metrics
+  private Double participantCountChange; // % change from this run
+  private Double participationRateChange; // % change from this run
+  private Double averageRatingChange; // % change from this run
+  private Double costPerParticipantChange; // % change from this run
 }

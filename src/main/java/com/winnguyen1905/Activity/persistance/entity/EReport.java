@@ -37,6 +37,9 @@ public class EReport {
   @JoinColumn(name = "activity_id")
   private EActivity activity;
 
+  @Column(name = "report_type")
+  private String reportType;
+
   @ManyToOne
   @JoinColumn(name = "reporter_id")
   private EAccountCredentials reporter;

@@ -33,7 +33,7 @@ public class ActivityStatisticsController {
      */
     @GetMapping("/{activityId}")
     public ResponseEntity<ActivityStatisticsVm> getActivityStatistics(
-            @PathVariable Long activityId) {
+            @PathVariable("activityId") Long activityId) {
         ActivityStatisticsVm statistics = activityStatisticsService.getActivityStatistics(activityId);
         return ResponseEntity.ok(statistics);
     }
@@ -48,7 +48,7 @@ public class ActivityStatisticsController {
      */
     @GetMapping("/{activityId}/time-range")
     public ResponseEntity<ActivityStatisticsVm> getActivityStatisticsInTimeRange(
-            @PathVariable Long activityId,
+            @PathVariable("activityId") Long activityId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant startDate,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant endDate) {
         ActivityStatisticsVm statistics = activityStatisticsService.getActivityStatisticsInTimeRange(activityId, startDate, endDate);

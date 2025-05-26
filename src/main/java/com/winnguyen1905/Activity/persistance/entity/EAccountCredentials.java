@@ -85,8 +85,8 @@ public class EAccountCredentials {
   @OneToMany(mappedBy = "reporter")
   private List<EReport> reports;
 
-  @OneToMany(mappedBy = "student")
-  private List<EStudentSemesterDetail> studentSemesterDetails;
+  // @OneToMany(mappedBy = "student")
+  // private List<EStudentSemesterDetail> studentSemesterDetails;
 
   @JsonIgnore
   @Column(name = "created_by", nullable = true)

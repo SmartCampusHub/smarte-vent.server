@@ -24,59 +24,59 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
-@Getter
-@Setter
-@Entity
-@SuperBuilder
-@NoArgsConstructor
-@AllArgsConstructor
-@Table(name = "student_semester_detail")
+// @Getter
+// @Setter
+// @Entity
+// @SuperBuilder
+// @NoArgsConstructor
+// @AllArgsConstructor
+// @Table(name = "student_semester_detail")
 public class EStudentSemesterDetail {
-  @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
-  @Column(name = "id", updatable = false, nullable = false)
-  protected Long id;
+  // @Id
+  // @GeneratedValue(strategy = GenerationType.AUTO)
+  // @Column(name = "id", updatable = false, nullable = false)
+  // protected Long id;
 
-  @ManyToOne
-  @JoinColumn(name = "student_id")
-  private EAccountCredentials student;
+  // @ManyToOne
+  // @JoinColumn(name = "student_id")
+  // private EAccountCredentials student;
 
-  @Column(name = "semester_year")
-  private String semesterYear;
+  // @Column(name = "semester_year")
+  // private String semesterYear;
   
 
-  @Min(60)
-  @Max(100)
-  @Column(name = "attendance_score")
-  private Integer attendanceScore;
+  // @Min(60)
+  // @Max(100)
+  // @Column(name = "attendance_score")
+  // private Integer attendanceScore;
 
-  @Column(name = "semester_number")
-  private Integer semesterNumber;
+  // @Column(name = "semester_number")
+  // private Integer semesterNumber;
 
-  @Min(0)
-  @Max(4)
-  @Column(name = "gpa")
-  private Float gpa;
+  // @Min(0)
+  // @Max(4)
+  // @Column(name = "gpa")
+  // private Float gpa;
 
-  @Column(name = "start_date")
-  private Instant startDate;
+  // @Column(name = "start_date")
+  // private Instant startDate;
 
-  @Column(name = "end_date")
-  private Instant endDate;
+  // @Column(name = "end_date")
+  // private Instant endDate;
 
-  @JsonIgnore
-  @Column(name = "created_by", nullable = true)
-  private String createdBy;
+  // @JsonIgnore
+  // @Column(name = "created_by", nullable = true)
+  // private String createdBy;
 
-  @JsonIgnore
-  @Column(name = "updated_by", nullable = true)
-  private String updatedBy;
+  // @JsonIgnore
+  // @Column(name = "updated_by", nullable = true)
+  // private String updatedBy;
 
-  @CreationTimestamp
-  @Column(name = "created_date", updatable = false)
-  private Instant createdDate;
+  // @CreationTimestamp
+  // @Column(name = "created_date", updatable = false)
+  // private Instant createdDate;
 
-  @UpdateTimestamp
-  @Column(name = "updated_date", updatable = true)
-  private Instant updatedDate;
+  // @UpdateTimestamp
+  // @Column(name = "updated_date", updatable = true)
+  // private Instant updatedDate;
 }

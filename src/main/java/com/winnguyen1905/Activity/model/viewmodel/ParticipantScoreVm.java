@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 public class ParticipantScoreVm implements AbstractModel {
     private Long participantId;
     private String participantName;
+    private String feedbackDescription;
     private ParticipationRole role;
     private Double score;
     private Double feedbackRating;

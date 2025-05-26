@@ -64,6 +64,9 @@ public class EOrganization {
   @OneToMany(mappedBy = "organization")
   private List<EActivity> activities;
 
+  @Column(name = "description")
+  private String description;
+
   @MapsId
   @OneToOne
   @JoinColumn(name = "id")

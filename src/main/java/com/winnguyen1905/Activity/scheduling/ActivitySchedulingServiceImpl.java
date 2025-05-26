@@ -4,6 +4,7 @@ import com.winnguyen1905.Activity.common.constant.ActivityStatus;
 import com.winnguyen1905.Activity.common.constant.NotificationType;
 import com.winnguyen1905.Activity.common.constant.ScheduleStatus;
 import com.winnguyen1905.Activity.model.dto.NotificationDto;
+import com.winnguyen1905.Activity.model.dto.SocketNotificationDto;
 import com.winnguyen1905.Activity.persistance.entity.EAccountCredentials;
 import com.winnguyen1905.Activity.persistance.entity.EActivity;
 import com.winnguyen1905.Activity.persistance.entity.EActivitySchedule;
@@ -14,10 +15,12 @@ import com.winnguyen1905.Activity.persistance.repository.ParticipationDetailRepo
 import com.winnguyen1905.Activity.rest.service.ActivitySchedulingService;
 import com.winnguyen1905.Activity.rest.service.EmailService;
 import com.winnguyen1905.Activity.rest.service.NotificationService;
+import com.winnguyen1905.Activity.rest.service.SocketIOService;
 import com.winnguyen1905.Activity.utils.EmailTemplateUtil;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +30,7 @@ import java.util.List;
 
 @Slf4j
 @Service
+@EnableScheduling
 @RequiredArgsConstructor
 public class ActivitySchedulingServiceImpl implements ActivitySchedulingService {
 
@@ -35,51 +39,260 @@ public class ActivitySchedulingServiceImpl implements ActivitySchedulingService 
     private final ParticipationDetailRepository participationDetailRepository;
     private final NotificationService notificationService;
     private final EmailService emailService;
+    private final SocketIOService socketIOService;
 
     /**
-     * Sends notifications for activities starting in the next 24 hours.
-     * Runs daily at 9 AM.
+     * Sends notifications for activities happening today.
+     * Runs daily at 7 AM.
      */
-    @Override
-    @Scheduled(cron = "0 0 9 * * ?")
-    public void sendUpcomingActivityNotifications() {
-        log.info("Running scheduled task: sendUpcomingActivityNotifications");
-        
+    @Scheduled(cron = "0 0 7 * * ?")
+    public void sendActivityHappeningTodayNotifications() {
+        log.info("Running scheduled task: sendActivityHappeningTodayNotifications");
+
         Instant now = Instant.now();
-        Instant oneDayLater = now.plus(24, ChronoUnit.HOURS);
-        
-        // Find activities starting in the next 24 hours
-        List<EActivity> upcomingActivities = activityRepository.findActivitiesStartingInRange(now, oneDayLater);
-        
-        for (EActivity activity : upcomingActivities) {
+        Instant endOfDay = now.plus(24, ChronoUnit.HOURS);
+
+        // Find activities starting today
+        List<EActivity> todayActivities = activityRepository.findActivitiesStartingInRange(now, endOfDay);
+
+        for (EActivity activity : todayActivities) {
             // Only send notifications for confirmed activities
-            if (!ActivityStatus.CONFIRMED.equals(activity.getStatus())) {
+            if (!ActivityStatus.CONFIRMED.equals(activity.getStatus()) &&
+                    !ActivityStatus.ONGOING.equals(activity.getStatus())) {
                 continue;
             }
-            
+
             List<EParticipationDetail> participants = participationDetailRepository.findByActivityId(activity.getId());
-            
+
+            // Create a socket notification for this activity
+            SocketNotificationDto socketNotification = SocketNotificationDto.builder()
+                    .title("Activity Starting Today!")
+                    .message("Your activity '" + activity.getActivityName() + "' is starting today!")
+                    .type(NotificationType.ACTIVITY)
+                    .activityId(activity.getId())
+                    .timestamp(Instant.now())
+                    .daysUntilStart(0L)
+                    .activityName(activity.getActivityName())
+                    .activityStartDate(activity.getStartDate())
+                    .build();
+
             for (EParticipationDetail detail : participants) {
                 EAccountCredentials participant = detail.getParticipant();
-                
-                // Send notification
+
+                // Send socket notification if user is connected
+                socketIOService.sendNotification(participant.getId(), "activity_today", socketNotification);
+
+                // Send regular notification
                 NotificationDto notification = NotificationDto.builder()
-                    .title("Activity Reminder: " + activity.getActivityName())
-                    .content("Your activity '" + activity.getActivityName() + "' is starting soon on " + activity.getStartDate())
-                    .notificationType(NotificationType.ACTIVITY)
-                    .receiverId(participant.getId())
-                    .build();
-                
+                        .title("Activity Today: " + activity.getActivityName())
+                        .content("Your activity '" + activity.getActivityName() + "' is starting today at " +
+                                activity.getStartDate())
+                        .notificationType(NotificationType.ACTIVITY)
+                        .receiverId(participant.getId())
+                        .build();
+
                 try {
                     notificationService.sendNotification(null, notification);
                 } catch (Exception e) {
                     log.error("Failed to send notification to participant {}: {}", participant.getId(), e.getMessage());
                 }
-                
+
                 // Send email
                 try {
                     String emailBody = EmailTemplateUtil.generateActivityReminderBody(activity, participant);
-                    emailService.sendEmail(participant.getEmail(), "Activity Reminder: " + activity.getActivityName(), emailBody);
+                    emailService.sendEmail(participant.getEmail(), "Activity Today: " + activity.getActivityName(),
+                            emailBody);
+                    log.info("Sent activity today email to: {}", participant.getEmail());
+                } catch (Exception e) {
+                    log.error("Failed to send email to {}: {}", participant.getEmail(), e.getMessage());
+                }
+            }
+        }
+    }
+
+    /**
+     * Sends notifications for activities starting in 1 day.
+     * Runs daily at 8 AM.
+     */
+    @Scheduled(cron = "0 0 8 * * ?")
+    public void sendActivityOneDayReminderNotifications() {
+        log.info("Running scheduled task: sendActivityOneDayReminderNotifications");
+
+        Instant oneDayLater = Instant.now().plus(1, ChronoUnit.DAYS);
+        Instant twoDaysLater = oneDayLater.plus(24, ChronoUnit.HOURS);
+
+        // Find activities starting in 1 day
+        List<EActivity> oneDayActivities = activityRepository.findActivitiesStartingInRange(oneDayLater, twoDaysLater);
+
+        for (EActivity activity : oneDayActivities) {
+            // Only send notifications for confirmed activities
+            if (!ActivityStatus.CONFIRMED.equals(activity.getStatus())) {
+                continue;
+            }
+
+            List<EParticipationDetail> participants = participationDetailRepository.findByActivityId(activity.getId());
+
+            // Create a socket notification for this activity
+            SocketNotificationDto socketNotification = SocketNotificationDto.builder()
+                    .title("Activity Starting Tomorrow!")
+                    .message("Your activity '" + activity.getActivityName() + "' starts tomorrow!")
+                    .type(NotificationType.ACTIVITY)
+                    .activityId(activity.getId())
+                    .timestamp(Instant.now())
+                    .daysUntilStart(1L)
+                    .activityName(activity.getActivityName())
+                    .activityStartDate(activity.getStartDate())
+                    .build();
+
+            for (EParticipationDetail detail : participants) {
+                EAccountCredentials participant = detail.getParticipant();
+
+                // Send socket notification if user is connected
+                socketIOService.sendNotification(participant.getId(), "activity_one_day", socketNotification);
+
+                // Send regular notification
+                NotificationDto notification = NotificationDto.builder()
+                        .title("Activity Tomorrow: " + activity.getActivityName())
+                        .content("Your activity '" + activity.getActivityName() + "' is starting tomorrow at " +
+                                activity.getStartDate())
+                        .notificationType(NotificationType.ACTIVITY)
+                        .receiverId(participant.getId())
+                        .build();
+
+                try {
+                    notificationService.sendNotification(null, notification);
+                } catch (Exception e) {
+                    log.error("Failed to send notification to participant {}: {}", participant.getId(), e.getMessage());
+                }
+
+                // Send email
+                try {
+                    String emailBody = EmailTemplateUtil.generateActivityReminderBody(activity, participant);
+                    emailService.sendEmail(participant.getEmail(), "Activity Tomorrow: " + activity.getActivityName(),
+                            emailBody);
+                    log.info("Sent activity tomorrow email to: {}", participant.getEmail());
+                } catch (Exception e) {
+                    log.error("Failed to send email to {}: {}", participant.getEmail(), e.getMessage());
+                }
+            }
+        }
+    }
+
+    /**
+     * Sends notifications for activities starting in 3 days.
+     * Runs daily at 9 AM.
+     */
+    @Scheduled(cron = "0 0 9 * * ?")
+    public void sendActivityThreeDayReminderNotifications() {
+        log.info("Running scheduled task: sendActivityThreeDayReminderNotifications");
+
+        Instant threeDaysLater = Instant.now().plus(3, ChronoUnit.DAYS);
+        Instant fourDaysLater = threeDaysLater.plus(24, ChronoUnit.HOURS);
+
+        // Find activities starting in 3 days
+        List<EActivity> threeDayActivities = activityRepository.findActivitiesStartingInRange(threeDaysLater,
+                fourDaysLater);
+
+        for (EActivity activity : threeDayActivities) {
+            // Only send notifications for confirmed activities
+            if (!ActivityStatus.CONFIRMED.equals(activity.getStatus())) {
+                continue;
+            }
+
+            List<EParticipationDetail> participants = participationDetailRepository.findByActivityId(activity.getId());
+
+            // Create a socket notification for this activity
+            SocketNotificationDto socketNotification = SocketNotificationDto.builder()
+                    .title("Activity in 3 Days!")
+                    .message("Your activity '" + activity.getActivityName() + "' starts in 3 days!")
+                    .type(NotificationType.ACTIVITY)
+                    .activityId(activity.getId())
+                    .timestamp(Instant.now())
+                    .daysUntilStart(3L)
+                    .activityName(activity.getActivityName())
+                    .activityStartDate(activity.getStartDate())
+                    .build();
+
+            for (EParticipationDetail detail : participants) {
+                EAccountCredentials participant = detail.getParticipant();
+
+                // Send socket notification if user is connected
+                socketIOService.sendNotification(participant.getId(), "activity_three_days", socketNotification);
+
+                // Send regular notification
+                NotificationDto notification = NotificationDto.builder()
+                        .title("Activity in 3 Days: " + activity.getActivityName())
+                        .content("Your activity '" + activity.getActivityName() + "' is starting in 3 days on " +
+                                activity.getStartDate())
+                        .notificationType(NotificationType.ACTIVITY)
+                        .receiverId(participant.getId())
+                        .build();
+
+                try {
+                    notificationService.sendNotification(null, notification);
+                } catch (Exception e) {
+                    log.error("Failed to send notification to participant {}: {}", participant.getId(), e.getMessage());
+                }
+
+                // Send email
+                try {
+                    String emailBody = EmailTemplateUtil.generateActivityReminderBody(activity, participant);
+                    emailService.sendEmail(participant.getEmail(), "Activity in 3 Days: " + activity.getActivityName(),
+                            emailBody);
+                    log.info("Sent activity 3-day reminder email to: {}", participant.getEmail());
+                } catch (Exception e) {
+                    log.error("Failed to send email to {}: {}", participant.getEmail(), e.getMessage());
+                }
+            }
+        }
+    }
+
+    /**
+     * Sends notifications for activities starting in the next 24 hours.
+     * Runs daily at 10 AM.
+     */
+    @Override
+    @Scheduled(cron = "0 0 10 * * ?")
+    public void sendUpcomingActivityNotifications() {
+        log.info("Running scheduled task: sendUpcomingActivityNotifications");
+
+        Instant now = Instant.now();
+        Instant oneDayLater = now.plus(24, ChronoUnit.HOURS);
+
+        // Find activities starting in the next 24 hours
+        List<EActivity> upcomingActivities = activityRepository.findActivitiesStartingInRange(now, oneDayLater);
+
+        for (EActivity activity : upcomingActivities) {
+            // Only send notifications for confirmed activities
+            if (!ActivityStatus.CONFIRMED.equals(activity.getStatus())) {
+                continue;
+            }
+
+            List<EParticipationDetail> participants = participationDetailRepository.findByActivityId(activity.getId());
+
+            for (EParticipationDetail detail : participants) {
+                EAccountCredentials participant = detail.getParticipant();
+
+                // Send notification
+                NotificationDto notification = NotificationDto.builder()
+                        .title("Activity Reminder: " + activity.getActivityName())
+                        .content("Your activity '" + activity.getActivityName() + "' is starting soon on "
+                                + activity.getStartDate())
+                        .notificationType(NotificationType.ACTIVITY)
+                        .receiverId(participant.getId())
+                        .build();
+
+                try {
+                    notificationService.sendNotification(null, notification);
+                } catch (Exception e) {
+                    log.error("Failed to send notification to participant {}: {}", participant.getId(), e.getMessage());
+                }
+
+                // Send email
+                try {
+                    String emailBody = EmailTemplateUtil.generateActivityReminderBody(activity, participant);
+                    emailService.sendEmail(participant.getEmail(), "Activity Reminder: " + activity.getActivityName(),
+                            emailBody);
                     log.info("Sent activity reminder email to: {}", participant.getEmail());
                 } catch (Exception e) {
                     log.error("Failed to send email to {}: {}", participant.getEmail(), e.getMessage());
@@ -93,46 +306,63 @@ public class ActivitySchedulingServiceImpl implements ActivitySchedulingService 
      * Runs daily at 10 AM.
      */
     @Override
-    @Scheduled(cron = "0 0 10 * * ?")
+    @Scheduled(cron = "0 0 11 * * ?")
     public void sendUpcomingScheduleNotifications() {
         log.info("Running scheduled task: sendUpcomingScheduleNotifications");
-        
+
         Instant now = Instant.now();
         Instant oneDayLater = now.plus(24, ChronoUnit.HOURS);
-        
+
         // Find schedules starting in the next 24 hours
-        List<EActivitySchedule> upcomingSchedules = activityScheduleRepository.findSchedulesStartingBetween(now, oneDayLater);
-        
+        List<EActivitySchedule> upcomingSchedules = activityScheduleRepository.findSchedulesStartingBetween(now,
+                oneDayLater);
+
         for (EActivitySchedule schedule : upcomingSchedules) {
             // Only send notifications for confirmed schedules
             if (!ScheduleStatus.CONFIRMED.equals(schedule.getStatus())) {
                 continue;
             }
-            
+
             EActivity activity = schedule.getActivity();
             List<EParticipationDetail> participants = participationDetailRepository.findByActivityId(activity.getId());
-            
+
             for (EParticipationDetail detail : participants) {
                 EAccountCredentials participant = detail.getParticipant();
-                
+
                 // Send notification
                 NotificationDto notification = NotificationDto.builder()
-                    .title("Schedule Reminder: " + activity.getActivityName())
-                    .content("A schedule for '" + activity.getActivityName() + "' is starting soon at " + schedule.getStartTime())
-                    .notificationType(NotificationType.ACTIVITY)
-                    .receiverId(participant.getId())
-                    .build();
-                
+                        .title("Schedule Reminder: " + activity.getActivityName())
+                        .content("A schedule for '" + activity.getActivityName() + "' is starting soon at "
+                                + schedule.getStartTime())
+                        .notificationType(NotificationType.ACTIVITY)
+                        .receiverId(participant.getId())
+                        .build();
+
                 try {
                     notificationService.sendNotification(null, notification);
                 } catch (Exception e) {
                     log.error("Failed to send notification to participant {}: {}", participant.getId(), e.getMessage());
                 }
-                
+
+                // Send socket notification
+                SocketNotificationDto socketNotification = SocketNotificationDto.builder()
+                        .title("Schedule Reminder!")
+                        .message("A schedule for '" + activity.getActivityName() + "' is starting soon at "
+                                + schedule.getStartTime())
+                        .type(NotificationType.ACTIVITY)
+                        .activityId(activity.getId())
+                        .timestamp(Instant.now())
+                        .activityName(activity.getActivityName())
+                        .activityStartDate(schedule.getStartTime())
+                        .build();
+
+                socketIOService.sendNotification(participant.getId(), "schedule_reminder", socketNotification);
+
                 // Send email
                 try {
                     String emailBody = EmailTemplateUtil.generateScheduleReminderBody(schedule, participant);
-                    emailService.sendEmail(participant.getEmail(), "Schedule Reminder: " + activity.getActivityName(), emailBody);
+                    emailService.sendEmail(participant.getEmail(), "Schedule Reminder: " + activity.getActivityName(),
+                            emailBody);
                     log.info("Sent schedule reminder email to: {}", participant.getEmail());
                 } catch (Exception e) {
                     log.error("Failed to send email to {}: {}", participant.getEmail(), e.getMessage());
@@ -150,7 +380,7 @@ public class ActivitySchedulingServiceImpl implements ActivitySchedulingService 
     public void updateActivityStatuses() {
         log.info("Running scheduled task: updateActivityStatuses");
         Instant now = Instant.now();
-        
+
         // Find activities that have ended but still marked as ongoing
         List<EActivity> endedActivities = activityRepository.findByStatusAndEndDateBefore(ActivityStatus.ONGOING, now);
         for (EActivity activity : endedActivities) {
@@ -158,33 +388,37 @@ public class ActivitySchedulingServiceImpl implements ActivitySchedulingService 
             String oldStatus = activity.getStatus().toString();
             activity.setStatus(ActivityStatus.COMPLETED);
             activityRepository.save(activity);
-            
+
             // Notify participants about status change
             notifyStatusChange(activity, oldStatus, ActivityStatus.COMPLETED.toString());
         }
-        
-        // Find confirmed activities whose start date has passed but not yet marked as ongoing
-        List<EActivity> startedActivities = activityRepository.findByStatusAndStartDateBefore(ActivityStatus.CONFIRMED, now);
+
+        // Find confirmed activities whose start date has passed but not yet marked as
+        // ongoing
+        List<EActivity> startedActivities = activityRepository.findByStatusAndStartDateBefore(ActivityStatus.CONFIRMED,
+                now);
         for (EActivity activity : startedActivities) {
             // Update to ONGOING status
             String oldStatus = activity.getStatus().toString();
             activity.setStatus(ActivityStatus.ONGOING);
             activityRepository.save(activity);
-            
+
             // Notify participants about status change
             notifyStatusChange(activity, oldStatus, ActivityStatus.ONGOING.toString());
         }
-        
+
         // Find pending activities whose registration deadline has passed
-        List<EActivity> expiredRegistrations = activityRepository.findByStatusAndRegistrationDeadlineBefore(ActivityStatus.PENDING, now);
+        List<EActivity> expiredRegistrations = activityRepository
+                .findByStatusAndRegistrationDeadlineBefore(ActivityStatus.PENDING, now);
         for (EActivity activity : expiredRegistrations) {
             // Check if minimum participants reached
-            if (activity.getCurrentParticipants() >= activity.getCapacityLimit() * 0.3) { // 30% capacity as minimum threshold
+            if (activity.getCurrentParticipants() >= activity.getCapacityLimit() * 0.3) { // 30% capacity as minimum
+                                                                                          // threshold
                 // Update to CONFIRMED status
                 String oldStatus = activity.getStatus().toString();
                 activity.setStatus(ActivityStatus.CONFIRMED);
                 activityRepository.save(activity);
-                
+
                 // Notify participants about status change
                 notifyStatusChange(activity, oldStatus, ActivityStatus.CONFIRMED.toString());
             } else {
@@ -192,7 +426,7 @@ public class ActivitySchedulingServiceImpl implements ActivitySchedulingService 
                 String oldStatus = activity.getStatus().toString();
                 activity.setStatus(ActivityStatus.CANCELLED);
                 activityRepository.save(activity);
-                
+
                 // Notify participants about status change
                 notifyStatusChange(activity, oldStatus, ActivityStatus.CANCELLED.toString());
             }
@@ -207,42 +441,44 @@ public class ActivitySchedulingServiceImpl implements ActivitySchedulingService 
     @Scheduled(cron = "0 0 8 * * ?")
     public void sendRegistrationDeadlineReminders() {
         log.info("Running scheduled task: sendRegistrationDeadlineReminders");
-        
+
         Instant now = Instant.now();
         Instant twoDaysLater = now.plus(2, ChronoUnit.DAYS);
-        
+
         // Find activities with registration deadlines approaching within 2 days
         List<EActivity> activities = activityRepository.findByRegistrationDeadlineBetween(now, twoDaysLater);
-        
+
         for (EActivity activity : activities) {
             // Only send reminders for pending activities
             if (!ActivityStatus.PENDING.equals(activity.getStatus())) {
                 continue;
             }
-            
+
             List<EParticipationDetail> participants = participationDetailRepository.findByActivityId(activity.getId());
-            
+
             for (EParticipationDetail detail : participants) {
                 EAccountCredentials participant = detail.getParticipant();
-                
+
                 // Send notification
                 NotificationDto notification = NotificationDto.builder()
-                    .title("Registration Deadline: " + activity.getActivityName())
-                    .content("Registration for '" + activity.getActivityName() + "' closes on " + activity.getRegistrationDeadline())
-                    .notificationType(NotificationType.ACTIVITY)
-                    .receiverId(participant.getId())
-                    .build();
-                
+                        .title("Registration Deadline: " + activity.getActivityName())
+                        .content("Registration for '" + activity.getActivityName() + "' closes on "
+                                + activity.getRegistrationDeadline())
+                        .notificationType(NotificationType.ACTIVITY)
+                        .receiverId(participant.getId())
+                        .build();
+
                 try {
                     notificationService.sendNotification(null, notification);
                 } catch (Exception e) {
                     log.error("Failed to send notification to participant {}: {}", participant.getId(), e.getMessage());
                 }
-                
+
                 // Send email
                 try {
                     String emailBody = EmailTemplateUtil.generateRegistrationDeadlineBody(activity, participant);
-                    emailService.sendEmail(participant.getEmail(), "Registration Deadline: " + activity.getActivityName(), emailBody);
+                    emailService.sendEmail(participant.getEmail(),
+                            "Registration Deadline: " + activity.getActivityName(), emailBody);
                     log.info("Sent registration deadline email to: {}", participant.getEmail());
                 } catch (Exception e) {
                     log.error("Failed to send email to {}: {}", participant.getEmail(), e.getMessage());
@@ -250,34 +486,51 @@ public class ActivitySchedulingServiceImpl implements ActivitySchedulingService 
             }
         }
     }
-    
+
     /**
      * Helper method to notify all participants about activity status changes.
      */
     private void notifyStatusChange(EActivity activity, String oldStatus, String newStatus) {
         List<EParticipationDetail> participants = participationDetailRepository.findByActivityId(activity.getId());
-        
+
         for (EParticipationDetail detail : participants) {
             EAccountCredentials participant = detail.getParticipant();
-            
+
             // Send notification
             NotificationDto notification = NotificationDto.builder()
-                .title("Activity Status Update: " + activity.getActivityName())
-                .content("Activity '" + activity.getActivityName() + "' status changed from " + oldStatus + " to " + newStatus)
-                .notificationType(NotificationType.ACTIVITY)
-                .receiverId(participant.getId())
-                .build();
-            
+                    .title("Activity Status Update: " + activity.getActivityName())
+                    .content("Activity '" + activity.getActivityName() + "' status changed from " + oldStatus + " to "
+                            + newStatus)
+                    .notificationType(NotificationType.ACTIVITY)
+                    .receiverId(participant.getId())
+                    .build();
+
             try {
                 notificationService.sendNotification(null, notification);
             } catch (Exception e) {
                 log.error("Failed to send notification to participant {}: {}", participant.getId(), e.getMessage());
             }
-            
+
+            // Send socket notification
+            SocketNotificationDto socketNotification = SocketNotificationDto.builder()
+                    .title("Activity Status Change")
+                    .message("Activity '" + activity.getActivityName() + "' status changed from " + oldStatus + " to "
+                            + newStatus)
+                    .type(NotificationType.ACTIVITY)
+                    .activityId(activity.getId())
+                    .timestamp(Instant.now())
+                    .activityName(activity.getActivityName())
+                    .activityStartDate(activity.getStartDate())
+                    .build();
+
+            socketIOService.sendNotification(participant.getId(), "activity_status_change", socketNotification);
+
             // Send email
             try {
-                String emailBody = EmailTemplateUtil.generateActivityStatusChangeBody(activity, participant, oldStatus, newStatus);
-                emailService.sendEmail(participant.getEmail(), "Activity Status Update: " + activity.getActivityName(), emailBody);
+                String emailBody = EmailTemplateUtil.generateActivityStatusChangeBody(activity, participant, oldStatus,
+                        newStatus);
+                emailService.sendEmail(participant.getEmail(), "Activity Status Update: " + activity.getActivityName(),
+                        emailBody);
                 log.info("Sent status change email to: {}", participant.getEmail());
             } catch (Exception e) {
                 log.error("Failed to send email to {}: {}", participant.getEmail(), e.getMessage());
