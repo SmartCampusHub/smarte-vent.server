@@ -28,18 +28,20 @@ public class OrganizationStatisticsController {
   private final OrganizationStatisticsService organizationStatisticsService;
 
   @GetMapping("/organization/{organizationId}")
-  // @PreAuthorize("hasRole('ROLE_ADMIN') or @securityService.isOrganizationMember(#organizationId)")
+  // @PreAuthorize("hasRole('ROLE_ADMIN') or
+  // @securityService.isOrganizationMember(#organizationId)")
   @ApiOperation(value = "Get statistics for a specific organization")
   public ResponseEntity<OrganizationStatisticsVm> getOrganizationStatistics(
-      @PathVariable Long organizationId) {
+      @PathVariable("organizationId") Long organizationId) {
     return ResponseEntity.ok(organizationStatisticsService.getOrganizationStatistics(organizationId));
   }
 
   @GetMapping("/organization/{organizationId}/filter")
-  // @PreAuthorize("hasRole('ROLE_ADMIN') or @securityService.isOrganizationMember(#organizationId)")
+  // @PreAuthorize("hasRole('ROLE_ADMIN') or
+  // @securityService.isOrganizationMember(#organizationId)")
   @ApiOperation(value = "Get filtered statistics for a specific organization")
   public ResponseEntity<OrganizationStatisticsVm> getFilteredOrganizationStatistics(
-      @PathVariable Long organizationId,
+      @PathVariable("organizationId") Long organizationId,
       @RequestParam(required = false) String timePeriod,
       @RequestParam(required = false) String activityType,
       @RequestParam(required = false) String status,
@@ -64,50 +66,56 @@ public class OrganizationStatisticsController {
   }
 
   @GetMapping("/organization/{organizationId}/daily")
-  // @PreAuthorize("hasRole('ROLE_ADMIN') or @securityService.isOrganizationMember(#organizationId)")
+  // @PreAuthorize("hasRole('ROLE_ADMIN') or
+  // @securityService.isOrganizationMember(#organizationId)")
   @ApiOperation(value = "Get daily statistics for a specific organization")
   public ResponseEntity<OrganizationStatisticsVm> getDailyOrganizationStatistics(
-      @PathVariable Long organizationId) {
+      @PathVariable("organizationId") Long organizationId) {
     return ResponseEntity.ok(organizationStatisticsService.getDailyOrganizationStatistics(organizationId));
   }
 
   @GetMapping("/organization/{organizationId}/weekly")
-  // @PreAuthorize("hasRole('ROLE_ADMIN') or @securityService.isOrganizationMember(#organizationId)")
+  // @PreAuthorize("hasRole('ROLE_ADMIN') or
+  // @securityService.isOrganizationMember(#organizationId)")
   @ApiOperation(value = "Get weekly statistics for a specific organization")
   public ResponseEntity<OrganizationStatisticsVm> getWeeklyOrganizationStatistics(
-      @PathVariable Long organizationId) {
+      @PathVariable("organizationId") Long organizationId) {
     return ResponseEntity.ok(organizationStatisticsService.getWeeklyOrganizationStatistics(organizationId));
   }
 
   @GetMapping("/organization/{organizationId}/monthly")
-  // @PreAuthorize("hasRole('ROLE_ADMIN') or @securityService.isOrganizationMember(#organizationId)")
+  // @PreAuthorize("hasRole('ROLE_ADMIN') or
+  // @securityService.isOrganizationMember(#organizationId)")
   @ApiOperation(value = "Get monthly statistics for a specific organization")
   public ResponseEntity<OrganizationStatisticsVm> getMonthlyOrganizationStatistics(
-      @PathVariable Long organizationId) {
+      @PathVariable("organizationId") Long organizationId) {
     return ResponseEntity.ok(organizationStatisticsService.getMonthlyOrganizationStatistics(organizationId));
   }
 
   @GetMapping("/organization/{organizationId}/quarterly")
-  // @PreAuthorize("hasRole('ROLE_ADMIN') or @securityService.isOrganizationMember(#organizationId)")
+  // @PreAuthorize("hasRole('ROLE_ADMIN') or
+  // @securityService.isOrganizationMember(#organizationId)")
   @ApiOperation(value = "Get quarterly statistics for a specific organization")
   public ResponseEntity<OrganizationStatisticsVm> getQuarterlyOrganizationStatistics(
-      @PathVariable Long organizationId) {
+      @PathVariable("organizationId") Long organizationId) {
     return ResponseEntity.ok(organizationStatisticsService.getQuarterlyOrganizationStatistics(organizationId));
   }
 
   @GetMapping("/organization/{organizationId}/yearly")
-  // @PreAuthorize("hasRole('ROLE_ADMIN') or @securityService.isOrganizationMember(#organizationId)")
+  // @PreAuthorize("hasRole('ROLE_ADMIN') or
+  // @securityService.isOrganizationMember(#organizationId)")
   @ApiOperation(value = "Get yearly statistics for a specific organization")
   public ResponseEntity<OrganizationStatisticsVm> getYearlyOrganizationStatistics(
-      @PathVariable Long organizationId) {
+      @PathVariable("organizationId") Long organizationId) {
     return ResponseEntity.ok(organizationStatisticsService.getYearlyOrganizationStatistics(organizationId));
   }
 
   @GetMapping("/organization/{organizationId}/date-range")
-  // @PreAuthorize("hasRole('ROLE_ADMIN') or @securityService.isOrganizationMember(#organizationId)")
+  // @PreAuthorize("hasRole('ROLE_ADMIN') or
+  // @securityService.isOrganizationMember(#organizationId)")
   @ApiOperation(value = "Get statistics for a specific organization within a custom date range")
   public ResponseEntity<OrganizationStatisticsVm> getOrganizationStatisticsInDateRange(
-      @PathVariable Long organizationId,
+      @PathVariable("organizationId") Long organizationId,
       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant startDate,
       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant endDate) {
     return ResponseEntity

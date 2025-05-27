@@ -11,4 +11,5 @@ public interface NotificationService {
   void sendNotification(TAccountRequest accountRequest, NotificationDto notificationDto);
   PagedResponse<NotificationVm> getNotifications(TAccountRequest accountRequest, Pageable pageable);
   void readNotification(TAccountRequest accountRequest, Long id);
+  void deleteNotification(TAccountRequest accountRequest, Long id);
 }

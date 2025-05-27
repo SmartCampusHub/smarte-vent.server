@@ -28,20 +28,25 @@ public class NotificationServiceImpl implements NotificationService {
         .isRead(false)
         .notificationType(notificationDto.notificationType())
         .receiver(accountRepository.findById(notificationDto.receiverId())
-            .orElseGet(null)).build();
+            .orElseGet(null))
+        .build();
     notificationRepository.save(notification);
   }
 
   @Override
   public PagedResponse<NotificationVm> getNotifications(TAccountRequest accountRequest, Pageable pageable) {
-    Page<ENotification> notificationsPage = notificationRepository.findAllByParticipantId(accountRequest.id(),
+    Page<ENotification> notificationsPage = notificationRepository.findAllByReceiverId(accountRequest.id(),
         pageable);
     return PagedResponse.<NotificationVm>builder()
         .results(notificationsPage.getContent().stream()
             .map(notification -> NotificationVm.builder()
+                .receiverId(notification.getReceiver().getId())
+                .id(notification.getId())
                 .title(notification.getTitle())
                 .content(notification.getContent())
                 .notificationType(notification.getNotificationType())
+                .createdDate(notification.getCreatedDate())
+                .isRead(notification.getIsRead())
                 .build())
             .toList())
         .totalPages(notificationsPage.getTotalPages())
@@ -58,5 +63,12 @@ public class NotificationServiceImpl implements NotificationService {
         .orElseThrow(() -> new RuntimeException("Notification not found"));
     notification.setIsRead(true);
     notificationRepository.save(notification);
+  }
+
+  @Override
+  public void deleteNotification(TAccountRequest accountRequest, Long id) {
+    ENotification notification = notificationRepository.findById(id)
+        .orElseThrow(() -> new RuntimeException("Notification not found"));
+    notificationRepository.delete(notification);
   }
 }

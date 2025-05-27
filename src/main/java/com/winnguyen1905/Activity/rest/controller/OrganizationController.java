@@ -34,7 +34,7 @@ public class OrganizationController {
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<OrganizationVm> getOrganization(@PathVariable Long id) {
+  public ResponseEntity<OrganizationVm> getOrganization(@PathVariable("id") Long id) {
     return ResponseEntity.ok(organizationService.getOrganizerById(id));
   }
 
@@ -52,7 +52,7 @@ public class OrganizationController {
   }
 
   @DeleteMapping("/{id}")
-  public ResponseEntity<Void> deleteOrganization(@PathVariable Long id) {
+  public ResponseEntity<Void> deleteOrganization(@PathVariable("id") Long id) {
     organizationService.deleteOrganizerById(id);
     return ResponseEntity.noContent().build();
   }

@@ -15,6 +15,6 @@ import java.util.List;
 @Repository
 public interface NotificationRepository extends JpaRepository<ENotification, Long> {
 
-  @Query("SELECT a FROM ENotification a WHERE a.receiver.id IN :ids")
-  Page<ENotification> findAllByParticipantId(Long id, Pageable pageable);
+  @Query("SELECT a FROM ENotification a WHERE a.receiver.id = :id")
+  Page<ENotification> findAllByReceiverId(@Param("id") Long id, Pageable pageable);
 }

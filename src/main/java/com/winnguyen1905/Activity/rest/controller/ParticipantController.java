@@ -36,13 +36,13 @@ public class ParticipantController {
   }
 
   @PostMapping("/{id}/verify")
-  public ResponseEntity<ParticipationDetailVm> postMethodName(@PathVariable Long id,
+  public ResponseEntity<ParticipationDetailVm> postMethodName(@PathVariable("id") Long id,
       @AccountRequest TAccountRequest accountRequest) {
     return ResponseEntity.ok(participantService.verifyParticipation(accountRequest, id));
   }
 
   @PostMapping("/{id}/delete")
-  public ResponseEntity<Void> postMethodName(@AccountRequest TAccountRequest accountRequest, @PathVariable Long id) {
+  public ResponseEntity<Void> postMethodName(@AccountRequest TAccountRequest accountRequest, @PathVariable("id") Long id) {
     this.participantService.deleteParticipant(accountRequest, id);
     return ResponseEntity.noContent().build();
   }

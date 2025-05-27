@@ -1,0 +1,1 @@
+Giả sử một bản rõ được mã hóa bằng Diffie-Hellman. Kết quả mã hóa là gì nếu đầu vào là '8BD84463' với khóa '1813E6'?

@@ -49,14 +49,14 @@ public class ActivityController {
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> deleteActivity(
       @AccountRequest TAccountRequest accountRequest,
-      @PathVariable Long id) {
+      @PathVariable("id") Long id) {
     activityService.deleteActivity(accountRequest, id);
     return ResponseEntity.noContent().build();
   }
 
   @GetMapping("/{id}")
   public ResponseEntity<ActivityVm> getActivityById(
-      @AccountRequest TAccountRequest accountRequest, @PathVariable Long id) {
+      @AccountRequest TAccountRequest accountRequest, @PathVariable("id") Long id) {
     ActivityVm activity = activityService.getActivityById(accountRequest, id);
     return ResponseEntity.ok(activity);
   }

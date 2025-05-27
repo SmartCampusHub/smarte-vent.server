@@ -6,6 +6,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import org.springframework.boot.CommandLineRunner;
@@ -16,6 +17,7 @@ import com.winnguyen1905.Activity.common.constant.AccountRole;
 import com.winnguyen1905.Activity.common.constant.ActivityCategory;
 import com.winnguyen1905.Activity.common.constant.ActivityStatus;
 import com.winnguyen1905.Activity.common.constant.ClassStatus;
+import com.winnguyen1905.Activity.common.constant.NotificationType;
 import com.winnguyen1905.Activity.common.constant.OrganizationType;
 import com.winnguyen1905.Activity.common.constant.ParticipationRole;
 import com.winnguyen1905.Activity.common.constant.ParticipationStatus;
@@ -77,10 +79,15 @@ public class DatabaseInitializer implements CommandLineRunner {
     // Create semester details for students
 
     // Create organizations and their accounts
-    List<EOrganization> organizations = createOrganizations();
-    List<EAccountCredentials> orgAccounts = createOrganizationAccounts(organizations);
-    accountRepository.saveAll(orgAccounts);
-    organizationRepository.saveAll(organizations);
+    EAccountCredentials adminAccount = accounts.stream()
+        .filter(account -> account.getId() == 3)
+        .findFirst()
+        .orElseThrow(() -> new IllegalArgumentException("Admin account not found"));
+    List<EOrganization> organizations = new ArrayList<>();
+    organizations.add(adminAccount.getOrganization()); // Add admin's organization to the list
+    // List<EAccountCredentials> orgAccounts = createOrganizationAccounts(organizations);
+    // accountRepository.saveAll(orgAccounts);
+    // organizationRepository.saveAll(organizations);
 
     List<EActivity> activities = createActivities(organizations);
     activityRepository.saveAll(activities);
@@ -104,21 +111,19 @@ public class DatabaseInitializer implements CommandLineRunner {
 
     // Create notifications
     List<ENotification> notifications = createNotifications(accounts,
-    activities);
+        activities);
     notificationRepository.saveAll(notifications);
 
     // Create reports
     List<EReport> reports = createReports(activities,
-    getStudentAccounts(accounts));
+        getStudentAccounts(accounts));
     reportRepository.saveAll(reports);
-
 
     System.out.println("Database seeding completed successfully!");
   }
 
   private List<EAccountCredentials> createAccounts() {
     List<EAccountCredentials> accounts = new ArrayList<>();
-
     // Admin accounts
     accounts.add(EAccountCredentials.builder().isActive(true)
         .fullName("Admin User")
@@ -130,18 +135,32 @@ public class DatabaseInitializer implements CommandLineRunner {
 
     accounts.add(EAccountCredentials.builder().isActive(true)
         .fullName("Student User")
-        .email("admin@university.edu")
+        .email("student@university.edu")
         .studentCode("1")
         .role(AccountRole.STUDENT)
         .password(passwordEncoder.encode("1"))
         .build());
-    accounts.add(EAccountCredentials.builder().isActive(true)
+
+    EAccountCredentials organizationAccount = EAccountCredentials.builder().isActive(true)
         .fullName("Organization User")
-        .email("admin@university.edu")
+        .email("organization@university.edu")
         .studentCode("3")
         .role(AccountRole.ORGANIZATION)
         .password(passwordEncoder.encode("1"))
-        .build());
+        .build();
+    accounts.add(organizationAccount);
+
+    EOrganization adminOrg = EOrganization.builder()
+        .name("University Admin")
+        .description("Administrative organization for university management")
+        .phone("0123456789")
+        .email("admin@university.edu")
+        .type(OrganizationType.UNIVERSITY)
+        .account(organizationAccount)
+        .build();
+    organizationAccount.setOrganization(adminOrg);
+
+    accountRepository.saveAll(accounts);
     // Create 20 student accounts
     String[] firstNames = { "John", "Emma", "Michael", "Sophia", "James", "Olivia", "William", "Ava", "Alexander",
         "Isabella" };
@@ -291,7 +310,8 @@ public class DatabaseInitializer implements CommandLineRunner {
 
     for (int i = 0; i < activityDetails.length; i++) {
       Object[] details = activityDetails[i];
-      EOrganization org = organizations.get(i % organizations.size());
+      EOrganization org = organizations.getFirst();
+
       ActivityStatus status = statuses[i % statuses.length];
 
       // Create current date and manipulate for different date ranges
@@ -607,10 +627,14 @@ public class DatabaseInitializer implements CommandLineRunner {
 
   private List<ENotification> createNotifications(List<EAccountCredentials> accounts, List<EActivity> activities) {
     List<ENotification> notifications = new ArrayList<>();
-
+    Map<Long, NotificationType> notificationTypeMap = Map.of(
+        1L, NotificationType.SECURITY, // Admin
+        2L, NotificationType.LEARNING, // Student
+        3L, NotificationType.ACTIVITY // Organization
+    );
     // Create various types of notifications
     for (int i = 0; i < 50; i++) { // Create 50 random notifications
-      EAccountCredentials recipient = accounts.get(random.nextInt(accounts.size()));
+      EAccountCredentials recipient = accounts.get(Integer.valueOf(i % notificationTypeMap.size() + 1));
       EActivity relatedActivity = activities.get(random.nextInt(activities.size()));
 
       // Sample notification messages
@@ -627,6 +651,8 @@ public class DatabaseInitializer implements CommandLineRunner {
       String message = messages[random.nextInt(messages.length)];
 
       ENotification notification = ENotification.builder()
+          .title(message)
+          .notificationType(notificationTypeMap.get(Long.valueOf(i % notificationTypeMap.size() + 1)))
           .receiver(recipient)
           .content(message)
           .isRead(random.nextBoolean())
