@@ -26,8 +26,8 @@ public class EActivitySpecification {
         predicates.add(criteriaBuilder.equal(root.get("activityCategory"), searchRequest.activityCategory()));
       }
 
-      if (searchRequest.status() != null) {
-        predicates.add(criteriaBuilder.equal(root.get("status"), searchRequest.status()));
+      if (searchRequest.activityStatus() != null) {
+        predicates.add(criteriaBuilder.equal(root.get("status"), searchRequest.activityStatus()));
       }
 
       if (searchRequest.organizationName() != null) {

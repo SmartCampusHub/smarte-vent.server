@@ -13,14 +13,10 @@ import lombok.Builder;
 @Builder
 public record AdminUpdateAccount(
     @NotBlank(message = "Full name is required") @Size(max = 100, message = "Full name must be less than 100 characters") String fullName,
-
-    @NotBlank(message = "Email is required") @Email(message = "Email should be valid") @Size(max = 100, message = "Email must be less than 100 characters") String email,
-
-    @NotBlank(message = "Phone number is required") @Pattern(regexp = "^[0-9]{10,15}$", message = "Phone number must be 10-15 digits") String phone,
-
-    @NotNull(message = "Major is required") MajorType major,
-
-    @NotNull(message = "Role is required") AccountRole role,
+    String email,
+  String phone,
+  MajorType major,
+  AccountRole role,
 
     Boolean isActive) implements AbstractModel {
   @Builder

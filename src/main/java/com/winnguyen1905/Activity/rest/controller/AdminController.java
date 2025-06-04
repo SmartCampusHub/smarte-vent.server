@@ -22,7 +22,7 @@ public class AdminController {
   @PostMapping("/accounts/update")
   public ResponseEntity<AccountVm> updateAccount(
       @AccountRequest TAccountRequest accountRequest,
-      @Valid @RequestBody AdminUpdateAccount updateDto) {
+      @RequestBody AdminUpdateAccount updateDto) {
     AccountVm updatedAccount = accountService.updateAccountByAdmin(accountRequest, updateDto);
     return ResponseEntity.ok(updatedAccount);
   }
