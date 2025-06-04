@@ -2,12 +2,15 @@ package com.winnguyen1905.Activity.persistance.repository;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.query.Procedure;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
@@ -191,4 +194,79 @@ public interface ActivityRepository extends JpaRepository<EActivity, Long>, JpaS
       boolean isApproved,
       Instant date);
 
+  // Stored Procedure calls
+  @Procedure(name = "update_activity_status")
+  void updateActivityStatus();
+
+  @Procedure(name = "calculate_activity_statistics")
+  List<Map<String, Object>> calculateActivityStatistics(
+      @Param("p_start_date") Instant startDate,
+      @Param("p_end_date") Instant endDate);
+
+  @Procedure(name = "get_organization_metrics")
+  Map<String, Object> getOrganizationMetrics(
+      @Param("p_organization_id") Long organizationId,
+      @Param("p_start_date") Instant startDate,
+      @Param("p_end_date") Instant endDate);
+
+  @Procedure(name = "get_activity_trends")
+  List<Map<String, Object>> getActivityTrends(
+      @Param("p_start_date") Instant startDate,
+      @Param("p_end_date") Instant endDate);
+
+  // Additional query methods for statistics
+  @Query("SELECT a.activityCategory as category, " +
+      "COUNT(a) as totalActivities, " +
+      "SUM(a.currentParticipants) as totalParticipants, " +
+      "AVG(a.currentParticipants) as avgParticipants, " +
+      "SUM(a.capacityLimit) as totalCapacity, " +
+      "(SUM(a.currentParticipants) * 100.0 / SUM(a.capacityLimit)) as participationRate " +
+      "FROM EActivity a " +
+      "WHERE a.startDate BETWEEN :startDate AND :endDate " +
+      "GROUP BY a.activityCategory")
+  List<Map<String, Object>> getActivityStatisticsByCategory(
+      @Param("startDate") Instant startDate,
+      @Param("endDate") Instant endDate);
+
+  @Query("SELECT " +
+      "COUNT(a) as totalActivities, " +
+      "SUM(a.currentParticipants) as totalParticipants, " +
+      "AVG(a.currentParticipants) as avgParticipantsPerActivity, " +
+      "SUM(a.capacityLimit) as totalCapacity, " +
+      "(SUM(a.currentParticipants) * 100.0 / SUM(a.capacityLimit)) as overallParticipationRate, " +
+      "COUNT(CASE WHEN a.status = 'COMPLETED' THEN 1 END) as completedActivities, " +
+      "COUNT(CASE WHEN a.status = 'IN_PROGRESS' THEN 1 END) as ongoingActivities, " +
+      "COUNT(CASE WHEN a.status = 'PUBLISHED' THEN 1 END) as upcomingActivities " +
+      "FROM EActivity a " +
+      "WHERE a.organization.id = :organizationId " +
+      "AND a.startDate BETWEEN :startDate AND :endDate")
+  Map<String, Object> getOrganizationPerformanceMetrics(
+      @Param("organizationId") Long organizationId,
+      @Param("startDate") Instant startDate,
+      @Param("endDate") Instant endDate);
+
+  @Query("SELECT " +
+      "FUNCTION('YEAR', a.startDate) as year, " +
+      "FUNCTION('MONTH', a.startDate) as month, " +
+      "a.activityCategory as category, " +
+      "COUNT(a) as activityCount, " +
+      "SUM(a.currentParticipants) as totalParticipants, " +
+      "AVG(a.currentParticipants) as avgParticipants " +
+      "FROM EActivity a " +
+      "WHERE a.startDate BETWEEN :startDate AND :endDate " +
+      "GROUP BY FUNCTION('YEAR', a.startDate), FUNCTION('MONTH', a.startDate), a.activityCategory " +
+      "ORDER BY year, month, category")
+  List<Map<String, Object>> getActivityTrendsByMonth(
+      @Param("startDate") Instant startDate,
+      @Param("endDate") Instant endDate);
+
+  // Method to update activity status based on dates
+  @Modifying
+  @Query("UPDATE EActivity a SET " +
+      "a.status = CASE " +
+      "WHEN a.startDate <= CURRENT_TIMESTAMP AND a.endDate > CURRENT_TIMESTAMP THEN 'IN_PROGRESS' " +
+      "WHEN a.endDate < CURRENT_TIMESTAMP THEN 'COMPLETED' " +
+      "ELSE a.status END " +
+      "WHERE a.status IN ('PUBLISHED', 'IN_PROGRESS')")
+  void updateActivityStatusBasedOnDates();
 }

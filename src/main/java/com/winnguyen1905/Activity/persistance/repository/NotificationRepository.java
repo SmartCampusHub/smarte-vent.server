@@ -11,6 +11,7 @@ import com.winnguyen1905.Activity.persistance.entity.EAccountCredentials;
 import com.winnguyen1905.Activity.persistance.entity.ENotification;
 
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public interface NotificationRepository extends JpaRepository<ENotification, Long> {
@@ -28,4 +29,28 @@ public interface NotificationRepository extends JpaRepository<ENotification, Lon
 
   @Query("SELECT a FROM ENotification a WHERE a.receiver.id = :id")
   Page<ENotification> findAllByReceiverId(@Param("id") Long id, Pageable pageable);
+
+  /**
+   * Get notification statistics by type
+   */
+  @Query(value = "CALL get_notification_statistics_by_type()", nativeQuery = true)
+  List<Map<String, Object>> getNotificationStatisticsByType();
+
+  /**
+   * Get user notification metrics
+   */
+  @Query(value = "CALL get_user_notification_metrics(:userId, :startDate, :endDate)", nativeQuery = true)
+  Map<String, Object> getUserNotificationMetrics(
+      @Param("userId") Long userId,
+      @Param("startDate") String startDate,
+      @Param("endDate") String endDate
+  );
+
+  /**
+   * Get notification engagement metrics
+   */
+  @Query(value = "CALL get_notification_engagement_metrics(:notificationType)", nativeQuery = true)
+  List<Map<String, Object>> getNotificationEngagementMetrics(
+      @Param("notificationType") String notificationType
+  );
 }

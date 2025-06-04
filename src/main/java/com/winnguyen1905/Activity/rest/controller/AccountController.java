@@ -1,6 +1,7 @@
 package com.winnguyen1905.Activity.rest.controller;
 
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,7 +36,8 @@ public class AccountController {
   @PostMapping("/create")
   public ResponseEntity<AccountVm> createAccount(@AccountRequest TAccountRequest accountRequest,
       @RequestBody RegisterRequest registerRequest) {
-    return ResponseEntity.ok().body(this.accountService.createAccount(accountRequest, registerRequest));
+    this.accountService.createAccount(accountRequest, registerRequest);
+    return ResponseEntity.status(HttpStatus.CREATED).build();
   }
 
   @PostMapping("/update")

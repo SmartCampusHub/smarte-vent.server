@@ -29,7 +29,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "notification")
+@Table(name = "feedback")
 public class EFeedback {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
