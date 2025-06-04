@@ -1,8 +1,26 @@
--- Stored Procedures for Account Management
-
--- 1. Procedure to get account statistics by role
+-- Account Management Stored Procedures and Triggers
+USE activity;
 DELIMITER //
+
+-- Drop all existing procedures and triggers first
+DROP PROCEDURE IF EXISTS get_account_statistics_by_role//
+DROP PROCEDURE IF EXISTS get_student_statistics_by_major//
+DROP PROCEDURE IF EXISTS get_account_participation_stats//
+DROP PROCEDURE IF EXISTS get_account_activity_metrics//
+
+DROP TRIGGER IF EXISTS before_account_insert_email//
+DROP TRIGGER IF EXISTS before_account_insert_phone//
+DROP TRIGGER IF EXISTS before_account_insert_identify//
+DROP TRIGGER IF EXISTS before_account_insert_email_unique//
+DROP TRIGGER IF EXISTS before_account_insert_identify_unique//
+DROP TRIGGER IF EXISTS before_account_insert_role//
+DROP TRIGGER IF EXISTS after_participation_insert//
+
+-- Now create all procedures and triggers
+
+-- 1. Account Statistics Procedures
 CREATE PROCEDURE get_account_statistics_by_role()
+READS SQL DATA
 BEGIN
     SELECT 
         role,
@@ -12,11 +30,8 @@ BEGIN
         COUNT(DISTINCT major_type) as unique_majors
     FROM account
     GROUP BY role;
-END //
-DELIMITER ;
+END//
 
--- 2. Procedure to get student statistics by major
-DELIMITER //
 CREATE PROCEDURE get_student_statistics_by_major()
 BEGIN
     SELECT 
@@ -27,11 +42,8 @@ BEGIN
     FROM account
     WHERE role = 'STUDENT'
     GROUP BY major_type;
-END //
-DELIMITER ;
+END//
 
--- 3. Procedure to get account participation statistics
-DELIMITER //
 CREATE PROCEDURE get_account_participation_stats(
     IN p_start_date TIMESTAMP,
     IN p_end_date TIMESTAMP
@@ -42,20 +54,17 @@ BEGIN
         COUNT(DISTINCT a.id) as total_accounts,
         COUNT(DISTINCT pd.id) as total_participations,
         COUNT(DISTINCT CASE WHEN pd.created_date BETWEEN p_start_date AND p_end_date THEN pd.id END) as new_participations,
-        AVG(pd_count.participation_count) as avg_participations_per_account
+        COALESCE(AVG(pd_count.participation_count), 0) as avg_participations_per_account
     FROM account a
-    LEFT JOIN participation_detail pd ON a.id = pd.participant_id
+    LEFT JOIN attendance pd ON a.id = pd.participant_id
     LEFT JOIN (
         SELECT participant_id, COUNT(*) as participation_count
-        FROM participation_detail
+        FROM attendance
         GROUP BY participant_id
     ) pd_count ON a.id = pd_count.participant_id
     GROUP BY a.role;
-END //
-DELIMITER ;
+END//
 
--- 4. Procedure to get account activity metrics
-DELIMITER //
 CREATE PROCEDURE get_account_activity_metrics(
     IN p_account_id BIGINT
 )
@@ -67,30 +76,23 @@ BEGIN
         COUNT(DISTINCT CASE WHEN pd.created_date >= DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 30 DAY) THEN pd.id END) as recent_participations,
         COUNT(DISTINCT CASE WHEN n.created_date >= DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 30 DAY) THEN n.id END) as recent_notifications
     FROM account a
-    LEFT JOIN participation_detail pd ON a.id = pd.participant_id
+    LEFT JOIN attendance pd ON a.id = pd.participant_id
     LEFT JOIN notification n ON a.id = n.receiver_id
     LEFT JOIN report r ON a.id = r.reporter_id
     WHERE a.id = p_account_id;
-END //
-DELIMITER ;
+END//
 
--- Triggers
-
--- 1. Trigger to validate email format
-DELIMITER //
+-- Account Triggers
 CREATE TRIGGER before_account_insert_email
 BEFORE INSERT ON account
 FOR EACH ROW
 BEGIN
-    IF NEW.email NOT REGEXP '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$' THEN
+    IF NEW.email NOT REGEXP '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$' THEN
         SIGNAL SQLSTATE '45000'
         SET MESSAGE_TEXT = 'Invalid email format';
     END IF;
-END //
-DELIMITER ;
+END//
 
--- 2. Trigger to validate phone number format
-DELIMITER //
 CREATE TRIGGER before_account_insert_phone
 BEFORE INSERT ON account
 FOR EACH ROW
@@ -99,11 +101,8 @@ BEGIN
         SIGNAL SQLSTATE '45000'
         SET MESSAGE_TEXT = 'Invalid phone number format';
     END IF;
-END //
-DELIMITER ;
+END//
 
--- 3. Trigger to validate identify code format
-DELIMITER //
 CREATE TRIGGER before_account_insert_identify
 BEFORE INSERT ON account
 FOR EACH ROW
@@ -112,50 +111,32 @@ BEGIN
         SIGNAL SQLSTATE '45000'
         SET MESSAGE_TEXT = 'Invalid identify code format';
     END IF;
-END //
-DELIMITER ;
+END//
 
--- 4. Trigger to prevent duplicate email
-DELIMITER //
 CREATE TRIGGER before_account_insert_email_unique
 BEFORE INSERT ON account
 FOR EACH ROW
 BEGIN
-    IF EXISTS (SELECT 1 FROM account WHERE email = NEW.email) THEN
+    DECLARE email_count INT DEFAULT 0;
+    SELECT COUNT(*) INTO email_count FROM account WHERE email = NEW.email;
+    IF email_count > 0 THEN
         SIGNAL SQLSTATE '45000'
         SET MESSAGE_TEXT = 'Email already exists';
     END IF;
-END //
-DELIMITER ;
+END//
 
--- 5. Trigger to prevent duplicate identify code
-DELIMITER //
 CREATE TRIGGER before_account_insert_identify_unique
 BEFORE INSERT ON account
 FOR EACH ROW
 BEGIN
-    IF EXISTS (SELECT 1 FROM account WHERE identify_code = NEW.identify_code) THEN
+    DECLARE identify_count INT DEFAULT 0;
+    SELECT COUNT(*) INTO identify_count FROM account WHERE identify_code = NEW.identify_code;
+    IF identify_count > 0 THEN
         SIGNAL SQLSTATE '45000'
         SET MESSAGE_TEXT = 'Identify code already exists';
     END IF;
-END //
-DELIMITER ;
+END//
 
--- 6. Trigger to update account status based on participation
-DELIMITER //
-CREATE TRIGGER after_participation_insert
-AFTER INSERT ON participation_detail
-FOR EACH ROW
-BEGIN
-    UPDATE account a
-    SET a.is_active = 1
-    WHERE a.id = NEW.participant_id
-    AND a.is_active = 0;
-END //
-DELIMITER ;
-
--- 7. Trigger to validate role-specific constraints
-DELIMITER //
 CREATE TRIGGER before_account_insert_role
 BEFORE INSERT ON account
 FOR EACH ROW
@@ -169,5 +150,16 @@ BEGIN
         SIGNAL SQLSTATE '45000'
         SET MESSAGE_TEXT = 'Organization accounts cannot have a major type';
     END IF;
-END //
+END//
+
+CREATE TRIGGER after_participation_insert
+AFTER INSERT ON attendance
+FOR EACH ROW
+BEGIN
+    UPDATE account a
+    SET a.is_active = 1
+    WHERE a.id = NEW.participant_id
+    AND a.is_active = 0;
+END//
+
 DELIMITER ;
