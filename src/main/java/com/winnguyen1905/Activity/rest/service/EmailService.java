@@ -19,7 +19,7 @@ public class EmailService {
     message.setTo(to);
     message.setSubject(subject);
     message.setText(body);
-    message.setFrom(System.getenv("GMAIL_USERNAME"));
+    message.setFrom("winnnguyen1905.game@gmail.com");
 
     mailSender.send(message);
   }

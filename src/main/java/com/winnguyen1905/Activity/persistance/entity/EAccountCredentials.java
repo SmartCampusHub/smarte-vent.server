@@ -8,6 +8,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.winnguyen1905.Activity.common.constant.AccountRole;
+import com.winnguyen1905.Activity.common.constant.MajorType;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -37,41 +38,37 @@ import lombok.experimental.SuperBuilder;
 @Table(name = "account")
 public class EAccountCredentials {
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "id")
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  @Column(name = "id", updatable = false, nullable = false)
   protected Long id;
 
-  @Column(name = "account_name")
+  @Column(name = "full_name")
   private String fullName;
 
-  @Column(name = "student_code")
-  private String studentCode;
+  @Column(name = "identify_code")
+  private String identifyCode;
 
-  @Column(name = "account_password")
+  @Column(name = "password")
   private String password;
 
-  @Column(name = "account_status")
+  @Column(name = "status")
   private Boolean isActive;
 
-  @Column(name = "account_email")
+  @Column(name = "email")
   private String email;
 
-  @Column(name = "account_phone")
+  @Column(name = "phone")
   private String phone;
 
   @Column(name = "refresh_token", length = 1024)
   private String refreshToken;
 
-  @Column(name = "account_role")
+  @Column(name = "role")
   @Enumerated(EnumType.STRING)
   private AccountRole role;
 
   @OneToOne(cascade = CascadeType.ALL, mappedBy = "account")
   private EOrganization organization;
-
-  @ManyToOne
-  @JoinColumn(name = "class_id", nullable = true)
-  private EClass studentClass;
 
   @OneToMany(mappedBy = "participant")
   private List<EParticipationDetail> participationDetails;
@@ -84,6 +81,10 @@ public class EAccountCredentials {
 
   @OneToMany(mappedBy = "reporter")
   private List<EReport> reports;
+
+  @Enumerated(EnumType.STRING)
+  @Column(name = "major_type")
+  private MajorType major;
 
   // @OneToMany(mappedBy = "student")
   // private List<EStudentSemesterDetail> studentSemesterDetails;

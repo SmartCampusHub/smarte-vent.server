@@ -2,6 +2,7 @@ package com.winnguyen1905.Activity.rest.controller;
 
 import com.winnguyen1905.Activity.common.constant.SystemConstant;
 import com.winnguyen1905.Activity.model.viewmodel.ActivityVm;
+import com.winnguyen1905.Activity.model.viewmodel.CheckJoinedActivityVm;
 import com.winnguyen1905.Activity.model.viewmodel.PagedResponse;
 import com.winnguyen1905.Activity.model.viewmodel.ParticipationDetailVm;
 
@@ -11,6 +12,7 @@ import com.winnguyen1905.Activity.common.annotation.AccountRequest;
 import com.winnguyen1905.Activity.common.annotation.TAccountRequest;
 import com.winnguyen1905.Activity.model.dto.ActivityDto;
 import com.winnguyen1905.Activity.model.dto.ActivitySearchRequest;
+import com.winnguyen1905.Activity.model.dto.CheckJoinedActivityDto;
 import com.winnguyen1905.Activity.model.dto.JoinActivityRequest;
 import com.winnguyen1905.Activity.rest.service.ActivityService;
 
@@ -100,6 +102,12 @@ public class ActivityController {
       @PathVariable("id") Long id) {
     activityService.disapproveActivity(accountRequest, id);
     return ResponseEntity.ok().build();
+  }
+
+  @PostMapping("/is-joined")
+  public ResponseEntity<CheckJoinedActivityVm> isJoinedActivity(@AccountRequest TAccountRequest accountRequest,
+      @RequestBody CheckJoinedActivityDto checkJoinedActivityDto) {
+    return ResponseEntity.ok(activityService.isJoinedActivity(accountRequest, checkJoinedActivityDto));
   }
 
   @PostMapping("/change-status")

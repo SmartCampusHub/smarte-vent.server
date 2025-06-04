@@ -9,7 +9,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.winnguyen1905.Activity.auth.CustomUserDetails;
+import com.winnguyen1905.Activity.common.annotation.TAccountRequest;
 import com.winnguyen1905.Activity.common.constant.AccountRole;
+import com.winnguyen1905.Activity.model.dto.ChangePasswordDto;
 import com.winnguyen1905.Activity.model.dto.LoginRequest;
 import com.winnguyen1905.Activity.model.dto.RegisterRequest;
 import com.winnguyen1905.Activity.model.viewmodel.AccountVm;
@@ -34,7 +36,7 @@ public class AuthService {
 
   public AuthResponse login(LoginRequest loginRequest) {
     CustomUserDetails userDetails = (CustomUserDetails) authenticationManager.authenticate(
-        new UsernamePasswordAuthenticationToken(loginRequest.studentCode(), loginRequest.password())).getPrincipal();
+        new UsernamePasswordAuthenticationToken(loginRequest.identifyCode(), loginRequest.password())).getPrincipal();
 
     TokenPair tokenPair = jwtUtils.createTokenPair(userDetails);
     EAccountCredentials userCredentials = userRepository.findById(userDetails.id())
@@ -47,17 +49,19 @@ public class AuthService {
         .refreshToken(tokenPair.refreshToken())
         .accessToken(tokenPair.accessToken())
         .account(AccountVm.builder()
-            .studentCode(userCredentials.getStudentCode())
+            .identifyCode(userCredentials.getIdentifyCode())
             .role(userCredentials.getRole())
             .name(userCredentials.getFullName())
-            .id(userCredentials.getId()).build())
+            .id(userCredentials.getId())
+            .major(userCredentials.getMajor())
+            .build())
         .build();
   }
 
   public AccountVm register(RegisterRequest registerRequest) {
     validateRegisterRequest(registerRequest);
 
-    Optional<EAccountCredentials> user = userRepository.findByStudentCode(registerRequest.studentCode());
+    Optional<EAccountCredentials> user = userRepository.findByIdentifyCode(registerRequest.identifyCode());
 
     if (user.isPresent()) {
       throw new IllegalArgumentException("Student code is already taken");
@@ -68,13 +72,19 @@ public class AuthService {
     userRepository.save(newUser);
 
     return AccountVm.builder()
-        .studentCode(newUser.getStudentCode()).role(newUser.getRole()).id(newUser.getId())
-        .name(newUser.getFullName()).email(newUser.getEmail()).isActive(newUser.getIsActive())
-        .phone(newUser.getPhone()).build();
+        .identifyCode(newUser.getIdentifyCode())
+        .role(newUser.getRole())
+        .id(newUser.getId())
+        .name(newUser.getFullName())
+        .email(newUser.getEmail())
+        .isActive(newUser.getIsActive())
+        .phone(newUser.getPhone())
+        .major(newUser.getMajor())
+        .build();
   }
 
   private void validateRegisterRequest(RegisterRequest request) {
-    if (request == null || request.studentCode() == null || request.password() == null) {
+    if (request == null || request.identifyCode() == null || request.password() == null) {
       throw new IllegalArgumentException("Student code and password are required");
     }
   }
@@ -85,18 +95,17 @@ public class AuthService {
         .phone(request.phone())
         .fullName(request.fullName())
         .isActive(true)
-        // .refreshToken(null)
+        .major(request.major())
         .role(AccountRole.STUDENT)
-        .studentCode(request.studentCode())
+        .identifyCode(request.identifyCode())
         .password(passwordEncoder.encode(request.password()))
-        .role(AccountRole.STUDENT) // Default role is STUDENT
         .build();
   }
 
   private AuthResponse mapToAuthResponse(EAccountCredentials user) {
     CustomUserDetails userDetails = CustomUserDetails.builder()
         .id(user.getId())
-        .username(user.getStudentCode())
+        .username(user.getIdentifyCode())
         .password(user.getPassword())
         .role(user.getRole())
         // .status(user.getIsActive())
@@ -108,9 +117,9 @@ public class AuthService {
         .build();
   }
 
-  public void logout(String studentCode) {
-    EAccountCredentials user = userRepository.findByStudentCode(studentCode)
-        .orElseThrow(() -> new UsernameNotFoundException("Not found user by studentCode " + studentCode));
+  public void logout(String identifyCode) {
+    EAccountCredentials user = userRepository.findByIdentifyCode(identifyCode)
+        .orElseThrow(() -> new UsernameNotFoundException("Not found user by identifyCode " + identifyCode));
     // user.setRefreshToken(null);
     userRepository.save(user);
   }
@@ -121,7 +130,7 @@ public class AuthService {
 
     CustomUserDetails userDetails = CustomUserDetails.builder()
         .id(user.getId())
-        .username(user.getStudentCode())
+        .username(user.getIdentifyCode())
         .password(user.getPassword())
         .role(user.getRole())
         // .status(user.getIsActive())
@@ -135,5 +144,17 @@ public class AuthService {
         .accessToken(tokenPair.accessToken())
         .refreshToken(refreshToken)
         .build();
+  }
+
+  public void changePassword(TAccountRequest accountRequest, ChangePasswordDto changePasswordDto) {
+    EAccountCredentials user = userRepository.findById(accountRequest.id())
+        .orElseThrow(() -> new UsernameNotFoundException("Not found user by id " + accountRequest.id()));
+
+    if (!passwordEncoder.matches(changePasswordDto.getOldPassword(), user.getPassword())) {
+      throw new IllegalArgumentException("Old password is not correct");
+    }
+
+    user.setPassword(passwordEncoder.encode(changePasswordDto.getNewPassword()));
+    userRepository.save(user);
   }
 }

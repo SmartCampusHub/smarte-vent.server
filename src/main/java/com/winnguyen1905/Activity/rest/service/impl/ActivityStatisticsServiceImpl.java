@@ -97,7 +97,9 @@ public class ActivityStatisticsServiceImpl implements ActivityStatisticsService 
           .mapToDouble(EFeedback::getRating)
           .average()
           .orElse(0);
-
+      if (averageRating == 0) {
+        averageRating = 0.0;
+      }
       int highRatingCount = (int) feedbacks.stream()
           .filter(f -> f.getRating() >= 8.0)
           .count();
@@ -531,7 +533,14 @@ public class ActivityStatisticsServiceImpl implements ActivityStatisticsService 
 
       // Get statistics for comparison
       ActivityStatisticsVm otherStats = getActivityStatistics(other.getId());
+      if (otherStats.getAverageRating() == null) {
+        otherStats.setAverageRating(0.0);
+      }
+
       ActivityStatisticsVm thisStats = getActivityStatistics(activityId);
+      if (thisStats.getAverageRating() == null) {
+        thisStats.setAverageRating(0.0);
+      }
 
       // Calculate differences
       int otherParticipantCount = other.getCurrentParticipants() != null ? other.getCurrentParticipants() : 0;
@@ -546,7 +555,8 @@ public class ActivityStatisticsServiceImpl implements ActivityStatisticsService 
           : 0;
 
       double ratingDiff = thisStats.getAverageRating() != null && thisStats.getAverageRating() > 0
-          ? (otherStats.getAverageRating() / thisStats.getAverageRating()) * 100 - 100
+          ? ((otherStats.getAverageRating() != null ? otherStats.getAverageRating() : 0.0)
+              / thisStats.getAverageRating()) * 100 - 100
           : 0;
 
       // Create view model

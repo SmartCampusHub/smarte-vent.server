@@ -33,7 +33,8 @@ public class ActivityVm implements AbstractModel {
   private String attendanceScoreUnit;
   private Long representativeOrganizerId;
   private List<ActivityScheduleVm> activitySchedules;
-
+  @JsonFormat(shape = JsonFormat.Shape.STRING)
+  private Instant createdDate;
   private OrganizationVm organization;
   private String shortDescription;
   private List<String> tags;
@@ -45,5 +46,6 @@ public class ActivityVm implements AbstractModel {
   private Boolean isFeatured;
   private Boolean isApproved;
   private int likes;
+  @JsonFormat(shape = JsonFormat.Shape.STRING)
   private Instant registrationDeadline;
 }

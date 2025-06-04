@@ -56,18 +56,18 @@ public class AuthenticationManagerConfig {
 
   @Bean("userDetailsService")
   public UserDetailsService userDetailsService(AccountRepository userRepository) {
-    return studentCode -> {
-      return userRepository.findByStudentCode(studentCode)
+    return identifyCode -> {
+      return userRepository.findByIdentifyCode(identifyCode)
           .map(user -> CustomUserDetails.builder()
               .id(user.getId())
               .role(user.getRole())
               .email(user.getEmail())
               .phone(user.getPhone())
-              .username(user.getStudentCode())
+              .username(user.getIdentifyCode())
               .password(user.getPassword())
               .build())
           .orElseThrow(
-              () -> new UsernameNotFoundException("Not found user by username " + studentCode));
+              () -> new UsernameNotFoundException("Not found user by username " + identifyCode));
     };
   }
 }

@@ -5,6 +5,7 @@ import java.time.Instant;
 import org.hibernate.annotations.CreationTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.winnguyen1905.Activity.common.constant.ReportType;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -33,19 +34,21 @@ public class EReport {
   @Column(name = "id", updatable = false, nullable = false)
   protected Long id;
 
-  @ManyToOne
-  @JoinColumn(name = "activity_id")
-  private EActivity activity;
-
   @Column(name = "report_type")
-  private String reportType;
+  private ReportType reportType;
+
+  @Column(name = "reported_object_id")
+  private Long reportedObjectId;
+
+  @Column(name = "title")
+  private String title;
+
+  @Column(name = "description", columnDefinition = "TEXT")
+  private String description;
 
   @ManyToOne
   @JoinColumn(name = "reporter_id")
   private EAccountCredentials reporter;
-
-  @Column(name = "description", columnDefinition = "TEXT")
-  private String description;
 
   @JsonIgnore
   @Column(name = "created_by", nullable = true)

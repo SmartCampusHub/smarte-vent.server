@@ -13,13 +13,16 @@ import com.winnguyen1905.Activity.common.constant.ActivityStatus;
 import com.winnguyen1905.Activity.common.constant.ParticipationRole;
 import com.winnguyen1905.Activity.common.constant.ParticipationStatus;
 import com.winnguyen1905.Activity.exception.BadRequestException;
+import com.winnguyen1905.Activity.exception.ResourceAlreadyExistsException;
 import com.winnguyen1905.Activity.model.dto.ActivityDto;
 import com.winnguyen1905.Activity.model.dto.ActivityScheduleDto;
 import com.winnguyen1905.Activity.model.dto.ActivitySearchRequest;
+import com.winnguyen1905.Activity.model.dto.CheckJoinedActivityDto;
 import com.winnguyen1905.Activity.model.dto.JoinActivityRequest;
 import com.winnguyen1905.Activity.model.dto.ParticipationSearchParams;
 import com.winnguyen1905.Activity.model.viewmodel.ActivityScheduleVm;
 import com.winnguyen1905.Activity.model.viewmodel.ActivityVm;
+import com.winnguyen1905.Activity.model.viewmodel.CheckJoinedActivityVm;
 import com.winnguyen1905.Activity.model.viewmodel.OrganizationVm;
 import com.winnguyen1905.Activity.model.viewmodel.PagedResponse;
 import com.winnguyen1905.Activity.model.viewmodel.ParticipationDetailVm;
@@ -41,6 +44,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Comparator;
+
 import com.winnguyen1905.Activity.persistance.entity.EActivitySchedule;
 import com.winnguyen1905.Activity.persistance.entity.EParticipationDetail;
 
@@ -73,7 +78,7 @@ public class ActivityServiceImpl implements ActivityService {
         .description(activityDto.getActivityDescription())
         .startDate(activityDto.getStartDate())
         .endDate(activityDto.getEndDate())
-        .status(ActivityStatus.PUBLISHED) // Set to null initially
+        .status(ActivityStatus.PENDING) // Set to null initially
         .imageUrl(activityDto.getImageUrl())
         .shortDescription(activityDto.getShortDescription())
         .tags(activityDto.getTags())
@@ -214,6 +219,8 @@ public class ActivityServiceImpl implements ActivityService {
             .endDate(activity.getEndDate())
             .activityName(activity.getActivityName())
             .description(activity.getDescription())
+        .createdDate(activity.getCreatedDate())
+
             .activityVenue(activity.getVenue())
             .startDate(activity.getStartDate())
             .endDate(activity.getEndDate())
@@ -366,6 +373,7 @@ public class ActivityServiceImpl implements ActivityService {
         .activitySchedules(activitySchedules)
         .startDate(activity.getStartDate())
         .endDate(activity.getEndDate())
+        .createdDate(activity.getCreatedDate())
         .activityName(activity.getActivityName())
         .description(activity.getDescription())
         .activityVenue(activity.getVenue())
@@ -389,6 +397,7 @@ public class ActivityServiceImpl implements ActivityService {
         .isApproved(activity.getIsApproved())
         .likes(activity.getLikes())
         .registrationDeadline(activity.getRegistrationDeadline())
+        .createdDate(activity.getCreatedDate())
         .build();
   }
 
@@ -401,10 +410,14 @@ public class ActivityServiceImpl implements ActivityService {
 
     EAccountCredentials account = this.accountRepository.findById(accountRequest.id())
         .orElseThrow(() -> new EntityNotFoundException("Not found account request"));
+    EParticipationDetail participationDetails = participationDetailRepository.findByStudentIdAndActivityId(
+        accountRequest.id(),
+        joinActivityRequest.activityId()).orElse(null);
+    Boolean x = participationDetailRepository.existsByParticipantIdAndActivityId(account.getId(),
+        joinActivityRequest.activityId());
 
-    if (participationDetailRepository.existsByParticipantIdAndActivityId(account.getId(),
-        joinActivityRequest.activityId()))
-      throw new BadRequestException("Already joined activity");
+    if (x)
+      throw new ResourceAlreadyExistsException("You have already joined this activity");
 
     if (activity.getCurrentParticipants() == activity.getCapacityLimit())
       throw new BadRequestException("Out of slot");
@@ -432,8 +445,10 @@ public class ActivityServiceImpl implements ActivityService {
     // }
     return ParticipationDetailVm.builder()
         .id(savedParticipationDetail.getId())
+        .studentId(accountRequest.id())
         .activityId(savedParticipationDetail.getActivity().getId())
         .activityName(savedParticipationDetail.getActivity().getActivityName())
+        .participationStatus(savedParticipationDetail.getParticipationStatus())
         .activityCategory(savedParticipationDetail.getActivity().getActivityCategory())
         .activityStatus(savedParticipationDetail.getActivity().getStatus())
         .activityVenue(savedParticipationDetail.getActivity().getVenue())
@@ -461,6 +476,7 @@ public class ActivityServiceImpl implements ActivityService {
                 .representativeEmail(activity.getOrganization().getEmail())
                 .representativePhone(activity.getOrganization().getPhone())
                 .build())
+            .createdDate(activity.getCreatedDate())
             .activityName(activity.getActivityName())
             .description(activity.getDescription())
             .activityVenue(activity.getVenue())
@@ -499,6 +515,7 @@ public class ActivityServiceImpl implements ActivityService {
 
     List<ActivityVm> activityVms = participationDetails.stream().map(EParticipationDetail::getActivity).toList()
         .stream()
+        .filter(activity -> activity.getIsApproved() == true)
         .map(activity -> ActivityVm.builder().id(activity.getId())
             .startDate(activity.getStartDate())
             .endDate(activity.getEndDate()).organization(OrganizationVm.builder()
@@ -510,7 +527,8 @@ public class ActivityServiceImpl implements ActivityService {
             .organization(null)
             .activityName(activity.getActivityName())
             .description(activity.getDescription())
-            .activityVenue(activity.getVenue())
+        .createdDate(activity.getCreatedDate())
+        .activityVenue(activity.getVenue())
             .startDate(activity.getStartDate())
             .endDate(activity.getEndDate())
             .capacityLimit(activity.getCapacityLimit())
@@ -527,6 +545,7 @@ public class ActivityServiceImpl implements ActivityService {
             .likes(activity.getLikes())
             .registrationDeadline(activity.getRegistrationDeadline())
             .build())
+        .sorted(Comparator.comparing(ActivityVm::getStartDate)) // Sort by startDate
         .collect(Collectors.toList());
 
     return PagedResponse.<ActivityVm>builder()
@@ -546,13 +565,10 @@ public class ActivityServiceImpl implements ActivityService {
     if (activity.getIsApproved() == true) {
       throw new BadRequestException("Activity is already approved");
     }
+    activity.setIsApproved(true);
+    activity.setStatus(ActivityStatus.PUBLISHED);
+    activityRepository.save(activity);
 
-    if (activity.getStatus() == ActivityStatus.PUBLISHED) {
-      activity.setIsApproved(true);
-      activityRepository.save(activity);
-    } else {
-      throw new BadRequestException("Activity is not in pending status");
-    }
   }
 
   @Override
@@ -562,12 +578,23 @@ public class ActivityServiceImpl implements ActivityService {
     if (activity.getIsApproved() == false) {
       throw new BadRequestException("Activity is already disapproved");
     }
+    activity.setIsApproved(false);
+    activity.setStatus(ActivityStatus.PENDING);
+    activityRepository.save(activity);
 
-    if (activity.getStatus() == ActivityStatus.PUBLISHED) {
-      activity.setIsApproved(false);
-      activityRepository.save(activity);
-    } else {
-      throw new BadRequestException("Activity is not in pending status");
-    }
+  }
+
+  @Override
+  public CheckJoinedActivityVm isJoinedActivity(TAccountRequest accountRequest,
+      CheckJoinedActivityDto checkJoinedActivityDto) {
+    // EActivity activity =
+    // activityRepository.findById(checkJoinedActivityDto.activityId())
+    // .orElseThrow(() -> new EntityNotFoundException("Not found activity"));
+    // Boolean isJoined = ;
+    return CheckJoinedActivityVm.builder()
+        .isJoined(participationDetailRepository.existsByParticipantIdAndActivityId(
+            accountRequest.id(),
+            checkJoinedActivityDto.activityId()))
+        .build();
   }
 }

@@ -25,20 +25,15 @@ import com.winnguyen1905.Activity.common.constant.ScheduleStatus;
 import com.winnguyen1905.Activity.persistance.entity.EAccountCredentials;
 import com.winnguyen1905.Activity.persistance.entity.EActivity;
 import com.winnguyen1905.Activity.persistance.entity.EActivitySchedule;
-import com.winnguyen1905.Activity.persistance.entity.EClass;
-import com.winnguyen1905.Activity.persistance.entity.EConfirmation;
-import com.winnguyen1905.Activity.persistance.entity.EDepartment;
-import com.winnguyen1905.Activity.persistance.entity.EFacultyAdvisor;
 import com.winnguyen1905.Activity.persistance.entity.EFeedback;
 import com.winnguyen1905.Activity.persistance.entity.ENotification;
 import com.winnguyen1905.Activity.persistance.entity.EOrganization;
 import com.winnguyen1905.Activity.persistance.entity.EParticipationDetail;
 import com.winnguyen1905.Activity.persistance.entity.EReport;
+import com.winnguyen1905.Activity.common.constant.MajorType;
 import com.winnguyen1905.Activity.persistance.repository.AccountRepository;
 import com.winnguyen1905.Activity.persistance.repository.ActivityRepository;
 import com.winnguyen1905.Activity.persistance.repository.ActivityScheduleRepository;
-import com.winnguyen1905.Activity.persistance.repository.ClassRepository;
-import com.winnguyen1905.Activity.persistance.repository.ConfirmationRepository;
 import com.winnguyen1905.Activity.persistance.repository.FeedbackRepository;
 import com.winnguyen1905.Activity.persistance.repository.NotificationRepository;
 import com.winnguyen1905.Activity.persistance.repository.OrganizationRepository;
@@ -51,7 +46,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class DatabaseInitializer implements CommandLineRunner {
 
-  private final ClassRepository classRepository;
   private final PasswordEncoder passwordEncoder;
   private final AccountRepository accountRepository;
   private final ActivityRepository activityRepository;
@@ -61,7 +55,6 @@ public class DatabaseInitializer implements CommandLineRunner {
   private final ActivityScheduleRepository activityScheduleRepository;
   private final NotificationRepository notificationRepository;
   private final ReportRepository reportRepository;
-  private final ConfirmationRepository confirmationRepository;
 
   private final Random random = new Random();
 
@@ -85,10 +78,12 @@ public class DatabaseInitializer implements CommandLineRunner {
         .orElseThrow(() -> new IllegalArgumentException("Admin account not found"));
     List<EOrganization> organizations = new ArrayList<>();
     organizations.add(adminAccount.getOrganization()); // Add admin's organization to the list
-    // List<EAccountCredentials> orgAccounts = createOrganizationAccounts(organizations);
+    // List<EAccountCredentials> orgAccounts =
+    // createOrganizationAccounts(organizations);
     // accountRepository.saveAll(orgAccounts);
     // organizationRepository.saveAll(organizations);
 
+    // TEMP
     List<EActivity> activities = createActivities(organizations);
     activityRepository.saveAll(activities);
 
@@ -127,24 +122,25 @@ public class DatabaseInitializer implements CommandLineRunner {
     // Admin accounts
     accounts.add(EAccountCredentials.builder().isActive(true)
         .fullName("Admin User")
-        .email("admin@university.edu")
-        .studentCode("2")
+        .email("vtc.tapkichmobile.vn@gmail.com")
+        .identifyCode("2")
         .role(AccountRole.ADMIN)
         .password(passwordEncoder.encode("1"))
         .build());
 
     accounts.add(EAccountCredentials.builder().isActive(true)
         .fullName("Student User")
-        .email("student@university.edu")
-        .studentCode("1")
+        .email("vtc.tapkichmobile.vn@gmail.com")
+        .identifyCode("1")
         .role(AccountRole.STUDENT)
+        .major(MajorType.IT) // Assign IT major to the test student
         .password(passwordEncoder.encode("1"))
         .build());
 
     EAccountCredentials organizationAccount = EAccountCredentials.builder().isActive(true)
         .fullName("Organization User")
-        .email("organization@university.edu")
-        .studentCode("3")
+        .email("vtc.tapkichmobile.vn@gmail.com")
+        .identifyCode("3")
         .role(AccountRole.ORGANIZATION)
         .password(passwordEncoder.encode("1"))
         .build();
@@ -154,32 +150,36 @@ public class DatabaseInitializer implements CommandLineRunner {
         .name("University Admin")
         .description("Administrative organization for university management")
         .phone("0123456789")
-        .email("admin@university.edu")
+        .email("vtc.tapkichmobile.vn@gmail.com")
         .type(OrganizationType.UNIVERSITY)
         .account(organizationAccount)
         .build();
     organizationAccount.setOrganization(adminOrg);
 
     accountRepository.saveAll(accounts);
-    // Create 20 student accounts
+    // Create 20 student accounts with random majors
     String[] firstNames = { "John", "Emma", "Michael", "Sophia", "James", "Olivia", "William", "Ava", "Alexander",
         "Isabella" };
     String[] lastNames = { "Smith", "Johnson", "Williams", "Brown", "Jones", "Miller", "Davis", "Garcia",
         "Rodriguez", "Wilson" };
+    MajorType[] majors = MajorType.values();
 
     for (int i = 1; i <= 20; i++) {
       String firstName = firstNames[random.nextInt(firstNames.length)];
       String lastName = lastNames[random.nextInt(lastNames.length)];
       String fullName = firstName + " " + lastName;
-      String email = firstName.toLowerCase() + "." + lastName.toLowerCase() + i + "@university.edu";
-      String studentCode = "S" + String.format("%03d", i);
+      String email = "vtc.tapkichmobile.vn@gmail.com";
+      String identifyCode = "S" + String.format("%03d", i);
+      MajorType randomMajor = majors[random.nextInt(majors.length)]; // Get random major
 
-      accounts.add(EAccountCredentials.builder().isActive(true)
+      accounts.add(EAccountCredentials.builder()
+          .isActive(true)
           .fullName(fullName)
           .email(email)
-          .studentCode(studentCode)
+          .identifyCode(identifyCode)
           .role(AccountRole.STUDENT)
-          .password(passwordEncoder.encode(studentCode))
+          .major(randomMajor) // Assign random major
+          .password(passwordEncoder.encode(identifyCode))
           .build());
     }
 
@@ -240,7 +240,7 @@ public class DatabaseInitializer implements CommandLineRunner {
           .isActive(true)
           .fullName(org.getName() + " Admin")
           .email(org.getEmail())
-          .studentCode(username)
+          .identifyCode(username)
           .role(AccountRole.ORGANIZATION)
           .password(passwordEncoder.encode(username))
           .organization(org)
@@ -336,6 +336,7 @@ public class DatabaseInitializer implements CommandLineRunner {
       boolean isApproved = status != ActivityStatus.PENDING;
 
       EActivity activity = EActivity.builder()
+          .id(Long.valueOf(i + 2000))
           .activityName((String) details[0])
           .description((String) details[1])
           .shortDescription((String) details[2])
@@ -433,9 +434,9 @@ public class DatabaseInitializer implements CommandLineRunner {
         Instant now = Instant.parse("2025-05-26T09:00:00Z"); // Current date
 
         if (segmentEnd.isBefore(now)) {
-          status = ScheduleStatus.FINISHED;
+          status = ScheduleStatus.COMPLETED;
         } else if (segmentStart.isBefore(now) && segmentEnd.isAfter(now)) {
-          status = ScheduleStatus.ONGOING;
+          status = ScheduleStatus.IN_PROGRESS;
         } else {
           status = ScheduleStatus.WAITING_TO_START;
         }
@@ -531,7 +532,7 @@ public class DatabaseInitializer implements CommandLineRunner {
             .activity(activity)
             .participationStatus(status)
             .participationRole(role)
-            .verifiedByAccount(verifier)
+            // .verifiedByAccount(verifier)
             .createdBy(student.getFullName())
             .registeredAt(Instant.parse("2025-05-01T17:00:00Z"))
             .build();
@@ -667,39 +668,39 @@ public class DatabaseInitializer implements CommandLineRunner {
   private List<EReport> createReports(List<EActivity> activities, List<EAccountCredentials> students) {
     List<EReport> reports = new ArrayList<>();
 
-    // Create reports for 30% of activities
-    for (EActivity activity : activities) {
-      if (random.nextDouble() < 0.3) { // 30% chance of having a report
-        EAccountCredentials reporter = students.get(random.nextInt(students.size()));
+    // // Create reports for 30% of activities
+    // for (EActivity activity : activities) {
+    // if (random.nextDouble() < 0.3) { // 30% chance of having a report
+    // EAccountCredentials reporter = students.get(random.nextInt(students.size()));
 
-        String[] reportTypes = {
-            "Activity Summary",
-            "Participation Report",
-            "Financial Summary",
-            "Feedback Analysis",
-            "Event Outcomes"
-        };
+    // String[] reportTypes = {
+    // "Activity Summary",
+    // "Participation Report",
+    // "Financial Summary",
+    // "Feedback Analysis",
+    // "Event Outcomes"
+    // };
 
-        String[] contents = {
-            "Detailed summary of the activity outcomes and achievements.",
-            "Analysis of participant demographics and engagement levels.",
-            "Breakdown of expenses and revenue generated from the activity.",
-            "Summary of participant feedback and suggestions for improvement.",
-            "Evaluation of the activity's goals and objectives achievement."
-        };
+    // String[] contents = {
+    // "Detailed summary of the activity outcomes and achievements.",
+    // "Analysis of participant demographics and engagement levels.",
+    // "Breakdown of expenses and revenue generated from the activity.",
+    // "Summary of participant feedback and suggestions for improvement.",
+    // "Evaluation of the activity's goals and objectives achievement."
+    // };
 
-        int typeIndex = random.nextInt(reportTypes.length);
+    // int typeIndex = random.nextInt(reportTypes.length);
 
-        EReport report = EReport.builder()
-            .activity(activity)
-            .reporter(reporter)
-            .reportType(reportTypes[typeIndex])
-            .description(contents[typeIndex])
-            .createdDate(activity.getEndDate().plusSeconds(60 * 60 * 24 * (1 + random.nextInt(5)))) // 1-5
-            .build();
-        reports.add(report);
-      }
-    }
+    // EReport report = EReport.builder()
+    // .reporter(reporter)
+    // .reportType(reportTypes[typeIndex])
+    // .description(contents[typeIndex])
+    // .createdDate(activity.getEndDate().plusSeconds(60 * 60 * 24 * (1 +
+    // random.nextInt(5)))) // 1-5
+    // .build();
+    // reports.add(report);
+    // }
+    // }
 
     return reports;
   }

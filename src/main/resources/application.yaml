@@ -22,15 +22,20 @@ management:
 spring:
   mail:
     host: smtp.gmail.com
-    port: 587
-    username: ${GMAIL_USERNAME}
-    password: ${GMAIL_APP_PASSWORD}
+    port: 465
+    username: winnnguyen1905.game@gmail.com
+    password: Loi19052004
     properties:
       mail:
+        transport:
+          protocol: smtp
         smtp:
           auth: true
-          starttls:
-            enable: true
+          socketFactory:
+            port: 465
+            class: javax.net.ssl.SSLSocketFactory
+        smtps:
+          quitwait: false
   application:
     name: ACTIVITY-GROUP3
   main:
@@ -54,7 +59,7 @@ spring:
     database-platform: org.hibernate.dialect.MySQL8Dialect
     hibernate:
       ddl-auto: create-drop # Change this if needed (create, create-drop, validate, none)
-    show-sql: true
+    show-sql: false
     defer-datasource-initialization: true
   # flyway:
   #   enabled: true

@@ -12,8 +12,8 @@ import lombok.Builder;
 public record ActivitySearchRequest(
     String activityName,
     ActivityCategory activityCategory,
-    ActivityStatus activityStatus,
-    Long organizationId,
+    ActivityStatus status,
+    String organizationName,
     Instant startDateFrom,
     Instant startDateTo,
     Instant endDateFrom,
@@ -39,8 +39,8 @@ public record ActivitySearchRequest(
   public ActivitySearchRequest(
       String activityName,
       ActivityCategory activityCategory,
-      ActivityStatus activityStatus,
-      Long organizationId,
+      ActivityStatus status,
+      String organizationName,
       Instant startDateFrom,
       Instant startDateTo,
       Instant endDateFrom,
@@ -64,8 +64,8 @@ public record ActivitySearchRequest(
       Instant registrationDeadline) {
     this.activityName = activityName;
     this.activityCategory = activityCategory;
-    this.activityStatus = activityStatus;
-    this.organizationId = organizationId;
+    this.status = status;
+    this.organizationName = organizationName;
     this.startDateFrom = startDateFrom;
     this.startDateTo = startDateTo;
     this.endDateFrom = endDateFrom;

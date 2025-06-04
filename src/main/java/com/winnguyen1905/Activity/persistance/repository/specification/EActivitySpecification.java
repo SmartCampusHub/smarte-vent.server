@@ -26,12 +26,12 @@ public class EActivitySpecification {
         predicates.add(criteriaBuilder.equal(root.get("activityCategory"), searchRequest.activityCategory()));
       }
 
-      if (searchRequest.activityStatus() != null) {
-        predicates.add(criteriaBuilder.equal(root.get("activityStatus"), searchRequest.activityStatus()));
+      if (searchRequest.status() != null) {
+        predicates.add(criteriaBuilder.equal(root.get("status"), searchRequest.status()));
       }
 
-      if (searchRequest.organizationId() != null) {
-        predicates.add(criteriaBuilder.equal(root.get("organization").get("id"), searchRequest.organizationId()));
+      if (searchRequest.organizationName() != null) {
+        predicates.add(criteriaBuilder.like(root.get("organization").get("name"), "%" + searchRequest.organizationName() + "%"));
       }
 
       if (searchRequest.startDateFrom() != null) {

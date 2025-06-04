@@ -28,5 +28,5 @@ public class ClassVm implements AbstractModel {
   private String createdBy;
   private Instant createdDate;
   private List<StudentVm> students;
-  public static record StudentVm(String studentName, String studentCode, String studentEmail) {}
+  public static record StudentVm(String studentName, String identifyCode, String studentEmail) {}
 }

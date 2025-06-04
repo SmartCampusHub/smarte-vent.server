@@ -49,8 +49,8 @@ public class ActivityStatisticsController {
   @GetMapping("/{activityId}/time-range")
   public ResponseEntity<ActivityStatisticsVm> getActivityStatisticsInTimeRange(
       @PathVariable("activityId") Long activityId,
-      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant startDate,
-      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant endDate) {
+      @RequestParam @DateTimeFormat Instant startDate,
+      @RequestParam @DateTimeFormat Instant endDate) {
     ActivityStatisticsVm statistics = activityStatisticsService.getActivityStatisticsInTimeRange(activityId, startDate,
         endDate);
     return ResponseEntity.ok(statistics);

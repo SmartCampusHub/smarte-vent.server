@@ -5,9 +5,11 @@ import org.springframework.data.domain.Pageable;
 import com.winnguyen1905.Activity.common.annotation.TAccountRequest;
 import com.winnguyen1905.Activity.model.dto.ActivityDto;
 import com.winnguyen1905.Activity.model.dto.ActivitySearchRequest;
+import com.winnguyen1905.Activity.model.dto.CheckJoinedActivityDto;
 import com.winnguyen1905.Activity.model.dto.JoinActivityRequest;
 import com.winnguyen1905.Activity.model.dto.ParticipationSearchParams;
 import com.winnguyen1905.Activity.model.viewmodel.ActivityVm;
+import com.winnguyen1905.Activity.model.viewmodel.CheckJoinedActivityVm;
 import com.winnguyen1905.Activity.model.viewmodel.PagedResponse;
 import com.winnguyen1905.Activity.model.viewmodel.ParticipationDetailVm;
 
@@ -24,4 +26,5 @@ public interface ActivityService {
   // PagedResponse<ActivityVm> getActivitiesByStudent(TAccountRequest accountRequest, Pageable pageable);
   ActivityVm getActivityById(TAccountRequest accountRequest, Long activityId);
   // PagedResponse<ActivityVm> getActivitiesByCategory(TAccountRequest accountRequest, ActivityCategory activityCategory, Pageable pageable);
+  CheckJoinedActivityVm isJoinedActivity(TAccountRequest accountRequest, CheckJoinedActivityDto checkJoinedActivityDto);
 }

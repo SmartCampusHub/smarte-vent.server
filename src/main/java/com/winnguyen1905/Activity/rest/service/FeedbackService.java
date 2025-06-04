@@ -3,6 +3,7 @@ package com.winnguyen1905.Activity.rest.service;
 import java.time.Instant;
 import java.util.List;
 
+import com.winnguyen1905.Activity.common.annotation.TAccountRequest;
 import com.winnguyen1905.Activity.common.constant.ActivityCategory;
 import com.winnguyen1905.Activity.common.constant.ActivityStatus;
 import com.winnguyen1905.Activity.model.dto.FeedbackCreateDto;
@@ -16,9 +17,9 @@ import org.springframework.data.domain.Pageable;
 public interface FeedbackService {
     
     // Basic CRUD operations
-    FeedbackDetailVm createFeedback(FeedbackCreateDto feedbackDto, Long studentId);
+    FeedbackDetailVm createFeedback(TAccountRequest accountRequest, FeedbackCreateDto feedbackDto);
     FeedbackDetailVm getFeedbackById(Long feedbackId);
-    FeedbackDetailVm updateFeedback(Long feedbackId, FeedbackUpdateDto feedbackDto);
+    FeedbackDetailVm updateFeedback(TAccountRequest accountRequest, FeedbackUpdateDto feedbackDto);
     void deleteFeedback(Long feedbackId);
     
     // Student-specific operations

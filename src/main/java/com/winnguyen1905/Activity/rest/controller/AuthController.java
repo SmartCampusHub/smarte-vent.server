@@ -12,8 +12,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.winnguyen1905.Activity.auth.CookieUtils;
+import com.winnguyen1905.Activity.common.annotation.AccountRequest;
+import com.winnguyen1905.Activity.common.annotation.TAccountRequest;
 import com.winnguyen1905.Activity.common.constant.SystemConstant;
 import com.winnguyen1905.Activity.exception.ResourceNotFoundException;
+import com.winnguyen1905.Activity.model.dto.ChangePasswordDto;
 import com.winnguyen1905.Activity.model.dto.LoginRequest;
 import com.winnguyen1905.Activity.model.dto.RegisterRequest;
 import com.winnguyen1905.Activity.model.viewmodel.AccountVm;
@@ -71,5 +74,12 @@ public class AuthController {
     return ResponseEntity.ok()
         .header(HttpHeaders.SET_COOKIE, CookieUtils.deleteCookie(SystemConstant.REFRESH_TOKEN).toString())
         .build();
+  }
+
+  @PostMapping("/change-password")
+  public ResponseEntity<Void> changePassword(@AccountRequest TAccountRequest accountRequest,
+      @RequestBody ChangePasswordDto changePasswordDto) {
+    this.authService.changePassword(accountRequest, changePasswordDto);
+    return ResponseEntity.ok().build();
   }
 }

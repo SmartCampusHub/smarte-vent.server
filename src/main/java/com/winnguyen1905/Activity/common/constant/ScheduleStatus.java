@@ -1,7 +1,7 @@
 package com.winnguyen1905.Activity.common.constant;
 
 public enum ScheduleStatus {
-  ONGOING("ONGOING"), FINISHED("FINISHED"), WAITING_TO_START("WAITING_TO_START"), CONFIRMED("CONFIRMED");
+  IN_PROGRESS("IN_PROGRESS"), COMPLETED("COMPLETED"), WAITING_TO_START("WAITING_TO_START"), CANCELLED("CANCELLED");
 
   private final String status;
 

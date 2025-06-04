@@ -117,13 +117,15 @@ public class StatisticsServiceImpl implements StatisticsService {
     activityRepository.countActivitiesByCategory().forEach(result -> {
       ActivityCategory category = (ActivityCategory) result[0];
       Long count = (Long) result[1];
-      activitiesByCategory.put(category.name(), count);
+      if (category != null && category.name() != null) {
+        activitiesByCategory.put(category.name(), count != null ? count : 0L);
+      }
     });
 
     // Ensure all categories are represented, even with zero count
     for (ActivityCategory category : ActivityCategory.values()) {
-      if (!activitiesByCategory.containsKey(category.name())) {
-        activitiesByCategory.put(category.name(), 0L);
+      if (category != null && category.name() != null) {
+        activitiesByCategory.putIfAbsent(category.name(), 0L);
       }
     }
 
@@ -135,7 +137,9 @@ public class StatisticsServiceImpl implements StatisticsService {
     feedbackRepository.getAverageRatingsByActivity().forEach(result -> {
       Long activityId = (Long) result[0];
       Double rating = (Double) result[1];
-      averageScoreByActivity.put(activityId, rating);
+      if (activityId != null) {
+        averageScoreByActivity.put(activityId, rating != null ? rating : 0.0);
+      }
     });
 
     // Get top keywords from feedback - process in service layer

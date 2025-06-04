@@ -1,9 +1,6 @@
-package com.winnguyen1905.Activity.model.viewmodel;
-
-import java.time.Instant;
+package com.winnguyen1905.Activity.model.dto;
 
 import com.winnguyen1905.Activity.common.constant.ReportType;
-import com.winnguyen1905.Activity.model.dto.AbstractModel;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,13 +11,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReportVm implements AbstractModel{
-    private Long id;
+public class ReportCreateDto implements AbstractModel {
     private ReportType reportType;
     private Long reportedObjectId;
     private String title;
     private String description;
-    private Long reporterId;
-    private String reporterName;
-    private Instant createdDate;
-}
+} 

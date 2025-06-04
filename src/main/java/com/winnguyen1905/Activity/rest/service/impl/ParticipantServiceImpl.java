@@ -98,15 +98,19 @@ public class ParticipantServiceImpl implements ParticipantService {
     Boolean isContributor = this.participantRepository.existsByParticipantIdAndActivityIdAndParticipationRole(
         accountRequest.id(), participationDetail.getActivity().getId(), ParticipationRole.CONTRIBUTOR);
 
-    if (!accountRequest.role().equals(AccountRole.ADMIN) && !isContributor)
-      throw new RuntimeException("You are not allowed to verify this participation detail");
+    // if ((!accountRequest.role().equals(AccountRole.ADMIN) && !isContributor)
+    // || (participationDetail.getActivity().getOrganization().getId() !=
+    // accountRequest.id()))
+    // throw new RuntimeException("You are not allowed to verify this participation
+    // detail");
 
-    if (participationDetail.getParticipationStatus() == ParticipationStatus.UNVERIFIED) {
-      participationDetail.setParticipationStatus(ParticipationStatus.VERIFIED);
-      participantRepository.save(participationDetail);
-    } else {
-      throw new RuntimeException("Participation detail is already verified");
-    }
+    // if (participationDetail.getParticipationStatus() ==
+    // ParticipationStatus.UNVERIFIED) {
+    participationDetail.setParticipationStatus(ParticipationStatus.VERIFIED);
+    participantRepository.save(participationDetail);
+    // } else {
+    // throw new RuntimeException("Participation detail is already verified");
+    // }
 
     return ParticipationDetailVm.builder()
         .activityId(participationDetail.getActivity().getId())
@@ -131,9 +135,9 @@ public class ParticipantServiceImpl implements ParticipantService {
 
     List<ParticipationDetailVm> participationDetailVms = participationDetails.getContent().stream()
         .map(participationDetail -> ParticipationDetailVm.builder()
+            .id(participationDetail.getId())
             .participationStatus(participationDetail.getParticipationStatus())
             .studentId(participationDetail.getParticipant().getId())
-            .id(participationDetail.getId())
             .participantName(participationDetail.getParticipant().getFullName())
             .activityId(participationDetail.getActivity().getId())
             .activityName(participationDetail.getActivity().getActivityName())
@@ -144,7 +148,7 @@ public class ParticipantServiceImpl implements ParticipantService {
             .endDate(participationDetail.getActivity().getEndDate())
             .participationStatus(participationDetail.getParticipationStatus())
             .registrationTime(participationDetail.getRegisteredAt())
-            .studentCode(participationDetail.getParticipant().getStudentCode())
+            .identifyCode(participationDetail.getParticipant().getIdentifyCode())
             .participationRole(participationDetail.getParticipationRole())
             .build())
         .toList();

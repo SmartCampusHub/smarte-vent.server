@@ -35,7 +35,7 @@ import lombok.experimental.SuperBuilder;
 @Table(name = "attendance")
 public class EParticipationDetail {
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id", updatable = false, nullable = false)
   protected Long id;
 
@@ -57,10 +57,6 @@ public class EParticipationDetail {
   @Enumerated(EnumType.STRING)
   @Column(name = "attendee_role")
   private ParticipationRole participationRole;
-
-  @ManyToOne
-  @JoinColumn(name = "verified_by")
-  private EAccountCredentials verifiedByAccount;
 
   @JsonIgnore
   @Column(name = "created_by", nullable = true)

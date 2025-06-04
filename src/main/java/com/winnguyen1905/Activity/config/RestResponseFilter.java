@@ -9,7 +9,6 @@ import org.springframework.http.server.ServletServerHttpResponse;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
-
 import com.winnguyen1905.Activity.common.annotation.ResponseMessage;
 import com.winnguyen1905.Activity.model.viewmodel.RestResponse;
 

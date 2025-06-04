@@ -2,6 +2,7 @@ package com.winnguyen1905.Activity.persistance.entity;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.UUID;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -9,6 +10,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.winnguyen1905.Activity.common.constant.ActivityCategory;
 import com.winnguyen1905.Activity.common.constant.ActivityStatus;
+import com.winnguyen1905.Activity.common.constant.MajorType;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -22,6 +24,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
 import lombok.AllArgsConstructor;
@@ -43,7 +46,7 @@ public class EActivity {
   private Long version;
 
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
+  // @GeneratedValue(strategy = GenerationType.AUTO)
   @Column(name = "id")
   protected Long id;
 
@@ -62,9 +65,6 @@ public class EActivity {
   @ElementCollection
   @Column(name = "tags")
   private List<String> tags;
-
-  @OneToMany(mappedBy = "activity")
-  private List<EReport> reports;
 
   @ManyToOne
   @JoinColumn(name = "organization_id")
@@ -120,9 +120,6 @@ public class EActivity {
   @Column(name = "image_url")
   private String imageUrl;
 
-  // @Column(name = "attachments")
-  // private Instant attachments;
-
   @Column(name = "likes")
   private Integer likes;
 
@@ -132,8 +129,6 @@ public class EActivity {
   @Column(name = "status")
   @Enumerated(EnumType.STRING)
   private ActivityStatus status;
-
-  // TODO: commentsEnabled
 
   @JsonIgnore
   @Column(name = "created_by_id", nullable = true)
@@ -150,4 +145,11 @@ public class EActivity {
   @UpdateTimestamp
   @Column(name = "updated_date", updatable = true)
   private Instant updatedDate;
+
+  @PrePersist
+  private void prePersist() {
+    if (this.id == null) {
+      this.id = 2000 + (long) (Math.random() * 1000);
+    }
+  }
 }

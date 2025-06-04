@@ -34,7 +34,7 @@ import jakarta.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/feedback")
+@RequestMapping("feedbacks")
 public class FeedbackController {
 
     @Autowired
@@ -51,8 +51,8 @@ public class FeedbackController {
     @PostMapping
     public ResponseEntity<FeedbackDetailVm> createFeedback(
             @AccountRequest TAccountRequest accountRequest,
-            @Valid @RequestBody FeedbackCreateDto feedbackDto) {
-        FeedbackDetailVm createdFeedback = feedbackService.createFeedback(feedbackDto, accountRequest.id());
+            @RequestBody FeedbackCreateDto feedbackDto) {
+        FeedbackDetailVm createdFeedback = feedbackService.createFeedback(accountRequest, feedbackDto);
         return new ResponseEntity<>(createdFeedback, HttpStatus.CREATED);
     }
 
@@ -87,15 +87,14 @@ public class FeedbackController {
     /**
      * Update a feedback provided by the current student
      * 
-     * @param feedbackId  The feedback ID
      * @param feedbackDto The updated feedback data
      * @return The updated feedback
      */
-    @PutMapping("/{feedbackId}")
+    @PostMapping("/update")
     public ResponseEntity<FeedbackDetailVm> updateFeedback(
-            @PathVariable Long feedbackId,
+            @AccountRequest TAccountRequest accountRequest,
             @Valid @RequestBody FeedbackUpdateDto feedbackDto) {
-        FeedbackDetailVm updatedFeedback = feedbackService.updateFeedback(feedbackId, feedbackDto);
+        FeedbackDetailVm updatedFeedback = feedbackService.updateFeedback(accountRequest, feedbackDto);
         return ResponseEntity.ok(updatedFeedback);
     }
 

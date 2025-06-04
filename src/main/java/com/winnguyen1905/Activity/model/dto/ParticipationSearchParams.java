@@ -9,7 +9,7 @@ public record ParticipationSearchParams(
     Long activityId,
     Long participantId,
     String participantName,
-    String studentCode,
+    String identifyCode,
     ParticipationStatus participationStatus,
     ParticipationRole participationRole,
     Instant registeredAfter,
