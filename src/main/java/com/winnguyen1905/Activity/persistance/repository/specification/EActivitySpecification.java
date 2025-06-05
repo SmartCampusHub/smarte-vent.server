@@ -61,11 +61,11 @@ public class EActivitySpecification {
       }
 
       if (searchRequest.minCapacityLimit() != null) {
-        predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("capacity"), searchRequest.minCapacityLimit()));
+        predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("capacityLimit"), searchRequest.minCapacityLimit()));
       }
 
       if (searchRequest.maxCapacityLimit() != null) {
-        predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("capacity"), searchRequest.maxCapacityLimit()));
+        predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("capacityLimit"), searchRequest.maxCapacityLimit()));
       }
 
       if (searchRequest.isApproved() != null) {
