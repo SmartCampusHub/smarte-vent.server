@@ -48,6 +48,7 @@ import java.util.Comparator;
 
 import com.winnguyen1905.Activity.persistance.entity.EActivitySchedule;
 import com.winnguyen1905.Activity.persistance.entity.EParticipationDetail;
+import com.winnguyen1905.Activity.model.viewmodel.FeedbackDetailVm;
 
 @Service
 @RequiredArgsConstructor
@@ -219,7 +220,7 @@ public class ActivityServiceImpl implements ActivityService {
             .endDate(activity.getEndDate())
             .activityName(activity.getActivityName())
             .description(activity.getDescription())
-        .createdDate(activity.getCreatedDate())
+            .createdDate(activity.getCreatedDate())
 
             .activityVenue(activity.getVenue())
             .startDate(activity.getStartDate())
@@ -369,6 +370,24 @@ public class ActivityServiceImpl implements ActivityService {
             .build())
         .collect(Collectors.toList());
 
+    // Map feedbacks to FeedbackDetailVm
+    List<FeedbackDetailVm> feedbacks = activity.getFeedbacks().stream()
+        .map(feedback -> FeedbackDetailVm.builder()
+            .id(feedback.getId())
+            .activityId(activity.getId())
+            .activityName(activity.getActivityName())
+            .studentId(feedback.getParticipation().getParticipant().getId())
+            .studentName(feedback.getParticipation().getParticipant().getFullName())
+            .rating(feedback.getRating())
+            .feedbackDescription(feedback.getFeedbackDescription())
+            .createdDate(feedback.getCreatedAt())
+            .participationId(feedback.getParticipation().getId())
+            .organizationResponse(feedback.getOrganizationResponse())
+            .respondedAt(feedback.getRespondedAt())
+            .hasResponse(feedback.getOrganizationResponse() != null && !feedback.getOrganizationResponse().isEmpty())
+            .build())
+        .collect(Collectors.toList());
+
     return ActivityVm.builder().id(activity.getId())
         .activitySchedules(activitySchedules)
         .startDate(activity.getStartDate())
@@ -378,14 +397,15 @@ public class ActivityServiceImpl implements ActivityService {
         .description(activity.getDescription())
         .activityVenue(activity.getVenue())
         .startDate(activity.getStartDate())
-        .endDate(activity.getEndDate()).organization(OrganizationVm.builder()
+        .endDate(activity.getEndDate())
+        .organization(OrganizationVm.builder()
             .id(activity.getOrganization().getId())
             .organizationName(activity.getOrganization().getName())
             .representativeEmail(activity.getOrganization().getEmail())
             .representativePhone(activity.getOrganization().getPhone())
             .build())
         .capacityLimit(activity.getCapacityLimit())
-        .activityStatus(activity.getStatus()) // Updated to use getStatus()
+        .activityStatus(activity.getStatus())
         .activityCategory(activity.getActivityCategory())
         .tags(activity.getTags())
         .currentParticipants(activity.getCurrentParticipants())
@@ -398,6 +418,7 @@ public class ActivityServiceImpl implements ActivityService {
         .likes(activity.getLikes())
         .registrationDeadline(activity.getRegistrationDeadline())
         .createdDate(activity.getCreatedDate())
+        .feedbacks(feedbacks) // Add feedbacks to the response
         .build();
   }
 
@@ -527,8 +548,8 @@ public class ActivityServiceImpl implements ActivityService {
             .organization(null)
             .activityName(activity.getActivityName())
             .description(activity.getDescription())
-        .createdDate(activity.getCreatedDate())
-        .activityVenue(activity.getVenue())
+            .createdDate(activity.getCreatedDate())
+            .activityVenue(activity.getVenue())
             .startDate(activity.getStartDate())
             .endDate(activity.getEndDate())
             .capacityLimit(activity.getCapacityLimit())
@@ -591,10 +612,31 @@ public class ActivityServiceImpl implements ActivityService {
     // activityRepository.findById(checkJoinedActivityDto.activityId())
     // .orElseThrow(() -> new EntityNotFoundException("Not found activity"));
     // Boolean isJoined = ;
+    EParticipationDetail participationDetail = participationDetailRepository.findByStudentIdAndActivityId(
+        accountRequest.id(),
+        checkJoinedActivityDto.activityId()).orElse(null);
+    if (participationDetail == null) {
+      return CheckJoinedActivityVm.builder()
+          .isJoined(false)
+          .registeredAt(null)
+          .processedAt(null)
+          .processedBy(null)
+          .rejectionReason(null)
+          .verifiedNote(null)
+          .status(null)
+          .role(null)
+          .build();
+    }
+    
     return CheckJoinedActivityVm.builder()
-        .isJoined(participationDetailRepository.existsByParticipantIdAndActivityId(
-            accountRequest.id(),
-            checkJoinedActivityDto.activityId()))
+        .isJoined(true)
+        .registeredAt(participationDetail.getRegisteredAt())
+        .processedAt(participationDetail.getProcessedAt())
+        .processedBy(participationDetail.getProcessedBy())
+        .rejectionReason(participationDetail.getRejectionReason())
+        .verifiedNote(participationDetail.getVerifiedNote())
+        .status(participationDetail.getParticipationStatus())
+        .role(participationDetail.getParticipationRole())
         .build();
   }
 }

@@ -22,6 +22,8 @@ import com.winnguyen1905.Activity.common.constant.OrganizationType;
 import com.winnguyen1905.Activity.common.constant.ParticipationRole;
 import com.winnguyen1905.Activity.common.constant.ParticipationStatus;
 import com.winnguyen1905.Activity.common.constant.ScheduleStatus;
+import com.winnguyen1905.Activity.common.constant.ReportType;
+import com.winnguyen1905.Activity.common.constant.ReportStatus;
 import com.winnguyen1905.Activity.persistance.entity.EAccountCredentials;
 import com.winnguyen1905.Activity.persistance.entity.EActivity;
 import com.winnguyen1905.Activity.persistance.entity.EActivitySchedule;
@@ -516,9 +518,6 @@ public class DatabaseInitializer implements CommandLineRunner {
           } else if (rand < 0.9) {
             status = ParticipationStatus.UNVERIFIED;
           }
-          // else {
-          // status = ParticipationStatus;
-          // }
         }
 
         // Randomly select a verifier for some participants
@@ -527,14 +526,33 @@ public class DatabaseInitializer implements CommandLineRunner {
           verifier = shuffledStudents.get((i + 5) % shuffledStudents.size()); // Just pick another student for
         }
 
+        // Set processing details based on status
+        Instant processedAt = null;
+        String processedBy = null;
+        String verifiedNote = null;
+        String rejectionReason = null;
+
+        if (status == ParticipationStatus.VERIFIED) {
+          processedAt = Instant.parse("2025-05-01T17:00:00Z");
+          processedBy = "H2K Company"; // Admin ID
+          verifiedNote = "Participation verified by admin";
+        } else if (status == ParticipationStatus.REJECTED) {
+          processedAt = Instant.parse("2025-05-01T17:00:00Z");
+          processedBy = "H2K Company"; // Admin ID
+          rejectionReason = "Activity was cancelled";
+        }
+
         EParticipationDetail participation = EParticipationDetail.builder()
             .participant(student)
             .activity(activity)
             .participationStatus(status)
             .participationRole(role)
-            // .verifiedByAccount(verifier)
             .createdBy(student.getFullName())
             .registeredAt(Instant.parse("2025-05-01T17:00:00Z"))
+            .processedAt(processedAt)
+            .processedBy(processedBy)
+            .verifiedNote(verifiedNote)
+            .rejectionReason(rejectionReason)
             .build();
 
         participations.add(participation);
@@ -617,6 +635,8 @@ public class DatabaseInitializer implements CommandLineRunner {
             .participation(participation)
             .rating(rating)
             .feedbackDescription(comment)
+            .organizationResponse("Oke bro how  tks so much")
+            .respondedAt(Instant.now())
             .build();
 
         feedbacks.add(feedback);
@@ -668,39 +688,80 @@ public class DatabaseInitializer implements CommandLineRunner {
   private List<EReport> createReports(List<EActivity> activities, List<EAccountCredentials> students) {
     List<EReport> reports = new ArrayList<>();
 
-    // // Create reports for 30% of activities
-    // for (EActivity activity : activities) {
-    // if (random.nextDouble() < 0.3) { // 30% chance of having a report
-    // EAccountCredentials reporter = students.get(random.nextInt(students.size()));
+    // Sample reviewer responses
+    String[] reviewerResponses = {
+        "Thank you for your report. We have investigated the issue and taken appropriate action.",
+        "We have reviewed your report and implemented necessary changes to address the concerns.",
+        "Your report has been noted. We are working on improving the situation.",
+        "The reported issue has been resolved. Thank you for bringing this to our attention.",
+        "We have taken disciplinary action based on your report. Thank you for your vigilance."
+    };
 
-    // String[] reportTypes = {
-    // "Activity Summary",
-    // "Participation Report",
-    // "Financial Summary",
-    // "Feedback Analysis",
-    // "Event Outcomes"
-    // };
+    // Create reports for 30% of activities
+    for (EActivity activity : activities) {
+      if (random.nextDouble() < 0.3) { // 30% chance of having a report
+        EAccountCredentials reporter = students.get(random.nextInt(students.size()));
 
-    // String[] contents = {
-    // "Detailed summary of the activity outcomes and achievements.",
-    // "Analysis of participant demographics and engagement levels.",
-    // "Breakdown of expenses and revenue generated from the activity.",
-    // "Summary of participant feedback and suggestions for improvement.",
-    // "Evaluation of the activity's goals and objectives achievement."
-    // };
+        // Randomly select report type
+        ReportType reportType = ReportType.values()[random.nextInt(ReportType.values().length)];
 
-    // int typeIndex = random.nextInt(reportTypes.length);
+        // Generate report title and description based on type
+        String title;
+        String description;
+        switch (reportType) {
+          case ACTIVITY:
+            title = "Issue with Activity: " + activity.getActivityName();
+            description = "Reported issues with activity organization and execution. " +
+                "Some participants complained about unclear instructions and scheduling conflicts.";
+            break;
+          case USER:
+            title = "User Behavior Concern";
+            description = "Reported inappropriate behavior during the activity. " +
+                "Some participants were disruptive and did not follow guidelines.";
+            break;
+          case ORGANIZATION:
+            title = "Organization Management Issue";
+            description = "Concerns about organization's handling of the activity. " +
+                "Communication and resource allocation need improvement.";
+            break;
+          default:
+            title = "General Report";
+            description = "General concerns about the activity implementation.";
+        }
 
-    // EReport report = EReport.builder()
-    // .reporter(reporter)
-    // .reportType(reportTypes[typeIndex])
-    // .description(contents[typeIndex])
-    // .createdDate(activity.getEndDate().plusSeconds(60 * 60 * 24 * (1 +
-    // random.nextInt(5)))) // 1-5
-    // .build();
-    // reports.add(report);
-    // }
-    // }
+        // Randomly determine report status and review state
+        ReportStatus status = ReportStatus.values()[random.nextInt(ReportStatus.values().length)];
+        boolean isReviewed = status != ReportStatus.SPENDING;
+
+        // Set review details if the report is reviewed
+        Instant reviewedAt = null;
+        Long reviewerId = null;
+        String reviewerResponse = null;
+        if (isReviewed) {
+          reviewedAt = activity.getEndDate().plusSeconds(60 * 60 * 24 * (1 + random.nextInt(5))); // 1-5 days after
+                                                                                                  // activity
+          reviewerId = 1L; // Admin ID
+          reviewerResponse = reviewerResponses[random.nextInt(reviewerResponses.length)];
+        }
+
+        EReport report = EReport.builder()
+            .reportType(reportType)
+            .reportedObjectId(activity.getId())
+            .title(title)
+            .description(description)
+            .reporter(reporter)
+            .status(status)
+            .isReviewed(isReviewed)
+            .reviewedAt(reviewedAt)
+            .reviewerId(reviewerId)
+            .reviewerResponse(reviewerResponse)
+            .createdDate(activity.getEndDate().plusSeconds(60 * 60 * 24 * (1 + random.nextInt(5)))) // 1-5 days after
+                                                                                                    // activity
+            .build();
+
+        reports.add(report);
+      }
+    }
 
     return reports;
   }

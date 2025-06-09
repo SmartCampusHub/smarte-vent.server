@@ -6,6 +6,7 @@ import com.winnguyen1905.Activity.common.constant.ParticipationRole;
 import com.winnguyen1905.Activity.common.constant.ParticipationStatus;
 import com.winnguyen1905.Activity.model.dto.ParticipationSearchParams;
 import com.winnguyen1905.Activity.model.dto.JoinActivityRequest;
+import com.winnguyen1905.Activity.model.dto.ParticipationUpdateDto;
 import com.winnguyen1905.Activity.model.viewmodel.ActivityVm;
 import com.winnguyen1905.Activity.model.viewmodel.PagedResponse;
 import com.winnguyen1905.Activity.model.viewmodel.ParticipationDetailVm;
@@ -25,6 +26,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.repository.query.parser.Part;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.Comparator;
 import java.util.List;
 
@@ -75,7 +77,25 @@ public class ParticipantServiceImpl implements ParticipantService {
 
   @Override
   public ParticipationDetailVm getParticipantById(Long id) {
-    return null;
+    EParticipationDetail participationDetail = participantRepository.findById(id)
+        .orElseThrow(() -> new RuntimeException("Participation detail not found with id: " + id));
+    return ParticipationDetailVm.builder()
+        .id(participationDetail.getId())
+        .activityId(participationDetail.getActivity().getId())
+        .activityName(participationDetail.getActivity().getActivityName())
+        .activityCategory(participationDetail.getActivity().getActivityCategory())
+        .activityStatus(participationDetail.getActivity().getStatus())
+        .activityVenue(participationDetail.getActivity().getVenue())
+        .startDate(participationDetail.getActivity().getStartDate())
+        .endDate(participationDetail.getActivity().getEndDate())
+        .registrationTime(participationDetail.getRegisteredAt())
+        .participationRole(participationDetail.getParticipationRole())
+        .participationStatus(participationDetail.getParticipationStatus())
+        .processedAt(participationDetail.getProcessedAt())
+        .processedBy(participationDetail.getProcessedBy())
+        .rejectionReason(participationDetail.getRejectionReason())
+        .verifiedNote(participationDetail.getVerifiedNote())
+        .build();
   }
 
   // @Override
@@ -90,29 +110,23 @@ public class ParticipantServiceImpl implements ParticipantService {
   }
 
   @Override
-  public ParticipationDetailVm verifyParticipation(TAccountRequest accountRequest, Long participationId) {
-
-    EParticipationDetail participationDetail = participantRepository.findById(participationId)
-        .orElseThrow(() -> new RuntimeException("Participation detail not found with id: " + participationId));
+  public ParticipationDetailVm verifyParticipation(TAccountRequest accountRequest, ParticipationUpdateDto updateDto) {
+    EParticipationDetail participationDetail = participantRepository.findById(updateDto.getParticipationId())
+        .orElseThrow(
+            () -> new RuntimeException("Participation detail not found with id: " + updateDto.getParticipationId()));
 
     Boolean isContributor = this.participantRepository.existsByParticipantIdAndActivityIdAndParticipationRole(
         accountRequest.id(), participationDetail.getActivity().getId(), ParticipationRole.CONTRIBUTOR);
 
-    // if ((!accountRequest.role().equals(AccountRole.ADMIN) && !isContributor)
-    // || (participationDetail.getActivity().getOrganization().getId() !=
-    // accountRequest.id()))
-    // throw new RuntimeException("You are not allowed to verify this participation
-    // detail");
-
-    // if (participationDetail.getParticipationStatus() ==
-    // ParticipationStatus.UNVERIFIED) {
-    participationDetail.setParticipationStatus(ParticipationStatus.VERIFIED);
+    participationDetail.setParticipationStatus(updateDto.getStatus());
+    participationDetail.setProcessedAt(Instant.now());
+    participationDetail.setProcessedBy(accountRequest.username());
+    participationDetail.setVerifiedNote(updateDto.getVerifiedNote());
+    participationDetail.setRejectionReason(updateDto.getRejectionReason());
     participantRepository.save(participationDetail);
-    // } else {
-    // throw new RuntimeException("Participation detail is already verified");
-    // }
 
     return ParticipationDetailVm.builder()
+        .id(participationDetail.getId())
         .activityId(participationDetail.getActivity().getId())
         .activityName(participationDetail.getActivity().getActivityName())
         .activityCategory(participationDetail.getActivity().getActivityCategory())
@@ -122,6 +136,10 @@ public class ParticipantServiceImpl implements ParticipantService {
         .endDate(participationDetail.getActivity().getEndDate())
         .registrationTime(participationDetail.getRegisteredAt())
         .participationRole(participationDetail.getParticipationRole())
+        .participationStatus(participationDetail.getParticipationStatus())
+        .processedAt(participationDetail.getProcessedAt())
+        .processedBy(participationDetail.getProcessedBy())
+        .verifiedNote(participationDetail.getVerifiedNote())
         .build();
   }
 
@@ -150,6 +168,10 @@ public class ParticipantServiceImpl implements ParticipantService {
             .registrationTime(participationDetail.getRegisteredAt())
             .identifyCode(participationDetail.getParticipant().getIdentifyCode())
             .participationRole(participationDetail.getParticipationRole())
+            .processedAt(participationDetail.getProcessedAt())
+            .processedBy(participationDetail.getProcessedBy())
+            .rejectionReason(participationDetail.getRejectionReason())
+            .verifiedNote(participationDetail.getVerifiedNote())
             .build())
         .toList();
 
@@ -160,6 +182,42 @@ public class ParticipantServiceImpl implements ParticipantService {
         .results(participationDetailVms)
         .totalElements((int) participationDetails.getTotalElements())
         .totalPages(participationDetails.getTotalPages())
+        .build();
+  }
+
+  @Override
+  public ParticipationDetailVm rejectParticipation(TAccountRequest accountRequest,
+      ParticipationUpdateDto updateDto) {
+    EParticipationDetail participationDetail = participantRepository.findById(updateDto.getParticipationId())
+        .orElseThrow(
+            () -> new RuntimeException("Participation detail not found with id: " + updateDto.getParticipationId()));
+
+    Boolean isContributor = this.participantRepository.existsByParticipantIdAndActivityIdAndParticipationRole(
+        accountRequest.id(), participationDetail.getActivity().getId(), ParticipationRole.CONTRIBUTOR);
+
+    participationDetail.setParticipationStatus(updateDto.getStatus());
+    participationDetail.setProcessedAt(Instant.now());
+    participationDetail.setProcessedBy(accountRequest.username());
+    participationDetail.setRejectionReason(updateDto.getRejectionReason());
+    participationDetail.setVerifiedNote(updateDto.getVerifiedNote());
+    participantRepository.save(participationDetail);
+
+    return ParticipationDetailVm.builder()
+        .id(participationDetail.getId())
+        .activityId(participationDetail.getActivity().getId())
+        .activityName(participationDetail.getActivity().getActivityName())
+        .activityCategory(participationDetail.getActivity().getActivityCategory())
+        .activityStatus(participationDetail.getActivity().getStatus())
+        .activityVenue(participationDetail.getActivity().getVenue())
+        .startDate(participationDetail.getActivity().getStartDate())
+        .endDate(participationDetail.getActivity().getEndDate())
+        .registrationTime(participationDetail.getRegisteredAt())
+        .participationRole(participationDetail.getParticipationRole())
+        .participationStatus(participationDetail.getParticipationStatus())
+        .processedAt(participationDetail.getProcessedAt())
+        .processedBy(participationDetail.getProcessedBy())
+        .rejectionReason(participationDetail.getRejectionReason())
+        .verifiedNote(participationDetail.getVerifiedNote())
         .build();
   }
 }

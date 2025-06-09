@@ -25,6 +25,7 @@ import com.winnguyen1905.Activity.model.dto.FeedbackCreateDto;
 import com.winnguyen1905.Activity.model.dto.FeedbackUpdateDto;
 import com.winnguyen1905.Activity.model.viewmodel.FeedbackDetailVm;
 import com.winnguyen1905.Activity.model.viewmodel.FeedbackSummaryVm;
+import com.winnguyen1905.Activity.model.dto.OrganizationResponseDto;
 import com.winnguyen1905.Activity.persistance.entity.EAccountCredentials;
 import com.winnguyen1905.Activity.persistance.entity.EActivity;
 import com.winnguyen1905.Activity.persistance.entity.EFeedback;
@@ -117,14 +118,16 @@ public class FeedbackServiceImpl implements FeedbackService {
         EFeedback feedback = feedbackRepository.findById(feedbackDto.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Feedback not found with id: " + feedbackDto.getId()));
 
-        // Update only non-null fields
-        if (feedbackDto.getRating() != null) {
-            feedback.setRating(feedbackDto.getRating());
-        }
+        // // Update only non-null fields
+        // if (feedbackDto.getRating() != null) {
+        //     feedback.setRating(feedbackDto.getRating());
+        // }
 
-        if (feedbackDto.getFeedbackDescription() != null) {
-            feedback.setFeedbackDescription(feedbackDto.getFeedbackDescription());
-        }
+        // if (feedbackDto.getFeedbackDescription() != null) {
+        //     feedback.setFeedbackDescription(feedbackDto.getFeedbackDescription());
+        // }
+
+        feedback.setOrganizationResponse(feedbackDto.getOrganizationResponse());
 
         // Save updated feedback
         EFeedback updatedFeedback = feedbackRepository.save(feedback);
@@ -398,6 +401,27 @@ public class FeedbackServiceImpl implements FeedbackService {
         return feedbackRepository.getBestRatedActivitiesForOrganization(organizationId, minFeedbacks, pageable);
     }
 
+    @Override
+    @Transactional
+    public FeedbackDetailVm addOrganizationResponse(Long feedbackId, OrganizationResponseDto responseDto) {
+        EFeedback feedback = feedbackRepository.findById(feedbackId)
+                .orElseThrow(() -> new ResourceNotFoundException("Feedback not found with id: " + feedbackId));
+
+        // TODO: Check if feedback already has a response
+        // if (feedback.getOrganizationResponse() != null) {
+        //     throw new BusinessLogicException("This feedback already has an organization response");
+        // }
+
+        // Add organization response
+        feedback.setOrganizationResponse(responseDto.getResponse());
+        feedback.setRespondedAt(Instant.now());
+
+        // Save updated feedback
+        EFeedback updatedFeedback = feedbackRepository.save(feedback);
+
+        return mapToDetailVm(updatedFeedback);
+    }
+
     // Helper methods to map entities to view models
     private FeedbackDetailVm mapToDetailVm(EFeedback feedback) {
         EActivity activity = feedback.getActivity();
@@ -413,6 +437,9 @@ public class FeedbackServiceImpl implements FeedbackService {
                 .rating(feedback.getRating())
                 .feedbackDescription(feedback.getFeedbackDescription())
                 .participationId(participation.getId())
+                .organizationResponse(feedback.getOrganizationResponse())
+                .respondedAt(feedback.getRespondedAt())
+                .hasResponse(feedback.getOrganizationResponse() != null)
                 .build();
     }
 
@@ -428,6 +455,10 @@ public class FeedbackServiceImpl implements FeedbackService {
                 .studentId(student.getId())
                 .studentName(student.getFullName())
                 .rating(feedback.getRating())
+                .createdDate(feedback.getCreatedAt())
+                .organizationResponse(feedback.getOrganizationResponse())
+                .respondedAt(feedback.getRespondedAt())
+                .hasResponse(feedback.getOrganizationResponse() != null)
                 .build();
     }
 }

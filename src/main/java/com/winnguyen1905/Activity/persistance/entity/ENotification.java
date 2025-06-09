@@ -46,6 +46,9 @@ public class ENotification {
   @Column(name = "is_read")
   private Boolean isRead;
 
+  @Column(name = "is_deleted")
+  private Boolean isDeleted;
+
   @ManyToOne
   @JoinColumn(name = "sender_id", nullable = true)
   private EAccountCredentials sender;

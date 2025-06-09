@@ -48,4 +48,6 @@ public class ActivityVm implements AbstractModel {
   private int likes;
   @JsonFormat(shape = JsonFormat.Shape.STRING)
   private Instant registrationDeadline;
+
+  List<FeedbackDetailVm> feedbacks;
 }

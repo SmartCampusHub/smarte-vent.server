@@ -5,6 +5,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -12,12 +14,13 @@ import com.winnguyen1905.Activity.common.annotation.AccountRequest;
 import com.winnguyen1905.Activity.common.annotation.TAccountRequest;
 import com.winnguyen1905.Activity.common.constant.SystemConstant;
 import com.winnguyen1905.Activity.model.dto.ParticipationSearchParams;
+import com.winnguyen1905.Activity.model.dto.ParticipationUpdateDto;
 import com.winnguyen1905.Activity.model.viewmodel.PagedResponse;
 import com.winnguyen1905.Activity.model.viewmodel.ParticipationDetailVm;
 import com.winnguyen1905.Activity.rest.service.ParticipantService;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequiredArgsConstructor
@@ -35,16 +38,28 @@ public class ParticipantController {
     return ResponseEntity.ok(participants);
   }
 
-  @PostMapping("/{id}/verify")
-  public ResponseEntity<ParticipationDetailVm> postMethodName(@PathVariable("id") Long id,
+  @PostMapping("/verify")
+  public ResponseEntity<ParticipationDetailVm> verifyParticipation(@RequestBody ParticipationUpdateDto updateDto,
       @AccountRequest TAccountRequest accountRequest) {
-    return ResponseEntity.ok(participantService.verifyParticipation(accountRequest, id));
+    return ResponseEntity.ok(participantService.verifyParticipation(accountRequest, updateDto));
   }
 
-  @PostMapping("/{id}/delete")
-  public ResponseEntity<Void> postMethodName(@AccountRequest TAccountRequest accountRequest, @PathVariable("id") Long id) {
+  @PostMapping("/reject")
+  public ResponseEntity<ParticipationDetailVm> rejectParticipation(
+      @AccountRequest TAccountRequest accountRequest, @RequestBody ParticipationUpdateDto updateDto) {
+    return ResponseEntity.ok(participantService.rejectParticipation(accountRequest, updateDto));
+  }
+
+  @PostMapping("/delete")
+  public ResponseEntity<Void> deleteParticipation(@AccountRequest TAccountRequest accountRequest,
+      @PathVariable("id") Long id) {
     this.participantService.deleteParticipant(accountRequest, id);
     return ResponseEntity.noContent().build();
+  }
+
+  @GetMapping("{id}")
+  public ResponseEntity<ParticipationDetailVm> getMethodName(@PathVariable("id") Long id) {
+    return ResponseEntity.ok(this.participantService.getParticipantById(id));
   }
 
   // @GetMapping("/admin")

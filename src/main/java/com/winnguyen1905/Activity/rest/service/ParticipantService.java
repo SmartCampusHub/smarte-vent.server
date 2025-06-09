@@ -4,6 +4,7 @@ import com.winnguyen1905.Activity.common.annotation.TAccountRequest;
 import com.winnguyen1905.Activity.model.dto.ParticipationSearchParams;
 import com.winnguyen1905.Activity.model.viewmodel.PagedResponse;
 import com.winnguyen1905.Activity.model.viewmodel.ParticipationDetailVm;
+import com.winnguyen1905.Activity.model.dto.ParticipationUpdateDto;
 
 import java.util.List;
 
@@ -22,7 +23,9 @@ public interface ParticipantService {
 
   ParticipationDetailVm getParticipantById(Long id);
 
-  ParticipationDetailVm verifyParticipation(TAccountRequest accountRequest, Long participationId);
+  ParticipationDetailVm verifyParticipation(TAccountRequest accountRequest, ParticipationUpdateDto updateDto);
+
+  ParticipationDetailVm rejectParticipation(TAccountRequest accountRequest, ParticipationUpdateDto updateDto);
 
   // List<ParticipationDetailVm> getAllParticipantsByActivityId();
   List<ParticipationDetailVm> getParticipantsByActivityId(Long activityId);

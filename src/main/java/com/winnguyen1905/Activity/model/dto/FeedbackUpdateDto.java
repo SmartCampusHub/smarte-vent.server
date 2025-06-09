@@ -1,5 +1,9 @@
 package com.winnguyen1905.Activity.model.dto;
 
+import java.time.Instant;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -12,14 +16,9 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class FeedbackUpdateDto  implements AbstractModel{
-    
-    @Min(value = 0, message = "Rating must be at least 0")
-    @Max(value = 10, message = "Rating must be at most 10")
-    private Double rating;
+public class FeedbackUpdateDto implements AbstractModel {
+  @NotNull
+  private Long id;
 
-    @NotNull
-    private Long id;
-    
-    private String feedbackDescription;
+  private String organizationResponse;
 }

@@ -27,7 +27,11 @@ public record ParticipationDetailVm(
     @JsonFormat(shape = JsonFormat.Shape.STRING) Instant registrationTime,
     ActivityStatus activityStatus,
     ParticipationStatus participationStatus,
-    ParticipationRole participationRole) implements AbstractModel {
+    ParticipationRole participationRole,
+    @JsonFormat(shape = JsonFormat.Shape.STRING) Instant processedAt,
+    String processedBy,
+    String rejectionReason,
+    String verifiedNote) implements AbstractModel {
 
   @Builder
   public ParticipationDetailVm(
@@ -45,7 +49,11 @@ public record ParticipationDetailVm(
       Instant registrationTime,
       ActivityStatus activityStatus,
       ParticipationStatus participationStatus,
-      ParticipationRole participationRole) {
+      ParticipationRole participationRole,
+      Instant processedAt,
+      String processedBy,
+      String rejectionReason,
+      String verifiedNote) {
     this.id = id;
     this.studentId = studentId;
     this.identifyCode = identifyCode;
@@ -61,5 +69,9 @@ public record ParticipationDetailVm(
     this.activityStatus = activityStatus;
     this.participationStatus = participationStatus;
     this.participationRole = participationRole;
+    this.processedAt = processedAt;
+    this.processedBy = processedBy;
+    this.rejectionReason = rejectionReason;
+    this.verifiedNote = verifiedNote;
   }
 }

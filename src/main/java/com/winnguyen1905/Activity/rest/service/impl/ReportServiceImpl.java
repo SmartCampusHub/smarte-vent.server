@@ -1,12 +1,16 @@
 package com.winnguyen1905.Activity.rest.service.impl;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.winnguyen1905.Activity.common.annotation.TAccountRequest;
+import com.winnguyen1905.Activity.common.constant.ReportStatus;
 import com.winnguyen1905.Activity.common.constant.ReportType;
+import com.winnguyen1905.Activity.model.dto.AdminUpdateReport;
 import com.winnguyen1905.Activity.model.dto.ReportCreateDto;
 import com.winnguyen1905.Activity.model.viewmodel.ReportVm;
 import com.winnguyen1905.Activity.persistance.entity.EAccountCredentials;
@@ -37,6 +41,8 @@ public class ReportServiceImpl implements ReportService {
         .title(reportDto.getTitle())
         .description(reportDto.getDescription())
         .reporter(reporter)
+        .status(reportDto.getStatus() != null ? reportDto.getStatus() : ReportStatus.SPENDING)
+        .isReviewed(false)
         .build();
 
     EReport savedReport = reportRepository.save(report);
@@ -81,14 +87,19 @@ public class ReportServiceImpl implements ReportService {
   }
 
   @Override
-  public ReportVm updateReport(Long reportId, ReportCreateDto reportDto) {
-    EReport report = reportRepository.findById(reportId)
+  public ReportVm updateReport(TAccountRequest accountRequest, AdminUpdateReport adminUpdateReport) {
+    EReport report = reportRepository.findById(adminUpdateReport.getReportId())
         .orElseThrow(() -> new EntityNotFoundException("Report not found"));
 
-    report.setReportType(reportDto.getReportType());
-    report.setReportedObjectId(reportDto.getReportedObjectId());
-    report.setTitle(reportDto.getTitle());
-    report.setDescription(reportDto.getDescription());
+    if (adminUpdateReport.getStatus() != null) {
+      report.setStatus(adminUpdateReport.getStatus());
+      if (adminUpdateReport.getStatus() != ReportStatus.SPENDING) {
+        report.setIsReviewed(true);
+        report.setReviewedAt(Instant.now());
+        report.setReviewerId(1L);
+        report.setReviewerResponse(adminUpdateReport.getReviewerResponse());
+      }
+    }
 
     EReport updatedReport = reportRepository.save(report);
     return mapToReportVm(updatedReport);
@@ -104,6 +115,11 @@ public class ReportServiceImpl implements ReportService {
         .reporterId(report.getReporter().getId())
         .reporterName(report.getReporter().getFullName())
         .createdDate(report.getCreatedDate())
+        .status(report.getStatus())
+        .isReviewed(report.getIsReviewed())
+        .reviewedAt(report.getReviewedAt())
+        .reviewerId(report.getReviewerId())
+        .reviewerResponse(report.getReviewerResponse())
         .build();
   }
 }

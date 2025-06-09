@@ -10,6 +10,7 @@ import com.winnguyen1905.Activity.model.dto.FeedbackCreateDto;
 import com.winnguyen1905.Activity.model.dto.FeedbackUpdateDto;
 import com.winnguyen1905.Activity.model.viewmodel.FeedbackDetailVm;
 import com.winnguyen1905.Activity.model.viewmodel.FeedbackSummaryVm;
+import com.winnguyen1905.Activity.model.dto.OrganizationResponseDto;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -48,4 +49,13 @@ public interface FeedbackService {
     // Feedback analytics
     List<String> getKeywordAnalysis(Long organizationId);
     List<Object[]> getBestRatedActivitiesForOrganization(Long organizationId, Long minFeedbacks, Pageable pageable);
+
+    /**
+     * Add organization response to a feedback
+     * 
+     * @param feedbackId The feedback ID
+     * @param responseDto The organization response data
+     * @return The updated feedback
+     */
+    FeedbackDetailVm addOrganizationResponse(Long feedbackId, OrganizationResponseDto responseDto);
 }

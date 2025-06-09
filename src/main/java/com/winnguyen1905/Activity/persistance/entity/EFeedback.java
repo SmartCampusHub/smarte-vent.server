@@ -1,5 +1,7 @@
 package com.winnguyen1905.Activity.persistance.entity;
 
+import java.time.Instant;
+
 import org.hibernate.annotations.CreationTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -48,7 +50,17 @@ public class EFeedback {
   @Column(name = "rating")
   private Double rating;
 
+  @CreationTimestamp
+  @Column(name = "created_at")
+  private Instant createdAt;
+
   @ManyToOne
   @JoinColumn(name = "pariticipation_id")
   private EParticipationDetail participation;
+
+  @Column(name = "organization_response")
+  private String organizationResponse;
+
+  @Column(name = "responded_at")
+  private Instant respondedAt;
 }

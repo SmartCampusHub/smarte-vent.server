@@ -65,4 +65,17 @@ public class EParticipationDetail {
   @CreationTimestamp
   @Column(name = "registered_at", updatable = false, columnDefinition = "DATETIME(6)")
   private Instant registeredAt;
+
+  // TODO: new attribute
+  @Column(name = "processed_at")
+  private Instant processedAt;
+
+  @Column(name = "processed_by")
+  private String processedBy;
+
+  @Column(name = "rejection_reason")
+  private String rejectionReason;
+
+  @Column(name = "verified_note")
+  private String verifiedNote;
 }
