@@ -49,6 +49,7 @@ public class NotificationServiceImpl implements NotificationService {
                 .title(notification.getTitle())
                 .content(notification.getContent())
                 .isRead(notification.getIsRead())
+                .notificationType(notification.getNotificationType())
                 .createdDate(notification.getCreatedDate())
                 .build())
             .toList())

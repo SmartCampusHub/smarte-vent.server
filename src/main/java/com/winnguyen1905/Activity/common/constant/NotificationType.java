@@ -1,7 +1,7 @@
 package com.winnguyen1905.Activity.common.constant;
 
 public enum NotificationType {
-    ACTIVITY("ACTIVITY"), LEARNING("LEARNING"), SECURITY("SECURITY");
+    ACTIVITY("ACTIVITY"), LEARNING("ACTIVITY"), SECURITY("SECURITY");
 
     private final String type;
 
