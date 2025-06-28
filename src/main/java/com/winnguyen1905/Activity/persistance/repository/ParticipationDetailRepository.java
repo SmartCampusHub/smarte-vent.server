@@ -100,4 +100,9 @@ public interface ParticipationDetailRepository
       "ORDER BY FUNCTION('MONTH', p.registeredAt)")
   List<Object[]> getCurrentYearMonthlyParticipation(@Param("studentId") Long studentId);
 
+  // New method for feedback eligibility check
+  @Query("SELECT p FROM EParticipationDetail p WHERE p.participant.id = :studentId AND p.activity.id = :activityId")
+  Optional<EParticipationDetail> findByStudentIdAndActivityIdForFeedback(
+      @Param("studentId") Long studentId, 
+      @Param("activityId") Long activityId);
 }

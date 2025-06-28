@@ -147,56 +147,27 @@ public class FeedbackServiceImpl implements FeedbackService {
 
     @Override
     public Page<FeedbackSummaryVm> getStudentFeedbacks(Long studentId, Pageable pageable) {
-        // Find all participations
-        List<EParticipationDetail> allParticipations = participationDetailRepository.findAll();
-
-        // Filter for the student
-        List<EParticipationDetail> participations = allParticipations.stream()
-                .filter(p -> p.getParticipant().getId().equals(studentId))
-                .collect(Collectors.toList());
-
-        if (participations.isEmpty()) {
-            return new PageImpl<>(new ArrayList<>(), pageable, 0);
-        }
-
-        // Get feedback IDs from participations
-        List<Long> participationIds = participations.stream()
-                .map(EParticipationDetail::getId)
-                .collect(Collectors.toList());
-
-        // Find all feedbacks
-        List<EFeedback> allFeedbacks = feedbackRepository.findAll();
-
-        // Filter feedbacks by participation IDs
-        List<EFeedback> feedbackList = allFeedbacks.stream()
-                .filter(f -> f.getParticipation() != null && participationIds.contains(f.getParticipation().getId()))
-                .collect(Collectors.toList());
-
-        // Apply pagination manually
-        int start = (int) pageable.getOffset();
-        int end = Math.min((start + pageable.getPageSize()), feedbackList.size());
-        List<EFeedback> pagedFeedbacks = start < end ? feedbackList.subList(start, end) : new ArrayList<>();
+        // Use efficient database query instead of in-memory filtering
+        Page<EFeedback> feedbacks = feedbackRepository.findByStudentId(studentId, pageable);
 
         // Map to view models
-        List<FeedbackSummaryVm> feedbackVms = pagedFeedbacks.stream()
+        List<FeedbackSummaryVm> feedbackVms = feedbacks.getContent().stream()
                 .map(this::mapToSummaryVm)
                 .collect(Collectors.toList());
 
-        return new PageImpl<>(feedbackVms, pageable, feedbackList.size());
+        return new PageImpl<>(feedbackVms, pageable, feedbacks.getTotalElements());
     }
 
     @Override
     public boolean canStudentProvideFeedback(Long studentId, Long activityId) {
-        // Find participations for the student and activity
-        List<EParticipationDetail> participations = participationDetailRepository.findAll();
-        Optional<EParticipationDetail> participation = participations.stream()
-                .filter(p -> p.getParticipant().getId().equals(studentId) && p.getActivity().getId().equals(activityId))
-                .findFirst();
+        // Use efficient database query instead of loading all participations
+        Optional<EParticipationDetail> participation = participationDetailRepository
+                .findByStudentIdAndActivityIdForFeedback(studentId, activityId);
 
-        // Student can provide feedback if they have participated (UNVERIFIED status)
+        // Student can provide feedback if they have participated (VERIFIED status)
         // and haven't provided feedback yet
         return participation.isPresent() &&
-                participation.get().getParticipationStatus() == ParticipationStatus.UNVERIFIED &&
+                participation.get().getParticipationStatus() == ParticipationStatus.VERIFIED &&
                 participation.get().getFeedbacks().isEmpty();
     }
 
@@ -207,25 +178,15 @@ public class FeedbackServiceImpl implements FeedbackService {
             throw new ResourceNotFoundException("Activity not found with id: " + activityId);
         }
 
-        // Find all feedbacks
-        List<EFeedback> allFeedbacks = feedbackRepository.findAll();
-
-        // Filter feedbacks for the activity
-        List<EFeedback> feedbackList = allFeedbacks.stream()
-                .filter(f -> f.getActivity() != null && f.getActivity().getId().equals(activityId))
-                .collect(Collectors.toList());
-
-        // Apply pagination manually
-        int start = (int) pageable.getOffset();
-        int end = Math.min((start + pageable.getPageSize()), feedbackList.size());
-        List<EFeedback> pagedFeedbacks = start < end ? feedbackList.subList(start, end) : new ArrayList<>();
+        // Use efficient database query instead of in-memory filtering
+        Page<EFeedback> feedbacks = feedbackRepository.findByActivityId(activityId, pageable);
 
         // Map to view models
-        List<FeedbackSummaryVm> feedbackVms = pagedFeedbacks.stream()
+        List<FeedbackSummaryVm> feedbackVms = feedbacks.getContent().stream()
                 .map(this::mapToSummaryVm)
                 .collect(Collectors.toList());
 
-        return new PageImpl<>(feedbackVms, pageable, feedbackList.size());
+        return new PageImpl<>(feedbackVms, pageable, feedbacks.getTotalElements());
     }
 
     @Override
@@ -235,42 +196,15 @@ public class FeedbackServiceImpl implements FeedbackService {
 
     @Override
     public Page<FeedbackSummaryVm> getOrganizationFeedbacks(Long organizationId, Pageable pageable) {
-        // Find all activities
-        List<EActivity> allActivities = activityRepository.findAll();
-
-        // Filter activities for the organization
-        List<EActivity> activities = allActivities.stream()
-                .filter(a -> a.getOrganization() != null && a.getOrganization().getId().equals(organizationId))
-                .collect(Collectors.toList());
-
-        if (activities.isEmpty()) {
-            return new PageImpl<>(new ArrayList<>(), pageable, 0);
-        }
-
-        // Get activity IDs
-        List<Long> activityIds = activities.stream()
-                .map(EActivity::getId)
-                .collect(Collectors.toList());
-
-        // Find all feedbacks
-        List<EFeedback> allFeedbacks = feedbackRepository.findAll();
-
-        // Filter feedbacks for these activities
-        List<EFeedback> feedbackList = allFeedbacks.stream()
-                .filter(f -> f.getActivity() != null && activityIds.contains(f.getActivity().getId()))
-                .collect(Collectors.toList());
-
-        // Apply pagination manually
-        int start = (int) pageable.getOffset();
-        int end = Math.min((start + pageable.getPageSize()), feedbackList.size());
-        List<EFeedback> pagedFeedbacks = start < end ? feedbackList.subList(start, end) : new ArrayList<>();
+        // Use efficient database query instead of in-memory filtering
+        Page<EFeedback> feedbacks = feedbackRepository.findByOrganizationId(organizationId, pageable);
 
         // Map to view models
-        List<FeedbackSummaryVm> feedbackVms = pagedFeedbacks.stream()
+        List<FeedbackSummaryVm> feedbackVms = feedbacks.getContent().stream()
                 .map(this::mapToSummaryVm)
                 .collect(Collectors.toList());
 
-        return new PageImpl<>(feedbackVms, pageable, feedbackList.size());
+        return new PageImpl<>(feedbackVms, pageable, feedbacks.getTotalElements());
     }
 
     @Override
@@ -298,70 +232,16 @@ public class FeedbackServiceImpl implements FeedbackService {
             Long organizationId,
             Pageable pageable) {
 
-        // Find all activities
-        List<EActivity> allActivities = activityRepository.findAll();
-
-        // Apply filters
-        List<EActivity> activities = allActivities.stream()
-                .filter(a -> {
-                    boolean match = true;
-
-                    // Filter by date range if provided
-                    if (startDate != null && endDate != null) {
-                        match = match && a.getStartDate() != null &&
-                                (a.getStartDate().isAfter(startDate) || a.getStartDate().equals(startDate)) &&
-                                (a.getEndDate() == null || a.getEndDate().isBefore(endDate)
-                                        || a.getEndDate().equals(endDate));
-                    }
-
-                    // Filter by category if provided
-                    if (category != null) {
-                        match = match && a.getActivityCategory() == category;
-                    }
-
-                    // Filter by status if provided
-                    if (status != null) {
-                        match = match && a.getStatus() == status;
-                    }
-
-                    // Filter by organization if provided
-                    if (organizationId != null) {
-                        match = match && a.getOrganization() != null
-                                && a.getOrganization().getId().equals(organizationId);
-                    }
-
-                    return match;
-                })
-                .collect(Collectors.toList());
-
-        if (activities.isEmpty()) {
-            return new PageImpl<>(new ArrayList<>(), pageable, 0);
-        }
-
-        // Get activity IDs
-        List<Long> activityIds = activities.stream()
-                .map(EActivity::getId)
-                .collect(Collectors.toList());
-
-        // Find all feedbacks
-        List<EFeedback> allFeedbacks = feedbackRepository.findAll();
-
-        // Filter feedbacks for these activities
-        List<EFeedback> feedbackList = allFeedbacks.stream()
-                .filter(f -> f.getActivity() != null && activityIds.contains(f.getActivity().getId()))
-                .collect(Collectors.toList());
-
-        // Apply pagination manually
-        int start = (int) pageable.getOffset();
-        int end = Math.min((start + pageable.getPageSize()), feedbackList.size());
-        List<EFeedback> pagedFeedbacks = start < end ? feedbackList.subList(start, end) : new ArrayList<>();
+        // Use efficient database query instead of in-memory filtering
+        Page<EFeedback> feedbacks = feedbackRepository.findFilteredFeedbacks(
+                startDate, endDate, category, status, organizationId, pageable);
 
         // Map to view models
-        List<FeedbackSummaryVm> feedbackVms = pagedFeedbacks.stream()
+        List<FeedbackSummaryVm> feedbackVms = feedbacks.getContent().stream()
                 .map(this::mapToSummaryVm)
                 .collect(Collectors.toList());
 
-        return new PageImpl<>(feedbackVms, pageable, feedbackList.size());
+        return new PageImpl<>(feedbackVms, pageable, feedbacks.getTotalElements());
     }
 
     @Override

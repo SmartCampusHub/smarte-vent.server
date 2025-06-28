@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.List;
 
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -163,4 +164,28 @@ public interface FeedbackRepository extends JpaRepository<EFeedback, Long> {
   List<String> getFeedbackDescriptionsByTimeAndCategoryAndStatus(@Param("startDate") Instant startDate,
       @Param("endDate") Instant endDate, @Param("category") ActivityCategory category,
       @Param("status") ActivityStatus status);
+
+  // New methods for efficient querying
+  @Query("SELECT f FROM EFeedback f JOIN f.participation p WHERE p.participant.id = :studentId")
+  Page<EFeedback> findByStudentId(@Param("studentId") Long studentId, Pageable pageable);
+
+  @Query("SELECT f FROM EFeedback f WHERE f.activity.id = :activityId")
+  Page<EFeedback> findByActivityId(@Param("activityId") Long activityId, Pageable pageable);
+
+  @Query("SELECT f FROM EFeedback f JOIN f.activity a WHERE a.organization.id = :organizationId")
+  Page<EFeedback> findByOrganizationId(@Param("organizationId") Long organizationId, Pageable pageable);
+
+  @Query("SELECT f FROM EFeedback f JOIN f.activity a WHERE " +
+         "(:startDate IS NULL OR a.startDate >= :startDate) AND " +
+         "(:endDate IS NULL OR a.endDate <= :endDate) AND " +
+         "(:category IS NULL OR a.activityCategory = :category) AND " +
+         "(:status IS NULL OR a.status = :status) AND " +
+         "(:organizationId IS NULL OR a.organization.id = :organizationId)")
+  Page<EFeedback> findFilteredFeedbacks(
+      @Param("startDate") Instant startDate,
+      @Param("endDate") Instant endDate,
+      @Param("category") ActivityCategory category,
+      @Param("status") ActivityStatus status,
+      @Param("organizationId") Long organizationId,
+      Pageable pageable);
 }

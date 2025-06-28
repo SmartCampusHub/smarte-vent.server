@@ -76,9 +76,7 @@ public class ActivityStatisticsServiceImpl implements ActivityStatisticsService 
     int confirmedParticipants = (int) participations.stream()
         .filter(p -> p.getParticipationStatus() == ParticipationStatus.VERIFIED)
         .count();
-    int actualAttendees = (int) participations.stream()
-        .filter(p -> p.getParticipationStatus() == ParticipationStatus.UNVERIFIED)
-        .count();
+    int actualAttendees = confirmedParticipants; // actualAttendees should be the same as confirmedParticipants
 
     double participationRate = totalRegistrations > 0 ? (double) actualAttendees / totalRegistrations * 100 : 0;
     double capacityUtilization = activity.getCapacityLimit() > 0
@@ -184,9 +182,7 @@ public class ActivityStatisticsServiceImpl implements ActivityStatisticsService 
     int confirmedParticipants = (int) filteredParticipations.stream()
         .filter(p -> p.getParticipationStatus() == ParticipationStatus.VERIFIED)
         .count();
-    int actualAttendees = (int) filteredParticipations.stream()
-        .filter(p -> p.getParticipationStatus() == ParticipationStatus.UNVERIFIED)
-        .count();
+    int actualAttendees = confirmedParticipants; // actualAttendees should be the same as confirmedParticipants
 
     double participationRate = totalRegistrations > 0 ? (double) actualAttendees / totalRegistrations * 100 : 0;
 
@@ -359,9 +355,9 @@ public class ActivityStatisticsServiceImpl implements ActivityStatisticsService 
     analysis.setPreviousRunsComparison(previousRuns);
 
     // Calculate percentile rankings
-    analysis.setParticipationPercentile(calculatePercentileRank(activityId, "participation"));
+    analysis.setParticipationPercentile(calculatePercentileRank(activityId, "participation_rate"));
     analysis.setRatingPercentile(calculatePercentileRank(activityId, "rating"));
-    analysis.setEngagementPercentile(calculatePercentileRank(activityId, "engagement"));
+    analysis.setEngagementPercentile(calculatePercentileRank(activityId, "cost_efficiency")); // Using cost_efficiency as proxy for engagement
 
     return analysis;
   }

@@ -69,17 +69,13 @@ public class ActivityServiceImpl implements ActivityService {
     // Create and save activity using builder
     EActivity activity = EActivity.builder()
         .activityName(activityDto.getActivityName())
-        .description(activityDto.getDescription())
+        .description(activityDto.getActivityDescription()) // Use the correct description
         .startDate(activityDto.getStartDate())
         .endDate(activityDto.getEndDate())
         .venue(activityDto.getActivityVenue())
-        .capacityLimit(0) // Changed from capacity to capacityLimit
-        .capacityLimit(activityDto.getCapacityLimit())
+        .capacityLimit(activityDto.getCapacityLimit()) // Remove duplicate
         .activityCategory(activityDto.getActivityCategory())
-        .description(activityDto.getActivityDescription())
-        .startDate(activityDto.getStartDate())
-        .endDate(activityDto.getEndDate())
-        .status(ActivityStatus.PENDING) // Set to null initially
+        .status(ActivityStatus.PENDING)
         .imageUrl(activityDto.getImageUrl())
         .shortDescription(activityDto.getShortDescription())
         .tags(activityDto.getTags())
@@ -92,8 +88,6 @@ public class ActivityServiceImpl implements ActivityService {
         .isApproved(false)
         .likes(0)
         .registrationDeadline(activityDto.getRegistrationDeadline())
-        .activityCategory(activityDto.getActivityCategory())
-        .description(activityDto.getActivityDescription())
         .organization(this.organizationRepository.findById(accountRequest.getId())
             .orElseThrow(() -> new EntityNotFoundException("Not found organization")))
         .attendanceScoreUnit(activityDto.getAttendanceScoreUnit())
@@ -134,14 +128,12 @@ public class ActivityServiceImpl implements ActivityService {
 
     // Update activity fields
     existingActivity.setActivityName(activityDto.getActivityName());
-    existingActivity.setDescription(activityDto.getDescription());
+    existingActivity.setDescription(activityDto.getActivityDescription()); // Use correct description method
     existingActivity.setStartDate(activityDto.getStartDate());
     existingActivity.setEndDate(activityDto.getEndDate());
     existingActivity.setVenue(activityDto.getActivityVenue());
-    existingActivity.setCapacityLimit(activityDto.getCapacityLimit()); // Changed from capacity to capacityLimit
-    // existingActivity.setStatus(activityDto.getActivityStatus());
+    existingActivity.setCapacityLimit(activityDto.getCapacityLimit());
     existingActivity.setActivityCategory(activityDto.getActivityCategory());
-    existingActivity.setDescription(activityDto.getActivityDescription());
     existingActivity.setAttendanceScoreUnit(activityDto.getAttendanceScoreUnit());
     existingActivity.setUpdatedById(accountRequest.getId());
     existingActivity.setUpdatedDate(Instant.now());
@@ -157,8 +149,6 @@ public class ActivityServiceImpl implements ActivityService {
     existingActivity.setIsFeatured(activityDto.getIsFeatured());
     existingActivity.setIsApproved(activityDto.getIsApproved());
     existingActivity.setLikes(activityDto.getLikes());
-    existingActivity.setActivityCategory(activityDto.getActivityCategory());
-    existingActivity.setDescription(activityDto.getActivityDescription());
 
     activityRepository.save(existingActivity);
 
@@ -221,10 +211,7 @@ public class ActivityServiceImpl implements ActivityService {
             .activityName(activity.getActivityName())
             .description(activity.getDescription())
             .createdDate(activity.getCreatedDate())
-
             .activityVenue(activity.getVenue())
-            .startDate(activity.getStartDate())
-            .endDate(activity.getEndDate())
             .capacityLimit(activity.getCapacityLimit())
             .activityStatus(activity.getStatus()) // Updated to use getStatus()
             .activityCategory(activity.getActivityCategory())
@@ -396,8 +383,6 @@ public class ActivityServiceImpl implements ActivityService {
         .activityName(activity.getActivityName())
         .description(activity.getDescription())
         .activityVenue(activity.getVenue())
-        .startDate(activity.getStartDate())
-        .endDate(activity.getEndDate())
         .organization(OrganizationVm.builder()
             .id(activity.getOrganization().getId())
             .organizationName(activity.getOrganization().getName())
@@ -417,7 +402,6 @@ public class ActivityServiceImpl implements ActivityService {
         .isApproved(activity.getIsApproved())
         .likes(activity.getLikes())
         .registrationDeadline(activity.getRegistrationDeadline())
-        .createdDate(activity.getCreatedDate())
         .feedbacks(feedbacks) // Add feedbacks to the response
         .build();
   }
@@ -491,7 +475,8 @@ public class ActivityServiceImpl implements ActivityService {
         .map(activity -> ActivityVm.builder()
             .id(activity.getId())
             .startDate(activity.getStartDate())
-            .endDate(activity.getEndDate()).organization(OrganizationVm.builder()
+            .endDate(activity.getEndDate())
+            .organization(OrganizationVm.builder()
                 .id(activity.getOrganization().getId())
                 .organizationName(activity.getOrganization().getName())
                 .representativeEmail(activity.getOrganization().getEmail())
@@ -501,8 +486,6 @@ public class ActivityServiceImpl implements ActivityService {
             .activityName(activity.getActivityName())
             .description(activity.getDescription())
             .activityVenue(activity.getVenue())
-            .startDate(activity.getStartDate())
-            .endDate(activity.getEndDate())
             .capacityLimit(activity.getCapacityLimit())
             .activityStatus(activity.getStatus()) // Updated to use getStatus()
             .activityCategory(activity.getActivityCategory())
@@ -539,19 +522,17 @@ public class ActivityServiceImpl implements ActivityService {
         .filter(activity -> activity.getIsApproved() == true)
         .map(activity -> ActivityVm.builder().id(activity.getId())
             .startDate(activity.getStartDate())
-            .endDate(activity.getEndDate()).organization(OrganizationVm.builder()
+            .endDate(activity.getEndDate())
+            .organization(OrganizationVm.builder()
                 .id(activity.getOrganization().getId())
                 .organizationName(activity.getOrganization().getName())
                 .representativeEmail(activity.getOrganization().getEmail())
                 .representativePhone(activity.getOrganization().getPhone())
                 .build())
-            .organization(null)
             .activityName(activity.getActivityName())
             .description(activity.getDescription())
             .createdDate(activity.getCreatedDate())
             .activityVenue(activity.getVenue())
-            .startDate(activity.getStartDate())
-            .endDate(activity.getEndDate())
             .capacityLimit(activity.getCapacityLimit())
             .activityStatus(activity.getStatus()) // Updated to use getStatus()
             .activityCategory(activity.getActivityCategory())
