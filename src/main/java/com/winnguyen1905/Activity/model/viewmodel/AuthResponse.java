@@ -1,22 +1,19 @@
-package com.winnguyen1905.Activity.model.viewmodel;
+package com.winnguyen1905.activity.model.viewmodel;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.winnguyen1905.Activity.model.dto.AbstractModel;
-
+import com.winnguyen1905.activity.model.dto.AbstractModel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-public record AuthResponse(String accessToken, AccountVm account, @JsonIgnore String refreshToken)
-    implements AbstractModel {
-      
-  @Builder
-  public AuthResponse(
-      String accessToken,
-      AccountVm account,
-      String refreshToken) {
-    this.accessToken = accessToken;
-    this.account = account;
-    this.refreshToken = refreshToken;
-  }
-
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class AuthResponse implements AbstractModel {
+    private String accessToken;
+    private AccountVm account;
+    @JsonIgnore
+    private String refreshToken;
 }

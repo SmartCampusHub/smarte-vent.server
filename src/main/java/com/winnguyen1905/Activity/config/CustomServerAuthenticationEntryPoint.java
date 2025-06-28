@@ -1,4 +1,4 @@
-package com.winnguyen1905.Activity.config;
+package com.winnguyen1905.activity.config;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -15,7 +15,7 @@ import org.springframework.security.oauth2.server.resource.web.BearerTokenAuthen
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.winnguyen1905.Activity.model.viewmodel.RestResponse;
+import com.winnguyen1905.activity.model.viewmodel.RestResponse;
 
 import lombok.RequiredArgsConstructor;
 

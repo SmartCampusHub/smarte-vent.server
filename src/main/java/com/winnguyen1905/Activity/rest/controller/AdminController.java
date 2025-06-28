@@ -1,10 +1,10 @@
-package com.winnguyen1905.Activity.rest.controller;
+package com.winnguyen1905.activity.rest.controller;
 
-import com.winnguyen1905.Activity.common.annotation.AccountRequest;
-import com.winnguyen1905.Activity.common.annotation.TAccountRequest;
-import com.winnguyen1905.Activity.model.dto.AdminUpdateAccount;
-import com.winnguyen1905.Activity.model.viewmodel.AccountVm;
-import com.winnguyen1905.Activity.rest.service.AccountService;
+import com.winnguyen1905.activity.common.annotation.AccountRequest;
+import com.winnguyen1905.activity.common.annotation.TAccountRequest;
+import com.winnguyen1905.activity.model.dto.AdminUpdateAccount;
+import com.winnguyen1905.activity.model.viewmodel.AccountVm;
+import com.winnguyen1905.activity.rest.service.AccountService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

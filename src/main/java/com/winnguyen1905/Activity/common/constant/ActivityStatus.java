@@ -1,4 +1,4 @@
-package com.winnguyen1905.Activity.common.constant;
+package com.winnguyen1905.activity.common.constant;
 
 public enum ActivityStatus {
   IN_PROGRESS("IN_PROGRESS"), COMPLETED("COMPLETED"), PUBLISHED("PUBLISHED"), CANCELLED("CANCELLED"), PENDING("PENDING");

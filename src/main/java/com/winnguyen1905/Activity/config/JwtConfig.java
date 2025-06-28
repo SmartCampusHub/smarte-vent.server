@@ -1,4 +1,4 @@
-package com.winnguyen1905.Activity.config;
+package com.winnguyen1905.activity.config;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
@@ -13,8 +13,8 @@ import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 
 import com.nimbusds.jose.jwk.source.ImmutableSecret;
 import com.nimbusds.jose.util.Base64;
-import com.winnguyen1905.Activity.exception.BaseException;
-import com.winnguyen1905.Activity.utils.SecurityUtils;
+import com.winnguyen1905.activity.exception.BaseException;
+import com.winnguyen1905.activity.utils.SecurityUtils;
 
 
 @Configuration

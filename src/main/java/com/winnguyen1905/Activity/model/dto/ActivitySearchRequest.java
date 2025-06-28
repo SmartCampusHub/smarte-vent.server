@@ -1,91 +1,43 @@
-package com.winnguyen1905.Activity.model.dto;
+package com.winnguyen1905.activity.model.dto;
 
 import java.time.Instant;
 import java.util.List;
 
-import com.winnguyen1905.Activity.common.constant.ActivityCategory;
-import com.winnguyen1905.Activity.common.constant.ActivityStatus;
+import com.winnguyen1905.activity.common.constant.ActivityCategory;
+import com.winnguyen1905.activity.common.constant.ActivityStatus;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
 @Builder
-public record ActivitySearchRequest(
-    String activityName,
-    ActivityCategory activityCategory,
-    ActivityStatus activityStatus,
-    String organizationName,
-    Instant startDateFrom,
-    Instant startDateTo,
-    Instant endDateFrom,
-    Instant endDateTo,
-    Integer minAttendanceScoreUnit,
-    Integer maxAttendanceScoreUnit,
-    Integer minCapacityLimit,
-    Integer maxCapacityLimit,
-    String activityVenue,
-
-    String shortDescription,
-    List<String> tags,
-    Integer currentParticipants,
-    String address,
-    Double latitude,
-    Double longitude,
-    Double fee,
-    Boolean isFeatured,
-    Boolean isApproved,
-    Integer likes,
-    Instant registrationDeadline) implements AbstractModel {
-  @Builder
-  public ActivitySearchRequest(
-      String activityName,
-      ActivityCategory activityCategory,
-      ActivityStatus activityStatus,
-      String organizationName,
-      Instant startDateFrom,
-      Instant startDateTo,
-      Instant endDateFrom,
-      Instant endDateTo,
-      Integer minAttendanceScoreUnit,
-      Integer maxAttendanceScoreUnit,
-      Integer minCapacityLimit,
-      Integer maxCapacityLimit,
-      String activityVenue,
-
-      String shortDescription,
-      List<String> tags,
-      Integer currentParticipants,
-      String address,
-      Double latitude,
-      Double longitude,
-      Double fee,
-      Boolean isFeatured,
-      Boolean isApproved,
-      Integer likes,
-      Instant registrationDeadline) {
-    this.activityName = activityName;
-    this.activityCategory = activityCategory;
-    this.activityStatus = activityStatus;
-    this.organizationName = organizationName;
-    this.startDateFrom = startDateFrom;
-    this.startDateTo = startDateTo;
-    this.endDateFrom = endDateFrom;
-    this.endDateTo = endDateTo;
-    this.minAttendanceScoreUnit = minAttendanceScoreUnit;
-    this.maxAttendanceScoreUnit = maxAttendanceScoreUnit;
-    this.minCapacityLimit = minCapacityLimit;
-    this.maxCapacityLimit = maxCapacityLimit;
-    this.activityVenue = activityVenue;
-    this.shortDescription = shortDescription;
-    this.tags = tags;
-    this.currentParticipants = currentParticipants;
-    this.address = address;
-    this.latitude = latitude;
-    this.longitude = longitude;
-    this.fee = fee;
-    this.isFeatured = isFeatured;
-    this.isApproved = isApproved;
-    this.likes = likes;
-    this.registrationDeadline = registrationDeadline;
-  }
-
+@NoArgsConstructor
+@AllArgsConstructor
+public class ActivitySearchRequest implements AbstractModel {
+    private String activityName;
+    private ActivityCategory activityCategory;
+    private ActivityStatus activityStatus;
+    private String organizationName;
+    private Instant startDateFrom;
+    private Instant startDateTo;
+    private Instant endDateFrom;
+    private Instant endDateTo;
+    private Integer minAttendanceScoreUnit;
+    private Integer maxAttendanceScoreUnit;
+    private Integer minCapacityLimit;
+    private Integer maxCapacityLimit;
+    private String activityVenue;
+    private String shortDescription;
+    private List<String> tags;
+    private Integer currentParticipants;
+    private String address;
+    private Double latitude;
+    private Double longitude;
+    private Double fee;
+    private Boolean isFeatured;
+    private Boolean isApproved;
+    private Integer likes;
+    private Instant registrationDeadline;
 }

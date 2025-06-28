@@ -1,13 +1,13 @@
-package com.winnguyen1905.Activity.rest.controller;
+package com.winnguyen1905.activity.rest.controller;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.winnguyen1905.Activity.common.annotation.AccountRequest;
-import com.winnguyen1905.Activity.common.annotation.TAccountRequest;
-import com.winnguyen1905.Activity.model.viewmodel.NotificationVm;
-import com.winnguyen1905.Activity.model.viewmodel.PagedResponse;
-import com.winnguyen1905.Activity.rest.service.NotificationService;
+import com.winnguyen1905.activity.common.annotation.AccountRequest;
+import com.winnguyen1905.activity.common.annotation.TAccountRequest;
+import com.winnguyen1905.activity.model.viewmodel.NotificationVm;
+import com.winnguyen1905.activity.model.viewmodel.PagedResponse;
+import com.winnguyen1905.activity.rest.service.NotificationService;
 
 import lombok.RequiredArgsConstructor;
 

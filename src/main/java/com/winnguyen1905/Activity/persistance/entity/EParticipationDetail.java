@@ -1,4 +1,4 @@
-package com.winnguyen1905.Activity.persistance.entity;
+package com.winnguyen1905.activity.persistance.entity;
 
 import java.time.Instant;
 import java.util.List;
@@ -6,8 +6,8 @@ import java.util.List;
 import org.hibernate.annotations.CreationTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.winnguyen1905.Activity.common.constant.ParticipationRole;
-import com.winnguyen1905.Activity.common.constant.ParticipationStatus;
+import com.winnguyen1905.activity.common.constant.ParticipationRole;
+import com.winnguyen1905.activity.common.constant.ParticipationStatus;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

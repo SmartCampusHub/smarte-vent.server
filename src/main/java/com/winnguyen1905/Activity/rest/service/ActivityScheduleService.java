@@ -1,8 +1,8 @@
-package com.winnguyen1905.Activity.rest.service;
+package com.winnguyen1905.activity.rest.service;
 
-import com.winnguyen1905.Activity.common.annotation.TAccountRequest;
-import com.winnguyen1905.Activity.model.dto.ActivityScheduleDto;
-import com.winnguyen1905.Activity.model.viewmodel.ActivityScheduleVm;
+import com.winnguyen1905.activity.common.annotation.TAccountRequest;
+import com.winnguyen1905.activity.model.dto.ActivityScheduleDto;
+import com.winnguyen1905.activity.model.viewmodel.ActivityScheduleVm;
 
 import java.util.List;
 

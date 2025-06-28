@@ -1,4 +1,4 @@
-package com.winnguyen1905.Activity.config;
+package com.winnguyen1905.activity.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;

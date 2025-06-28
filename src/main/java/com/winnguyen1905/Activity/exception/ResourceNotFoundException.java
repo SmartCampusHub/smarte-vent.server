@@ -1,4 +1,4 @@
-package com.winnguyen1905.Activity.exception;
+package com.winnguyen1905.activity.exception;
 
 public class ResourceNotFoundException extends BaseException {
   public ResourceNotFoundException(String message, Integer code, Object error) {

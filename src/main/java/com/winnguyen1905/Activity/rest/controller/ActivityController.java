@@ -1,20 +1,20 @@
-package com.winnguyen1905.Activity.rest.controller;
+package com.winnguyen1905.activity.rest.controller;
 
-import com.winnguyen1905.Activity.common.constant.SystemConstant;
-import com.winnguyen1905.Activity.model.viewmodel.ActivityVm;
-import com.winnguyen1905.Activity.model.viewmodel.CheckJoinedActivityVm;
-import com.winnguyen1905.Activity.model.viewmodel.PagedResponse;
-import com.winnguyen1905.Activity.model.viewmodel.ParticipationDetailVm;
+import com.winnguyen1905.activity.common.constant.SystemConstant;
+import com.winnguyen1905.activity.model.viewmodel.ActivityVm;
+import com.winnguyen1905.activity.model.viewmodel.CheckJoinedActivityVm;
+import com.winnguyen1905.activity.model.viewmodel.PagedResponse;
+import com.winnguyen1905.activity.model.viewmodel.ParticipationDetailVm;
 
 import org.springframework.web.bind.annotation.*;
 
-import com.winnguyen1905.Activity.common.annotation.AccountRequest;
-import com.winnguyen1905.Activity.common.annotation.TAccountRequest;
-import com.winnguyen1905.Activity.model.dto.ActivityDto;
-import com.winnguyen1905.Activity.model.dto.ActivitySearchRequest;
-import com.winnguyen1905.Activity.model.dto.CheckJoinedActivityDto;
-import com.winnguyen1905.Activity.model.dto.JoinActivityRequest;
-import com.winnguyen1905.Activity.rest.service.ActivityService;
+import com.winnguyen1905.activity.common.annotation.AccountRequest;
+import com.winnguyen1905.activity.common.annotation.TAccountRequest;
+import com.winnguyen1905.activity.model.dto.ActivityDto;
+import com.winnguyen1905.activity.model.dto.ActivitySearchRequest;
+import com.winnguyen1905.activity.model.dto.CheckJoinedActivityDto;
+import com.winnguyen1905.activity.model.dto.JoinActivityRequest;
+import com.winnguyen1905.activity.rest.service.ActivityService;
 
 import lombok.RequiredArgsConstructor;
 

@@ -1,8 +1,8 @@
-package com.winnguyen1905.Activity.utils;
+package com.winnguyen1905.activity.utils;
 
-import com.winnguyen1905.Activity.persistance.entity.EActivity;
-import com.winnguyen1905.Activity.persistance.entity.EActivitySchedule;
-import com.winnguyen1905.Activity.persistance.entity.EAccountCredentials;
+import com.winnguyen1905.activity.persistance.entity.EActivity;
+import com.winnguyen1905.activity.persistance.entity.EActivitySchedule;
+import com.winnguyen1905.activity.persistance.entity.EAccountCredentials;
 
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;

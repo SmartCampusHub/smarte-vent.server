@@ -1,4 +1,4 @@
-package com.winnguyen1905.Activity.rest.service;
+package com.winnguyen1905.activity.rest.service;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,20 +14,20 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import com.winnguyen1905.Activity.common.annotation.AccountRequest;
-import com.winnguyen1905.Activity.common.annotation.TAccountRequest;
-import com.winnguyen1905.Activity.exception.BadRequestException;
-import com.winnguyen1905.Activity.model.dto.AdminUpdateAccount;
-import com.winnguyen1905.Activity.model.dto.RegisterRequest;
-import com.winnguyen1905.Activity.model.dto.UpdateAccountDto;
-import com.winnguyen1905.Activity.model.dto.AccountSearchCriteria;
-import com.winnguyen1905.Activity.persistance.repository.specification.AccountSpecifications;
-import com.winnguyen1905.Activity.model.viewmodel.AccountVm;
-import com.winnguyen1905.Activity.model.viewmodel.ActivityVm;
-import com.winnguyen1905.Activity.model.viewmodel.PagedResponse;
-import com.winnguyen1905.Activity.persistance.entity.EAccountCredentials;
-import com.winnguyen1905.Activity.persistance.repository.AccountRepository;
-import com.winnguyen1905.Activity.utils.JwtUtils;
+import com.winnguyen1905.activity.common.annotation.AccountRequest;
+import com.winnguyen1905.activity.common.annotation.TAccountRequest;
+import com.winnguyen1905.activity.exception.BadRequestException;
+import com.winnguyen1905.activity.model.dto.AdminUpdateAccount;
+import com.winnguyen1905.activity.model.dto.RegisterRequest;
+import com.winnguyen1905.activity.model.dto.UpdateAccountDto;
+import com.winnguyen1905.activity.model.dto.AccountSearchCriteria;
+import com.winnguyen1905.activity.persistance.repository.specification.AccountSpecifications;
+import com.winnguyen1905.activity.model.viewmodel.AccountVm;
+import com.winnguyen1905.activity.model.viewmodel.ActivityVm;
+import com.winnguyen1905.activity.model.viewmodel.PagedResponse;
+import com.winnguyen1905.activity.persistance.entity.EAccountCredentials;
+import com.winnguyen1905.activity.persistance.repository.AccountRepository;
+import com.winnguyen1905.activity.utils.JwtUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -107,7 +107,7 @@ public class AccountService {
   }
 
   public AccountVm getAccount(TAccountRequest accountRequest) {
-    return this.accountRepository.findById(accountRequest.id())
+    return this.accountRepository.findById(accountRequest.getId())
         .map(account -> {
           return AccountVm.builder()
               .identifyCode(account.getIdentifyCode())
@@ -124,11 +124,11 @@ public class AccountService {
   }
 
   public AccountVm updateAccount(TAccountRequest accountRequest, UpdateAccountDto accountDto) {
-    Optional<EAccountCredentials> accountOptional = this.accountRepository.findById(accountRequest.id());
+    Optional<EAccountCredentials> accountOptional = this.accountRepository.findById(accountRequest.getId());
 
     if (accountOptional.isPresent() && accountOptional.get() instanceof EAccountCredentials account) {
-      account.setPhone(accountDto.phone());
-      account.setEmail(accountDto.email());
+      account.setPhone(accountDto.getPhone());
+      account.setEmail(accountDto.getEmail());
       this.accountRepository.save(account);
     } else
       throw new BadRequestException("Not found user");
@@ -137,23 +137,23 @@ public class AccountService {
   }
 
   public AccountVm updateAccountByAdmin(TAccountRequest accountRequest, AdminUpdateAccount updateDto) {
-    EAccountCredentials account = accountRepository.findById(accountRequest.id())
-        .orElseThrow(() -> new BadRequestException("Account not found with id: " + accountRequest.id()));
+    EAccountCredentials account = accountRepository.findById(accountRequest.getId())
+        .orElseThrow(() -> new BadRequestException("Account not found with id: " + accountRequest.getId()));
 
     // Update basic info
-    account.setFullName(updateDto.fullName());
-    account.setEmail(updateDto.email());
-    account.setPhone(updateDto.phone());
-    account.setMajor(updateDto.major());
+    account.setFullName(updateDto.getFullName());
+    account.setEmail(updateDto.getEmail());
+    account.setPhone(updateDto.getPhone());
+    account.setMajor(updateDto.getMajor());
 
     // Update role if provided (admin-only field)
-    if (updateDto.role() != null) {
-      account.setRole(updateDto.role());
+    if (updateDto.getRole() != null) {
+      account.setRole(updateDto.getRole());
     }
 
     // Update active status if provided (admin-only field)
-    if (updateDto.isActive() != null) {
-      account.setIsActive(updateDto.isActive());
+    if (updateDto.getIsActive() != null) {
+      account.setIsActive(updateDto.getIsActive());
     }
 
     EAccountCredentials savedAccount = accountRepository.save(account);
@@ -172,14 +172,14 @@ public class AccountService {
 
   public AccountVm createAccount(TAccountRequest accountRequest, RegisterRequest registerRequest) {
     EAccountCredentials newUser = EAccountCredentials.builder()
-        .fullName(registerRequest.fullName())
-        .identifyCode(registerRequest.identifyCode())
-        .password(registerRequest.password())
+        .fullName(registerRequest.getFullName())
+        .identifyCode(registerRequest.getIdentifyCode())
+        .password(registerRequest.getPassword())
         .isActive(true)
-        .email(registerRequest.email())
-        .phone(registerRequest.phone())
-        .major(registerRequest.major())
-        .role(registerRequest.role())
+        .email(registerRequest.getEmail())
+        .phone(registerRequest.getPhone())
+        .major(registerRequest.getMajor())
+        .role(registerRequest.getRole())
         .build();
     this.accountRepository.save(newUser);
     return this.convertToAccountVm(newUser);

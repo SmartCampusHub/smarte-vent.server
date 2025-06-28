@@ -1,9 +1,9 @@
-package com.winnguyen1905.Activity.model.viewmodel;
+package com.winnguyen1905.activity.model.viewmodel;
 
 import java.time.Instant;
 import java.time.Instant;
-import com.winnguyen1905.Activity.common.constant.ScheduleStatus;
-import com.winnguyen1905.Activity.model.dto.AbstractModel;
+import com.winnguyen1905.activity.common.constant.ScheduleStatus;
+import com.winnguyen1905.activity.model.dto.AbstractModel;
 
 import lombok.Builder;
 import lombok.Data;

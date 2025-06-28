@@ -1,4 +1,4 @@
-package com.winnguyen1905.Activity.rest.service.impl;
+package com.winnguyen1905.activity.rest.service.impl;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -16,19 +16,19 @@ import java.util.stream.Collectors;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import com.winnguyen1905.Activity.common.constant.ActivityCategory;
-import com.winnguyen1905.Activity.common.constant.ActivityStatus;
-import com.winnguyen1905.Activity.common.constant.TimePeriod;
-import com.winnguyen1905.Activity.model.dto.StatisticsFilterDto;
-import com.winnguyen1905.Activity.model.viewmodel.ActivityStatisticsSummaryVm;
-import com.winnguyen1905.Activity.model.viewmodel.OrganizationStatisticsVm;
-import com.winnguyen1905.Activity.persistance.entity.EActivity;
-import com.winnguyen1905.Activity.persistance.entity.EOrganization;
-import com.winnguyen1905.Activity.persistance.repository.ActivityRepository;
-import com.winnguyen1905.Activity.persistance.repository.FeedbackRepository;
-import com.winnguyen1905.Activity.persistance.repository.OrganizationRepository;
-import com.winnguyen1905.Activity.rest.service.OrganizationStatisticsService;
-import com.winnguyen1905.Activity.utils.DateTimeUtils;
+import com.winnguyen1905.activity.common.constant.ActivityCategory;
+import com.winnguyen1905.activity.common.constant.ActivityStatus;
+import com.winnguyen1905.activity.common.constant.TimePeriod;
+import com.winnguyen1905.activity.model.dto.StatisticsFilterDto;
+import com.winnguyen1905.activity.model.viewmodel.ActivityStatisticsSummaryVm;
+import com.winnguyen1905.activity.model.viewmodel.OrganizationStatisticsVm;
+import com.winnguyen1905.activity.persistance.entity.EActivity;
+import com.winnguyen1905.activity.persistance.entity.EOrganization;
+import com.winnguyen1905.activity.persistance.repository.ActivityRepository;
+import com.winnguyen1905.activity.persistance.repository.FeedbackRepository;
+import com.winnguyen1905.activity.persistance.repository.OrganizationRepository;
+import com.winnguyen1905.activity.rest.service.OrganizationStatisticsService;
+import com.winnguyen1905.activity.utils.DateTimeUtils;
 
 import lombok.RequiredArgsConstructor;
 

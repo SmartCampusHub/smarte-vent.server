@@ -1,11 +1,19 @@
-package com.winnguyen1905.Activity.model.dto;
+package com.winnguyen1905.activity.model.dto;
 
 import java.time.Instant;
 
-import com.winnguyen1905.Activity.common.constant.ParticipationRole;
-import com.winnguyen1905.Activity.common.constant.ParticipationStatus;
+import com.winnguyen1905.activity.common.constant.ParticipationRole;
+import com.winnguyen1905.activity.common.constant.ParticipationStatus;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-public record JoinActivityRequest(
-    Long activityId,
-    ParticipationRole role) implements AbstractModel {
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class JoinActivityRequest implements AbstractModel {
+    private Long activityId;
+    private ParticipationRole role;
 }

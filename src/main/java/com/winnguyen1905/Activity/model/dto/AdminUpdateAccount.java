@@ -1,38 +1,26 @@
-package com.winnguyen1905.Activity.model.dto;
+package com.winnguyen1905.activity.model.dto;
 
-import com.winnguyen1905.Activity.common.constant.AccountRole;
-import com.winnguyen1905.Activity.common.constant.MajorType;
-
-import jakarta.validation.constraints.Email;
+import com.winnguyen1905.activity.common.constant.AccountRole;
+import com.winnguyen1905.activity.common.constant.MajorType;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
 @Builder
-public record AdminUpdateAccount(
-    @NotBlank(message = "Full name is required") @Size(max = 100, message = "Full name must be less than 100 characters") String fullName,
-    String email,
-  String phone,
-  MajorType major,
-  AccountRole role,
-
-    Boolean isActive) implements AbstractModel {
-  @Builder
-  public AdminUpdateAccount(
-      String fullName,
-      String email,
-      String phone,
-      MajorType major,
-      AccountRole role,
-      Boolean isActive) {
-    this.fullName = fullName;
-    this.email = email;
-    this.phone = phone;
-    this.major = major;
-    this.role = role;
-    this.isActive = isActive;
-  }
-
+@NoArgsConstructor
+@AllArgsConstructor
+public class AdminUpdateAccount implements AbstractModel {
+    @NotBlank(message = "Full name is required") 
+    @Size(max = 100, message = "Full name must be less than 100 characters") 
+    private String fullName;
+    
+    private String email;
+    private String phone;
+    private MajorType major;
+    private AccountRole role;
+    private Boolean isActive;
 }

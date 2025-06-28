@@ -1,34 +1,25 @@
-package com.winnguyen1905.Activity.model.viewmodel;
+package com.winnguyen1905.activity.model.viewmodel;
 
 import java.time.Instant;
-
-import org.hibernate.annotations.CreationTimestamp;
-
-import com.winnguyen1905.Activity.common.constant.ParticipationRole;
-import com.winnguyen1905.Activity.common.constant.ParticipationStatus;
-import com.winnguyen1905.Activity.model.dto.AbstractModel;
-
-import jakarta.persistence.Column;
+import com.winnguyen1905.activity.common.constant.ParticipationRole;
+import com.winnguyen1905.activity.common.constant.ParticipationStatus;
+import com.winnguyen1905.activity.model.dto.AbstractModel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
 @Builder
-public record CheckJoinedActivityVm(Boolean isJoined, ParticipationStatus status, ParticipationRole role,
-    Instant registeredAt,
-    Instant processedAt,
-    String processedBy,
-    String rejectionReason,
-    String verifiedNote) implements AbstractModel {
-
-  @Builder
-  public CheckJoinedActivityVm(Boolean isJoined, ParticipationStatus status, ParticipationRole role,
-      Instant registeredAt, Instant processedAt, String processedBy, String rejectionReason, String verifiedNote) {
-    this.isJoined = isJoined;
-    this.status = status;
-    this.role = role;
-    this.registeredAt = registeredAt;
-    this.processedAt = processedAt;
-    this.processedBy = processedBy;
-    this.rejectionReason = rejectionReason;
-    this.verifiedNote = verifiedNote;
-  }
+@NoArgsConstructor
+@AllArgsConstructor
+public class CheckJoinedActivityVm implements AbstractModel {
+    private Boolean isJoined;
+    private ParticipationStatus status;
+    private ParticipationRole role;
+    private Instant registeredAt;
+    private Instant processedAt;
+    private String processedBy;
+    private String rejectionReason;
+    private String verifiedNote;
 }

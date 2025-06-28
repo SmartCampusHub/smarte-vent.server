@@ -1,4 +1,4 @@
-package com.winnguyen1905.Activity.rest.service.impl;
+package com.winnguyen1905.activity.rest.service.impl;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -18,23 +18,23 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.winnguyen1905.Activity.common.constant.ActivityCategory;
-import com.winnguyen1905.Activity.common.constant.ParticipationRole;
-import com.winnguyen1905.Activity.common.constant.ParticipationStatus;
-import com.winnguyen1905.Activity.model.viewmodel.ActivityComparativeAnalysisVm;
-import com.winnguyen1905.Activity.model.viewmodel.ActivityStatisticsVm;
-import com.winnguyen1905.Activity.model.viewmodel.ActivityTimeSeriesVm;
-import com.winnguyen1905.Activity.model.viewmodel.ParticipantScoreVm;
-import com.winnguyen1905.Activity.model.viewmodel.PreviousRunMetricsVm;
-import com.winnguyen1905.Activity.model.viewmodel.SeasonalPerformanceVm;
-import com.winnguyen1905.Activity.model.viewmodel.SimilarActivityMetricsVm;
-import com.winnguyen1905.Activity.persistance.entity.EActivity;
-import com.winnguyen1905.Activity.persistance.entity.EFeedback;
-import com.winnguyen1905.Activity.persistance.entity.EParticipationDetail;
-import com.winnguyen1905.Activity.persistance.repository.ActivityRepository;
-import com.winnguyen1905.Activity.persistance.repository.FeedbackRepository;
-import com.winnguyen1905.Activity.persistance.repository.ParticipationDetailRepository;
-import com.winnguyen1905.Activity.rest.service.ActivityStatisticsService;
+import com.winnguyen1905.activity.common.constant.ActivityCategory;
+import com.winnguyen1905.activity.common.constant.ParticipationRole;
+import com.winnguyen1905.activity.common.constant.ParticipationStatus;
+import com.winnguyen1905.activity.model.viewmodel.ActivityComparativeAnalysisVm;
+import com.winnguyen1905.activity.model.viewmodel.ActivityStatisticsVm;
+import com.winnguyen1905.activity.model.viewmodel.ActivityTimeSeriesVm;
+import com.winnguyen1905.activity.model.viewmodel.ParticipantScoreVm;
+import com.winnguyen1905.activity.model.viewmodel.PreviousRunMetricsVm;
+import com.winnguyen1905.activity.model.viewmodel.SeasonalPerformanceVm;
+import com.winnguyen1905.activity.model.viewmodel.SimilarActivityMetricsVm;
+import com.winnguyen1905.activity.persistance.entity.EActivity;
+import com.winnguyen1905.activity.persistance.entity.EFeedback;
+import com.winnguyen1905.activity.persistance.entity.EParticipationDetail;
+import com.winnguyen1905.activity.persistance.repository.ActivityRepository;
+import com.winnguyen1905.activity.persistance.repository.FeedbackRepository;
+import com.winnguyen1905.activity.persistance.repository.ParticipationDetailRepository;
+import com.winnguyen1905.activity.rest.service.ActivityStatisticsService;
 
 @Service
 public class ActivityStatisticsServiceImpl implements ActivityStatisticsService {

@@ -1,4 +1,4 @@
-package com.winnguyen1905.Activity.rest.service.impl;
+package com.winnguyen1905.activity.rest.service.impl;
 
 import java.time.Instant;
 import java.util.List;
@@ -7,17 +7,17 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.winnguyen1905.Activity.common.annotation.TAccountRequest;
-import com.winnguyen1905.Activity.common.constant.ReportStatus;
-import com.winnguyen1905.Activity.common.constant.ReportType;
-import com.winnguyen1905.Activity.model.dto.AdminUpdateReport;
-import com.winnguyen1905.Activity.model.dto.ReportCreateDto;
-import com.winnguyen1905.Activity.model.viewmodel.ReportVm;
-import com.winnguyen1905.Activity.persistance.entity.EAccountCredentials;
-import com.winnguyen1905.Activity.persistance.entity.EReport;
-import com.winnguyen1905.Activity.persistance.repository.AccountRepository;
-import com.winnguyen1905.Activity.persistance.repository.ReportRepository;
-import com.winnguyen1905.Activity.rest.service.ReportService;
+import com.winnguyen1905.activity.common.annotation.TAccountRequest;
+import com.winnguyen1905.activity.common.constant.ReportStatus;
+import com.winnguyen1905.activity.common.constant.ReportType;
+import com.winnguyen1905.activity.model.dto.AdminUpdateReport;
+import com.winnguyen1905.activity.model.dto.ReportCreateDto;
+import com.winnguyen1905.activity.model.viewmodel.ReportVm;
+import com.winnguyen1905.activity.persistance.entity.EAccountCredentials;
+import com.winnguyen1905.activity.persistance.entity.EReport;
+import com.winnguyen1905.activity.persistance.repository.AccountRepository;
+import com.winnguyen1905.activity.persistance.repository.ReportRepository;
+import com.winnguyen1905.activity.rest.service.ReportService;
 
 import jakarta.persistence.EntityNotFoundException;
 
@@ -73,7 +73,7 @@ public class ReportServiceImpl implements ReportService {
 
   @Override
   public List<ReportVm> getReportsByReporter(Long reporterId) {
-    return reportRepository.findByReporterId(reporterId).stream()
+    return reportRepository.findByReporter_Id(reporterId).stream()
         .map(this::mapToReportVm)
         .collect(Collectors.toList());
   }

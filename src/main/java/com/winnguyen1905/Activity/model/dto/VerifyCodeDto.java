@@ -1,5 +1,16 @@
-package com.winnguyen1905.Activity.model.dto;
+package com.winnguyen1905.activity.model.dto;
 
 import java.util.UUID;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-public record VerifyCodeDto(String code, UUID userId)  implements AbstractModel {}
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class VerifyCodeDto implements AbstractModel {
+    private String code;
+    private UUID userId;
+}

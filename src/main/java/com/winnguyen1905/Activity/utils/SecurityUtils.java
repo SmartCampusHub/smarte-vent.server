@@ -1,4 +1,4 @@
-package com.winnguyen1905.Activity.utils;
+package com.winnguyen1905.activity.utils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -10,7 +10,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.Jwt;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.winnguyen1905.Activity.auth.AuthPermission;
+import com.winnguyen1905.activity.auth.AuthPermission;
 
 public final class SecurityUtils {
 

@@ -1,4 +1,4 @@
-package com.winnguyen1905.Activity.rest.controller;
+package com.winnguyen1905.activity.rest.controller;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -10,14 +10,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.winnguyen1905.Activity.common.annotation.AccountRequest;
-import com.winnguyen1905.Activity.common.annotation.TAccountRequest;
-import com.winnguyen1905.Activity.common.constant.SystemConstant;
-import com.winnguyen1905.Activity.model.dto.ParticipationSearchParams;
-import com.winnguyen1905.Activity.model.dto.ParticipationUpdateDto;
-import com.winnguyen1905.Activity.model.viewmodel.PagedResponse;
-import com.winnguyen1905.Activity.model.viewmodel.ParticipationDetailVm;
-import com.winnguyen1905.Activity.rest.service.ParticipantService;
+import com.winnguyen1905.activity.common.annotation.AccountRequest;
+import com.winnguyen1905.activity.common.annotation.TAccountRequest;
+import com.winnguyen1905.activity.common.constant.SystemConstant;
+import com.winnguyen1905.activity.model.dto.ParticipationSearchParams;
+import com.winnguyen1905.activity.model.dto.ParticipationUpdateDto;
+import com.winnguyen1905.activity.model.viewmodel.PagedResponse;
+import com.winnguyen1905.activity.model.viewmodel.ParticipationDetailVm;
+import com.winnguyen1905.activity.rest.service.ParticipantService;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RequestParam;

@@ -1,4 +1,4 @@
-package com.winnguyen1905.Activity.rest.service;
+package com.winnguyen1905.activity.rest.service;
 
 import com.corundumstudio.socketio.SocketIOClient;
 import com.corundumstudio.socketio.SocketIOServer;

@@ -1,4 +1,4 @@
-package com.winnguyen1905.Activity.model.dto;
+package com.winnguyen1905.activity.model.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

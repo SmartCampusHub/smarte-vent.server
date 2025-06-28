@@ -1,10 +1,10 @@
-package com.winnguyen1905.Activity.model.dto;
+package com.winnguyen1905.activity.model.dto;
 
 import java.time.Instant;
 
-import com.winnguyen1905.Activity.common.constant.ActivityCategory;
-import com.winnguyen1905.Activity.common.constant.ActivityStatus;
-import com.winnguyen1905.Activity.common.constant.TimePeriod;
+import com.winnguyen1905.activity.common.constant.ActivityCategory;
+import com.winnguyen1905.activity.common.constant.ActivityStatus;
+import com.winnguyen1905.activity.common.constant.TimePeriod;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

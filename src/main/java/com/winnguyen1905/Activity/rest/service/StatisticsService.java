@@ -1,8 +1,8 @@
-package com.winnguyen1905.Activity.rest.service;
+package com.winnguyen1905.activity.rest.service;
 
-import com.winnguyen1905.Activity.common.annotation.TAccountRequest;
-import com.winnguyen1905.Activity.model.dto.StatisticsFilterDto;
-import com.winnguyen1905.Activity.model.viewmodel.StatisticsVm;
+import com.winnguyen1905.activity.common.annotation.TAccountRequest;
+import com.winnguyen1905.activity.model.dto.StatisticsFilterDto;
+import com.winnguyen1905.activity.model.viewmodel.StatisticsVm;
 
 public interface StatisticsService {
     // Get all statistics without filtering

@@ -1,7 +1,16 @@
-package com.winnguyen1905.Activity.model.dto;
+package com.winnguyen1905.activity.model.dto;
 
-import com.winnguyen1905.Activity.common.constant.OrganizationType;
+import com.winnguyen1905.activity.common.constant.OrganizationType;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-public record OrganizationSearchRequest(String name, OrganizationType organizationType) implements AbstractModel  {
-
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class OrganizationSearchRequest implements AbstractModel {
+    private String name;
+    private OrganizationType organizationType;
 }

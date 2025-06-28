@@ -1,16 +1,15 @@
-package com.winnguyen1905.Activity.persistance.repository;
+package com.winnguyen1905.activity.persistance.repository;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.winnguyen1905.Activity.persistance.entity.EActivity;
-import com.winnguyen1905.Activity.persistance.entity.EActivitySchedule;
+import com.winnguyen1905.activity.persistance.entity.EActivity;
+import com.winnguyen1905.activity.persistance.entity.EActivitySchedule;
 
 @Repository
 public interface ActivityScheduleRepository extends JpaRepository<EActivitySchedule, Long> {
@@ -31,26 +30,24 @@ public interface ActivityScheduleRepository extends JpaRepository<EActivitySched
   /**
    * Get schedule statistics by status
    */
-  @Query(value = "CALL get_schedule_statistics_by_status()", nativeQuery = true)
-  List<Map<String, Object>> getScheduleStatisticsByStatus();
+  @Query("SELECT s.status, COUNT(s) FROM EActivitySchedule s GROUP BY s.status")
+  List<Object[]> getScheduleStatisticsByStatus();
 
   /**
-   * Check for schedule conflicts
+   * Check for schedule conflicts - find overlapping schedules
    */
-  @Query(value = "CALL check_schedule_conflicts(:activityId, :startTime, :endTime)", nativeQuery = true)
-  List<Map<String, Object>> checkScheduleConflicts(
+  @Query("SELECT s FROM EActivitySchedule s WHERE s.activity.id = :activityId AND " +
+         "((s.startTime <= :endTime AND s.endTime >= :startTime))")
+  List<EActivitySchedule> checkScheduleConflicts(
       @Param("activityId") Long activityId,
-      @Param("startTime") String startTime,
-      @Param("endTime") String endTime
-  );
+      @Param("startTime") Instant startTime,
+      @Param("endTime") Instant endTime);
 
   /**
    * Get schedule statistics by time period
    */
-  @Query(value = "CALL get_schedule_statistics_by_period(:period, :startDate, :endDate)", nativeQuery = true)
-  List<Map<String, Object>> getScheduleStatisticsByPeriod(
-      @Param("period") String period,
-      @Param("startDate") String startDate,
-      @Param("endDate") String endDate
-  );
+  @Query("SELECT COUNT(s) FROM EActivitySchedule s WHERE s.startTime BETWEEN :startDate AND :endDate")
+  Long getScheduleCountByPeriod(
+      @Param("startDate") Instant startDate,
+      @Param("endDate") Instant endDate);
 }

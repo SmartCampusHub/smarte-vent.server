@@ -1,4 +1,4 @@
-package com.winnguyen1905.Activity.common.constant;
+package com.winnguyen1905.activity.common.constant;
 
 public class SystemConstant {
   /* Spring security 4: ROLE_ADMIN, Spring security 3 not required */

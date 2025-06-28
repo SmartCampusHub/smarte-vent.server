@@ -1,4 +1,4 @@
-package com.winnguyen1905.Activity.persistance.repository;
+package com.winnguyen1905.activity.persistance.repository;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -8,10 +8,10 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.winnguyen1905.Activity.common.constant.ActivityCategory;
-import com.winnguyen1905.Activity.common.constant.ParticipationRole;
-import com.winnguyen1905.Activity.common.constant.ParticipationStatus;
-import com.winnguyen1905.Activity.persistance.entity.EParticipationDetail;
+import com.winnguyen1905.activity.common.constant.ActivityCategory;
+import com.winnguyen1905.activity.common.constant.ParticipationRole;
+import com.winnguyen1905.activity.common.constant.ParticipationStatus;
+import com.winnguyen1905.activity.persistance.entity.EParticipationDetail;
 
 import java.time.Instant;
 import java.util.List;

@@ -1,9 +1,9 @@
-package com.winnguyen1905.Activity.rest.service;
+package com.winnguyen1905.activity.rest.service;
 
 import java.time.Instant;
 
-import com.winnguyen1905.Activity.model.dto.StatisticsFilterDto;
-import com.winnguyen1905.Activity.model.viewmodel.OrganizationStatisticsVm;
+import com.winnguyen1905.activity.model.dto.StatisticsFilterDto;
+import com.winnguyen1905.activity.model.viewmodel.OrganizationStatisticsVm;
 
 public interface OrganizationStatisticsService {
     /**

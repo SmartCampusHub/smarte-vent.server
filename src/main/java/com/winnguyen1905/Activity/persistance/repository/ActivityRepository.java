@@ -1,4 +1,4 @@
-package com.winnguyen1905.Activity.persistance.repository;
+package com.winnguyen1905.activity.persistance.repository;
 
 import java.time.Instant;
 import java.util.List;
@@ -11,9 +11,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.winnguyen1905.Activity.common.constant.ActivityCategory;
-import com.winnguyen1905.Activity.common.constant.ActivityStatus;
-import com.winnguyen1905.Activity.persistance.entity.EActivity;
+import com.winnguyen1905.activity.common.constant.ActivityCategory;
+import com.winnguyen1905.activity.common.constant.ActivityStatus;
+import com.winnguyen1905.activity.persistance.entity.EActivity;
 
 @Repository
 public interface ActivityRepository extends JpaRepository<EActivity, Long>, JpaSpecificationExecutor<EActivity> {

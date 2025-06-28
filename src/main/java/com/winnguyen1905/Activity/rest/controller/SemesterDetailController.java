@@ -1,10 +1,10 @@
-package com.winnguyen1905.Activity.rest.controller;
+package com.winnguyen1905.activity.rest.controller;
 
-import com.winnguyen1905.Activity.common.annotation.AccountRequest;
-import com.winnguyen1905.Activity.common.annotation.TAccountRequest;
-import com.winnguyen1905.Activity.model.dto.StudentSemesterDetailDto;
-import com.winnguyen1905.Activity.model.viewmodel.StudentSemesterDetailVm;
-import com.winnguyen1905.Activity.rest.service.StudentSemesterDetailService;
+import com.winnguyen1905.activity.common.annotation.AccountRequest;
+import com.winnguyen1905.activity.common.annotation.TAccountRequest;
+import com.winnguyen1905.activity.model.dto.StudentSemesterDetailDto;
+import com.winnguyen1905.activity.model.viewmodel.StudentSemesterDetailVm;
+import com.winnguyen1905.activity.rest.service.StudentSemesterDetailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

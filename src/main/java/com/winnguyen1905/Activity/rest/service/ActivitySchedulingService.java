@@ -1,4 +1,4 @@
-package com.winnguyen1905.Activity.rest.service;
+package com.winnguyen1905.activity.rest.service;
 
 /**
  * Service interface for scheduling activity-related tasks.

@@ -1,4 +1,4 @@
-package com.winnguyen1905.Activity.config;
+package com.winnguyen1905.activity.config;
 
 import org.springframework.core.MethodParameter;
 import org.springframework.core.io.Resource;
@@ -9,8 +9,8 @@ import org.springframework.http.server.ServletServerHttpResponse;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
-import com.winnguyen1905.Activity.common.annotation.ResponseMessage;
-import com.winnguyen1905.Activity.model.viewmodel.RestResponse;
+import com.winnguyen1905.activity.common.annotation.ResponseMessage;
+import com.winnguyen1905.activity.model.viewmodel.RestResponse;
 
 import jakarta.annotation.Nullable;
 import jakarta.servlet.http.HttpServletResponse;

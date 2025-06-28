@@ -1,4 +1,4 @@
-package com.winnguyen1905.Activity.rest.controller;
+package com.winnguyen1905.activity.rest.controller;
 
 import java.time.Instant;
 import java.util.List;
@@ -12,11 +12,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.winnguyen1905.Activity.model.viewmodel.ActivityComparativeAnalysisVm;
-import com.winnguyen1905.Activity.model.viewmodel.ActivityStatisticsVm;
-import com.winnguyen1905.Activity.model.viewmodel.ActivityTimeSeriesVm;
-import com.winnguyen1905.Activity.model.viewmodel.SimilarActivityMetricsVm;
-import com.winnguyen1905.Activity.rest.service.ActivityStatisticsService;
+import com.winnguyen1905.activity.model.viewmodel.ActivityComparativeAnalysisVm;
+import com.winnguyen1905.activity.model.viewmodel.ActivityStatisticsVm;
+import com.winnguyen1905.activity.model.viewmodel.ActivityTimeSeriesVm;
+import com.winnguyen1905.activity.model.viewmodel.SimilarActivityMetricsVm;
+import com.winnguyen1905.activity.rest.service.ActivityStatisticsService;
 
 @RestController
 @RequestMapping("/api/activity-statistics")

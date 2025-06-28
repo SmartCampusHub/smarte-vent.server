@@ -1,4 +1,4 @@
-package com.winnguyen1905.Activity.rest.controller;
+package com.winnguyen1905.activity.rest.controller;
 
 import java.util.List;
 
@@ -6,12 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.winnguyen1905.Activity.common.annotation.AccountRequest;
-import com.winnguyen1905.Activity.common.annotation.TAccountRequest;
-import com.winnguyen1905.Activity.model.dto.AdminUpdateReport;
-import com.winnguyen1905.Activity.model.dto.ReportCreateDto;
-import com.winnguyen1905.Activity.model.viewmodel.ReportVm;
-import com.winnguyen1905.Activity.rest.service.ReportService;
+import com.winnguyen1905.activity.common.annotation.AccountRequest;
+import com.winnguyen1905.activity.common.annotation.TAccountRequest;
+import com.winnguyen1905.activity.model.dto.AdminUpdateReport;
+import com.winnguyen1905.activity.model.dto.ReportCreateDto;
+import com.winnguyen1905.activity.model.viewmodel.ReportVm;
+import com.winnguyen1905.activity.rest.service.ReportService;
 
 @RestController
 @RequestMapping("/api/reports")
@@ -24,7 +24,7 @@ public class ReportController {
   public ResponseEntity<ReportVm> createReport(
       @RequestBody ReportCreateDto reportDto,
       @AccountRequest TAccountRequest accountRequest) {
-    ReportVm createdReport = reportService.createReport(reportDto, accountRequest.id());
+    ReportVm createdReport = reportService.createReport(reportDto, accountRequest.getId());
     return ResponseEntity.ok(createdReport);
   }
 

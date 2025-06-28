@@ -1,4 +1,4 @@
-package com.winnguyen1905.Activity.persistance.repository;
+package com.winnguyen1905.activity.persistance.repository;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -7,11 +7,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.winnguyen1905.Activity.persistance.entity.EAccountCredentials;
-import com.winnguyen1905.Activity.persistance.entity.ENotification;
+import com.winnguyen1905.activity.persistance.entity.EAccountCredentials;
+import com.winnguyen1905.activity.persistance.entity.ENotification;
 
+import java.time.Instant;
 import java.util.List;
-import java.util.Map;
 
 @Repository
 public interface NotificationRepository extends JpaRepository<ENotification, Long> {
@@ -33,24 +33,21 @@ public interface NotificationRepository extends JpaRepository<ENotification, Lon
   /**
    * Get notification statistics by type
    */
-  @Query(value = "CALL get_notification_statistics_by_type()", nativeQuery = true)
-  List<Map<String, Object>> getNotificationStatisticsByType();
+  @Query("SELECT n.notificationType, COUNT(n) FROM ENotification n GROUP BY n.notificationType")
+  List<Object[]> getNotificationStatisticsByType();
 
   /**
    * Get user notification metrics
    */
-  @Query(value = "CALL get_user_notification_metrics(:userId, :startDate, :endDate)", nativeQuery = true)
-  Map<String, Object> getUserNotificationMetrics(
+  @Query("SELECT COUNT(n) FROM ENotification n WHERE n.receiver.id = :userId AND n.createdDate BETWEEN :startDate AND :endDate")
+  Long getUserNotificationCount(
       @Param("userId") Long userId,
-      @Param("startDate") String startDate,
-      @Param("endDate") String endDate
-  );
+      @Param("startDate") Instant startDate,
+      @Param("endDate") Instant endDate);
 
   /**
    * Get notification engagement metrics
    */
-  @Query(value = "CALL get_notification_engagement_metrics(:notificationType)", nativeQuery = true)
-  List<Map<String, Object>> getNotificationEngagementMetrics(
-      @Param("notificationType") String notificationType
-  );
+  @Query("SELECT COUNT(n) FROM ENotification n WHERE n.notificationType = :notificationType AND n.isRead = true")
+  Long getNotificationReadCount(@Param("notificationType") String notificationType);
 }

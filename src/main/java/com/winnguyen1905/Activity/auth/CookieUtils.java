@@ -1,4 +1,4 @@
-package com.winnguyen1905.Activity.auth;
+package com.winnguyen1905.activity.auth;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;

@@ -1,9 +1,9 @@
-package com.winnguyen1905.Activity.persistance.repository.specification;
+package com.winnguyen1905.activity.persistance.repository.specification;
 
 import org.springframework.data.jpa.domain.Specification;
 
-import com.winnguyen1905.Activity.model.dto.OrganizationSearchRequest;
-import com.winnguyen1905.Activity.persistance.entity.EOrganization;
+import com.winnguyen1905.activity.model.dto.OrganizationSearchRequest;
+import com.winnguyen1905.activity.persistance.entity.EOrganization;
 
 import jakarta.persistence.criteria.Predicate;
 
@@ -13,12 +13,12 @@ public class OrganizationSpecification {
     return (root, query, cb) -> {
       Predicate predicate = cb.conjunction();
 
-      if (request.name() != null && !request.name().isEmpty()) {
-        predicate = cb.and(predicate, cb.like(cb.lower(root.get("name")), "%" + request.name().toLowerCase() + "%"));
+      if (request.getName() != null && !request.getName().isEmpty()) {
+        predicate = cb.and(predicate, cb.like(cb.lower(root.get("name")), "%" + request.getName().toLowerCase() + "%"));
       }
 
-      if (request.organizationType() != null) {
-        predicate = cb.and(predicate, cb.equal(root.get("type"), request.organizationType()));
+      if (request.getOrganizationType() != null) {
+        predicate = cb.and(predicate, cb.equal(root.get("type"), request.getOrganizationType()));
       }
 
       return predicate;

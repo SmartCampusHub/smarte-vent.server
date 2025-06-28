@@ -1,11 +1,11 @@
-package com.winnguyen1905.Activity.persistance.repository.specification;
+package com.winnguyen1905.activity.persistance.repository.specification;
 
 import org.springframework.data.jpa.domain.Specification;
 
-import com.winnguyen1905.Activity.common.annotation.TAccountRequest;
-import com.winnguyen1905.Activity.model.dto.JoinActivityRequest;
-import com.winnguyen1905.Activity.model.dto.ParticipationSearchParams;
-import com.winnguyen1905.Activity.persistance.entity.EParticipationDetail;
+import com.winnguyen1905.activity.common.annotation.TAccountRequest;
+import com.winnguyen1905.activity.model.dto.JoinActivityRequest;
+import com.winnguyen1905.activity.model.dto.ParticipationSearchParams;
+import com.winnguyen1905.activity.persistance.entity.EParticipationDetail;
 
 import jakarta.persistence.criteria.Predicate;
 import java.util.ArrayList;
@@ -17,35 +17,35 @@ public class EParticipationDetailSpecification {
     return (root, query, criteriaBuilder) -> {
       List<Predicate> predicates = new ArrayList<>();
 
-      if (searchDTO.participantId() != null) {
-        predicates.add(criteriaBuilder.equal(root.get("participant").get("id"), searchDTO.participantId()));
+      if (searchDTO.getParticipantId() != null) {
+        predicates.add(criteriaBuilder.equal(root.get("participant").get("id"), searchDTO.getParticipantId()));
       }
 
-      if (searchDTO.participantName() != null && !searchDTO.participantName().isBlank()) {
+      if (searchDTO.getParticipantName() != null && !searchDTO.getParticipantName().isBlank()) {
         predicates.add(criteriaBuilder.like(
             root.get("participant").get("fullName"),
-            "%" + searchDTO.participantName() + "%"));
+            "%" + searchDTO.getParticipantName() + "%"));
       }
 
-      if (searchDTO.identifyCode() != null) {
+      if (searchDTO.getIdentifyCode() != null) {
         predicates.add(criteriaBuilder.like(
             root.get("participant").get("identifyCode"),
-            "%" + searchDTO.identifyCode() + "%"));
+            "%" + searchDTO.getIdentifyCode() + "%"));
       }
-      if (searchDTO.participationStatus() != null) {
-        predicates.add(criteriaBuilder.equal(root.get("participationStatus"), searchDTO.participationStatus()));
-      }
-
-      if (searchDTO.participationRole() != null) {
-        predicates.add(criteriaBuilder.equal(root.get("participationRole"), searchDTO.participationRole()));
+      if (searchDTO.getParticipationStatus() != null) {
+        predicates.add(criteriaBuilder.equal(root.get("participationStatus"), searchDTO.getParticipationStatus()));
       }
 
-      if (searchDTO.registeredAfter() != null) {
-        predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("registeredAt"), searchDTO.registeredAfter()));
+      if (searchDTO.getParticipationRole() != null) {
+        predicates.add(criteriaBuilder.equal(root.get("participationRole"), searchDTO.getParticipationRole()));
       }
 
-      if (searchDTO.registeredBefore() != null) {
-        predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("registeredAt"), searchDTO.registeredBefore()));
+      if (searchDTO.getRegisteredAfter() != null) {
+        predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("registeredAt"), searchDTO.getRegisteredAfter()));
+      }
+
+      if (searchDTO.getRegisteredBefore() != null) {
+        predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("registeredAt"), searchDTO.getRegisteredBefore()));
       }
 
       // Combine predicates using AND logic

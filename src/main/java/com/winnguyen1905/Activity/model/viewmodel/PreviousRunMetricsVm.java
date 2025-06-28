@@ -1,8 +1,8 @@
-package com.winnguyen1905.Activity.model.viewmodel;
+package com.winnguyen1905.activity.model.viewmodel;
 
 import java.time.Instant;
 
-import com.winnguyen1905.Activity.model.dto.AbstractModel;
+import com.winnguyen1905.activity.model.dto.AbstractModel;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

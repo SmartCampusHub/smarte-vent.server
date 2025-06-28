@@ -1,4 +1,4 @@
-package com.winnguyen1905.Activity.common.constant;
+package com.winnguyen1905.activity.common.constant;
 
 public enum NotificationType {
     ACTIVITY("ACTIVITY"), LEARNING("LEARNING"), SECURITY("SECURITY");

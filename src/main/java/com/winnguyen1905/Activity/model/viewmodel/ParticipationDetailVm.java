@@ -1,77 +1,45 @@
-package com.winnguyen1905.Activity.model.viewmodel;
+package com.winnguyen1905.activity.model.viewmodel;
 
 import java.time.Instant;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.winnguyen1905.Activity.common.constant.ActivityCategory;
-import com.winnguyen1905.Activity.common.constant.ActivityStatus;
-import com.winnguyen1905.Activity.common.constant.MajorType;
-import com.winnguyen1905.Activity.common.constant.ParticipationRole;
-import com.winnguyen1905.Activity.common.constant.ParticipationStatus;
-import com.winnguyen1905.Activity.model.dto.AbstractModel;
-
+import com.winnguyen1905.activity.common.constant.ActivityCategory;
+import com.winnguyen1905.activity.common.constant.ActivityStatus;
+import com.winnguyen1905.activity.common.constant.MajorType;
+import com.winnguyen1905.activity.common.constant.ParticipationRole;
+import com.winnguyen1905.activity.common.constant.ParticipationStatus;
+import com.winnguyen1905.activity.model.dto.AbstractModel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-public record ParticipationDetailVm(
-    Long id,
-    Long studentId,
-    String identifyCode,
-    String participantName,
-    Long activityId,
-    String activityName,
-    ActivityCategory activityCategory,
-    MajorType major,
-    String activityVenue,
-    @JsonFormat(shape = JsonFormat.Shape.STRING) Instant startDate,
-    @JsonFormat(shape = JsonFormat.Shape.STRING) Instant endDate,
-    @JsonFormat(shape = JsonFormat.Shape.STRING) Instant registrationTime,
-    ActivityStatus activityStatus,
-    ParticipationStatus participationStatus,
-    ParticipationRole participationRole,
-    @JsonFormat(shape = JsonFormat.Shape.STRING) Instant processedAt,
-    String processedBy,
-    String rejectionReason,
-    String verifiedNote) implements AbstractModel {
-
-  @Builder
-  public ParticipationDetailVm(
-      Long id,
-      Long studentId,
-      String identifyCode,
-      String participantName,
-      Long activityId,
-      String activityName,
-      ActivityCategory activityCategory,
-      MajorType major,
-      String activityVenue,
-      Instant startDate,
-      Instant endDate,
-      Instant registrationTime,
-      ActivityStatus activityStatus,
-      ParticipationStatus participationStatus,
-      ParticipationRole participationRole,
-      Instant processedAt,
-      String processedBy,
-      String rejectionReason,
-      String verifiedNote) {
-    this.id = id;
-    this.studentId = studentId;
-    this.identifyCode = identifyCode;
-    this.participantName = participantName;
-    this.activityId = activityId;
-    this.activityName = activityName;
-    this.activityCategory = activityCategory;
-    this.major = major;
-    this.activityVenue = activityVenue;
-    this.startDate = startDate;
-    this.endDate = endDate;
-    this.registrationTime = registrationTime;
-    this.activityStatus = activityStatus;
-    this.participationStatus = participationStatus;
-    this.participationRole = participationRole;
-    this.processedAt = processedAt;
-    this.processedBy = processedBy;
-    this.rejectionReason = rejectionReason;
-    this.verifiedNote = verifiedNote;
-  }
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class ParticipationDetailVm implements AbstractModel {
+    private Long id;
+    private Long studentId;
+    private String identifyCode;
+    private String participantName;
+    private Long activityId;
+    private String activityName;
+    private ActivityCategory activityCategory;
+    private MajorType major;
+    private String activityVenue;
+    @JsonFormat(shape = JsonFormat.Shape.STRING) 
+    private Instant startDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING) 
+    private Instant endDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING) 
+    private Instant registrationTime;
+    private ActivityStatus activityStatus;
+    private ParticipationStatus participationStatus;
+    private ParticipationRole participationRole;
+    @JsonFormat(shape = JsonFormat.Shape.STRING) 
+    private Instant processedAt;
+    private String processedBy;
+    private String rejectionReason;
+    private String verifiedNote;
 }

@@ -1,4 +1,4 @@
-package com.winnguyen1905.Activity.rest.service.impl;
+package com.winnguyen1905.activity.rest.service.impl;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -15,26 +15,26 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.winnguyen1905.Activity.common.annotation.TAccountRequest;
-import com.winnguyen1905.Activity.common.constant.ActivityCategory;
-import com.winnguyen1905.Activity.common.constant.ActivityStatus;
-import com.winnguyen1905.Activity.common.constant.ParticipationStatus;
-import com.winnguyen1905.Activity.exception.BusinessLogicException;
-import com.winnguyen1905.Activity.exception.ResourceNotFoundException;
-import com.winnguyen1905.Activity.model.dto.FeedbackCreateDto;
-import com.winnguyen1905.Activity.model.dto.FeedbackUpdateDto;
-import com.winnguyen1905.Activity.model.viewmodel.FeedbackDetailVm;
-import com.winnguyen1905.Activity.model.viewmodel.FeedbackSummaryVm;
-import com.winnguyen1905.Activity.model.dto.OrganizationResponseDto;
-import com.winnguyen1905.Activity.persistance.entity.EAccountCredentials;
-import com.winnguyen1905.Activity.persistance.entity.EActivity;
-import com.winnguyen1905.Activity.persistance.entity.EFeedback;
-import com.winnguyen1905.Activity.persistance.entity.EParticipationDetail;
-import com.winnguyen1905.Activity.persistance.repository.AccountRepository;
-import com.winnguyen1905.Activity.persistance.repository.ActivityRepository;
-import com.winnguyen1905.Activity.persistance.repository.FeedbackRepository;
-import com.winnguyen1905.Activity.persistance.repository.ParticipationDetailRepository;
-import com.winnguyen1905.Activity.rest.service.FeedbackService;
+import com.winnguyen1905.activity.common.annotation.TAccountRequest;
+import com.winnguyen1905.activity.common.constant.ActivityCategory;
+import com.winnguyen1905.activity.common.constant.ActivityStatus;
+import com.winnguyen1905.activity.common.constant.ParticipationStatus;
+import com.winnguyen1905.activity.exception.BusinessLogicException;
+import com.winnguyen1905.activity.exception.ResourceNotFoundException;
+import com.winnguyen1905.activity.model.dto.FeedbackCreateDto;
+import com.winnguyen1905.activity.model.dto.FeedbackUpdateDto;
+import com.winnguyen1905.activity.model.viewmodel.FeedbackDetailVm;
+import com.winnguyen1905.activity.model.viewmodel.FeedbackSummaryVm;
+import com.winnguyen1905.activity.model.dto.OrganizationResponseDto;
+import com.winnguyen1905.activity.persistance.entity.EAccountCredentials;
+import com.winnguyen1905.activity.persistance.entity.EActivity;
+import com.winnguyen1905.activity.persistance.entity.EFeedback;
+import com.winnguyen1905.activity.persistance.entity.EParticipationDetail;
+import com.winnguyen1905.activity.persistance.repository.AccountRepository;
+import com.winnguyen1905.activity.persistance.repository.ActivityRepository;
+import com.winnguyen1905.activity.persistance.repository.FeedbackRepository;
+import com.winnguyen1905.activity.persistance.repository.ParticipationDetailRepository;
+import com.winnguyen1905.activity.rest.service.FeedbackService;
 
 @Service
 public class FeedbackServiceImpl implements FeedbackService {
@@ -61,14 +61,14 @@ public class FeedbackServiceImpl implements FeedbackService {
 
         // Validate if participation exists
         Optional<EParticipationDetail> participation = participationDetailRepository
-                .findByStudentIdAndActivityId(accountRequest.id(), feedbackDto.getActivityId());
+                .findByStudentIdAndActivityId(accountRequest.getId(), feedbackDto.getActivityId());
 
         if (participation.isEmpty()) {
             throw new ResourceNotFoundException("Participation not found with id: " + feedbackDto.getParticipationId());
         }
 
         // Check if the participation belongs to the student
-        if (!participation.get().getParticipant().getId().equals(accountRequest.id())) {
+        if (!participation.get().getParticipant().getId().equals(accountRequest.getId())) {
             throw new BusinessLogicException("You can only provide feedback for your own participation");
         }
 

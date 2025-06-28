@@ -1,27 +1,20 @@
-package com.winnguyen1905.Activity.model.viewmodel;
+package com.winnguyen1905.activity.model.viewmodel;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.winnguyen1905.Activity.model.dto.AbstractModel;
+import com.winnguyen1905.activity.model.dto.AbstractModel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import lombok.*;
-
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @JsonInclude(value = com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
-public record RestResponse<T>(
-  T data,
-  String error,
-  Object message,
-  Integer statusCode
-) implements AbstractModel {
-  @Builder
-  public RestResponse(
-    T data,
-    String error,
-    Object message,
-    Integer statusCode
-  ) {
-    this.data = data;
-    this.error = error;
-    this.message = message;
-    this.statusCode = statusCode;
-  }
+public class RestResponse<T> implements AbstractModel {
+    private T data;
+    private String error;
+    private Object message;
+    private Integer statusCode;
 }

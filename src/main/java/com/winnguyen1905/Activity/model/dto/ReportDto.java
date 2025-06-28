@@ -1,4 +1,4 @@
-package com.winnguyen1905.Activity.model.dto;
+package com.winnguyen1905.activity.model.dto;
 
 import lombok.Builder;
 import lombok.Data;

@@ -1,8 +1,8 @@
-package com.winnguyen1905.Activity.model.viewmodel;
+package com.winnguyen1905.activity.model.viewmodel;
 
-import com.winnguyen1905.Activity.common.constant.ClassStatus;
-import com.winnguyen1905.Activity.model.dto.AbstractModel;
-import com.winnguyen1905.Activity.persistance.entity.EAccountCredentials;
+import com.winnguyen1905.activity.common.constant.ClassStatus;
+import com.winnguyen1905.activity.model.dto.AbstractModel;
+import com.winnguyen1905.activity.persistance.entity.EAccountCredentials;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

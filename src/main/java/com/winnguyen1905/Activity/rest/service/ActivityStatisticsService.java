@@ -1,12 +1,12 @@
-package com.winnguyen1905.Activity.rest.service;
+package com.winnguyen1905.activity.rest.service;
 
 import java.time.Instant;
 import java.util.List;
 
-import com.winnguyen1905.Activity.model.viewmodel.ActivityComparativeAnalysisVm;
-import com.winnguyen1905.Activity.model.viewmodel.ActivityStatisticsVm;
-import com.winnguyen1905.Activity.model.viewmodel.ActivityTimeSeriesVm;
-import com.winnguyen1905.Activity.model.viewmodel.SimilarActivityMetricsVm;
+import com.winnguyen1905.activity.model.viewmodel.ActivityComparativeAnalysisVm;
+import com.winnguyen1905.activity.model.viewmodel.ActivityStatisticsVm;
+import com.winnguyen1905.activity.model.viewmodel.ActivityTimeSeriesVm;
+import com.winnguyen1905.activity.model.viewmodel.SimilarActivityMetricsVm;
 
 public interface ActivityStatisticsService {
     

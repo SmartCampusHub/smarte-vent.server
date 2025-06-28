@@ -1,26 +1,39 @@
-package com.winnguyen1905.Activity.model.dto;
+package com.winnguyen1905.activity.model.dto;
 
-import com.winnguyen1905.Activity.common.constant.AccountRole;
-import com.winnguyen1905.Activity.common.constant.MajorType;
+import com.winnguyen1905.activity.common.constant.AccountRole;
+import com.winnguyen1905.activity.common.constant.MajorType;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-public record RegisterRequest(
-    @NotBlank(message = "username not be blank") @Pattern(regexp = "^[a-zA-Z0-9]{8,20}$", message = "username must be of 8 to 20 length with no special characters") String identifyCode,
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class RegisterRequest implements AbstractModel {
+    @NotBlank(message = "username not be blank") 
+    @Pattern(regexp = "^[a-zA-Z0-9]{8,20}$", message = "username must be of 8 to 20 length with no special characters") 
+    private String identifyCode;
 
-    @NotBlank @Size(min = 8, message = "The password must be length >= 8") String password,
+    @NotBlank 
+    @Size(min = 8, message = "The password must be length >= 8") 
+    private String password;
 
-    @NotBlank @Email(message = "Email format invalid") String email,
+    @NotBlank 
+    @Email(message = "Email format invalid") 
+    private String email;
 
-    String phone,
+    private String phone;
 
-    MajorType major,
+    private MajorType major;
 
-    @NotBlank String fullName,
+    @NotBlank 
+    private String fullName;
 
-    AccountRole role
-
-) implements AbstractModel {
+    private AccountRole role;
 }

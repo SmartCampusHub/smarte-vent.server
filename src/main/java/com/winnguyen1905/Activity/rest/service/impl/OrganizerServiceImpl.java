@@ -1,15 +1,15 @@
-package com.winnguyen1905.Activity.rest.service.impl;
+package com.winnguyen1905.activity.rest.service.impl;
 
-import com.winnguyen1905.Activity.common.annotation.TAccountRequest;
-import com.winnguyen1905.Activity.model.dto.OrganizationDto;
-import com.winnguyen1905.Activity.model.dto.OrganizationSearchRequest;
-import com.winnguyen1905.Activity.model.viewmodel.OrganizationVm;
-import com.winnguyen1905.Activity.model.viewmodel.PagedResponse;
-import com.winnguyen1905.Activity.model.viewmodel.RepresentativeOrganizerVm;
-import com.winnguyen1905.Activity.persistance.entity.EOrganization;
-import com.winnguyen1905.Activity.persistance.repository.RepresentativeOrganizerRepository;
-import com.winnguyen1905.Activity.persistance.repository.specification.OrganizationSpecification;
-import com.winnguyen1905.Activity.rest.service.OrganizerService;
+import com.winnguyen1905.activity.common.annotation.TAccountRequest;
+import com.winnguyen1905.activity.model.dto.OrganizationDto;
+import com.winnguyen1905.activity.model.dto.OrganizationSearchRequest;
+import com.winnguyen1905.activity.model.viewmodel.OrganizationVm;
+import com.winnguyen1905.activity.model.viewmodel.PagedResponse;
+import com.winnguyen1905.activity.model.viewmodel.RepresentativeOrganizerVm;
+import com.winnguyen1905.activity.persistance.entity.EOrganization;
+import com.winnguyen1905.activity.persistance.repository.RepresentativeOrganizerRepository;
+import com.winnguyen1905.activity.persistance.repository.specification.OrganizationSpecification;
+import com.winnguyen1905.activity.rest.service.OrganizerService;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
@@ -34,13 +34,13 @@ public class OrganizerServiceImpl implements OrganizerService {
 
   @Override
   public void updateOrganizer(TAccountRequest accountRequest, OrganizationDto organizerDto) {
-    EOrganization organizer = organizerRepository.findById(organizerDto.id())
-        .orElseThrow(() -> new RuntimeException("Organizer not found with id: " + organizerDto.id()));
+    EOrganization organizer = organizerRepository.findById(organizerDto.getId())
+        .orElseThrow(() -> new RuntimeException("Organizer not found with id: " + organizerDto.getId()));
 
-    organizer.setName(organizerDto.organizationName());
-    organizer.setEmail(organizerDto.representativeEmail());
-    organizer.setPhone(organizerDto.representativePhone());
-    organizer.setType(organizerDto.organizationType());
+    organizer.setName(organizerDto.getOrganizationName());
+    organizer.setEmail(organizerDto.getRepresentativeEmail());
+    organizer.setPhone(organizerDto.getRepresentativePhone());
+    organizer.setType(organizerDto.getOrganizationType());
     organizerRepository.save(organizer);
   }
 

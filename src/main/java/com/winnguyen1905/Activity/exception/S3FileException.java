@@ -1,4 +1,4 @@
-package com.winnguyen1905.Activity.exception;
+package com.winnguyen1905.activity.exception;
 
 public class S3FileException extends BaseException {
   public S3FileException(String message, int code, Object error) {

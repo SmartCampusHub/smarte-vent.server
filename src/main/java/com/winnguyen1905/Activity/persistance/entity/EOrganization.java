@@ -1,4 +1,4 @@
-package com.winnguyen1905.Activity.persistance.entity;
+package com.winnguyen1905.activity.persistance.entity;
 
 import java.time.Instant;
 import java.util.List;
@@ -8,9 +8,9 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.winnguyen1905.Activity.common.annotation.AccountRequest;
-import com.winnguyen1905.Activity.common.annotation.TAccountRequest;
-import com.winnguyen1905.Activity.common.constant.OrganizationType;
+import com.winnguyen1905.activity.common.annotation.AccountRequest;
+import com.winnguyen1905.activity.common.annotation.TAccountRequest;
+import com.winnguyen1905.activity.common.constant.OrganizationType;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

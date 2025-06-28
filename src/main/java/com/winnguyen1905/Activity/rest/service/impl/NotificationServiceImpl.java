@@ -1,14 +1,14 @@
-package com.winnguyen1905.Activity.rest.service.impl;
+package com.winnguyen1905.activity.rest.service.impl;
 
-import com.winnguyen1905.Activity.common.annotation.TAccountRequest;
-import com.winnguyen1905.Activity.model.dto.NotificationDto;
-import com.winnguyen1905.Activity.model.viewmodel.NotificationVm;
-import com.winnguyen1905.Activity.model.viewmodel.PagedResponse;
-import com.winnguyen1905.Activity.persistance.entity.EAccountCredentials;
-import com.winnguyen1905.Activity.persistance.entity.ENotification;
-import com.winnguyen1905.Activity.persistance.repository.AccountRepository;
-import com.winnguyen1905.Activity.persistance.repository.NotificationRepository;
-import com.winnguyen1905.Activity.rest.service.NotificationService;
+import com.winnguyen1905.activity.common.annotation.TAccountRequest;
+import com.winnguyen1905.activity.model.dto.NotificationDto;
+import com.winnguyen1905.activity.model.viewmodel.NotificationVm;
+import com.winnguyen1905.activity.model.viewmodel.PagedResponse;
+import com.winnguyen1905.activity.persistance.entity.EAccountCredentials;
+import com.winnguyen1905.activity.persistance.entity.ENotification;
+import com.winnguyen1905.activity.persistance.repository.AccountRepository;
+import com.winnguyen1905.activity.persistance.repository.NotificationRepository;
+import com.winnguyen1905.activity.rest.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,11 +23,11 @@ public class NotificationServiceImpl implements NotificationService {
   @Override
   public void sendNotification(TAccountRequest accountRequest, NotificationDto notificationDto) {
     ENotification notification = ENotification.builder()
-        .title(notificationDto.title())
-        .content(notificationDto.content())
+        .title(notificationDto.getTitle())
+        .content(notificationDto.getContent())
         .isRead(false)
-        .notificationType(notificationDto.notificationType())
-        .receiver(accountRepository.findById(notificationDto.receiverId())
+        .notificationType(notificationDto.getNotificationType())
+        .receiver(accountRepository.findById(notificationDto.getReceiverId())
             .orElseGet(null))
         .build();
     notificationRepository.save(notification);
@@ -35,7 +35,7 @@ public class NotificationServiceImpl implements NotificationService {
 
   @Override
   public PagedResponse<NotificationVm> getNotifications(TAccountRequest accountRequest, Pageable pageable) {
-    EAccountCredentials account = accountRepository.findById(accountRequest.id())
+    EAccountCredentials account = accountRepository.findById(accountRequest.getId())
         .orElseThrow(() -> new RuntimeException("Account not found"));
 
     // Get notifications ordered by read status and creation date

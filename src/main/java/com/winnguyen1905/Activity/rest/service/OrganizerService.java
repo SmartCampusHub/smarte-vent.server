@@ -1,11 +1,11 @@
-package com.winnguyen1905.Activity.rest.service;
+package com.winnguyen1905.activity.rest.service;
 
-import com.winnguyen1905.Activity.common.annotation.TAccountRequest;
-import com.winnguyen1905.Activity.model.dto.OrganizationDto;
-import com.winnguyen1905.Activity.model.dto.OrganizationSearchRequest;
-import com.winnguyen1905.Activity.model.viewmodel.OrganizationVm;
-import com.winnguyen1905.Activity.model.viewmodel.PagedResponse;
-import com.winnguyen1905.Activity.model.viewmodel.RepresentativeOrganizerVm;
+import com.winnguyen1905.activity.common.annotation.TAccountRequest;
+import com.winnguyen1905.activity.model.dto.OrganizationDto;
+import com.winnguyen1905.activity.model.dto.OrganizationSearchRequest;
+import com.winnguyen1905.activity.model.viewmodel.OrganizationVm;
+import com.winnguyen1905.activity.model.viewmodel.PagedResponse;
+import com.winnguyen1905.activity.model.viewmodel.RepresentativeOrganizerVm;
 
 import java.util.List;
 

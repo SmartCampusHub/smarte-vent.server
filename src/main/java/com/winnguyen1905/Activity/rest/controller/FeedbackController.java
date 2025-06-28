@@ -1,4 +1,4 @@
-package com.winnguyen1905.Activity.rest.controller;
+package com.winnguyen1905.activity.rest.controller;
 
 import java.time.Instant;
 
@@ -19,16 +19,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.winnguyen1905.Activity.common.annotation.AccountRequest;
-import com.winnguyen1905.Activity.common.annotation.TAccountRequest;
-import com.winnguyen1905.Activity.common.constant.ActivityCategory;
-import com.winnguyen1905.Activity.common.constant.ActivityStatus;
-import com.winnguyen1905.Activity.model.dto.FeedbackCreateDto;
-import com.winnguyen1905.Activity.model.dto.FeedbackUpdateDto;
-import com.winnguyen1905.Activity.model.dto.OrganizationResponseDto;
-import com.winnguyen1905.Activity.model.viewmodel.FeedbackDetailVm;
-import com.winnguyen1905.Activity.model.viewmodel.FeedbackSummaryVm;
-import com.winnguyen1905.Activity.rest.service.FeedbackService;
+import com.winnguyen1905.activity.common.annotation.AccountRequest;
+import com.winnguyen1905.activity.common.annotation.TAccountRequest;
+import com.winnguyen1905.activity.common.constant.ActivityCategory;
+import com.winnguyen1905.activity.common.constant.ActivityStatus;
+import com.winnguyen1905.activity.model.dto.FeedbackCreateDto;
+import com.winnguyen1905.activity.model.dto.FeedbackUpdateDto;
+import com.winnguyen1905.activity.model.dto.OrganizationResponseDto;
+import com.winnguyen1905.activity.model.viewmodel.FeedbackDetailVm;
+import com.winnguyen1905.activity.model.viewmodel.FeedbackSummaryVm;
+import com.winnguyen1905.activity.rest.service.FeedbackService;
 
 import jakarta.validation.Valid;
 
@@ -67,7 +67,7 @@ public class FeedbackController {
   public ResponseEntity<Page<FeedbackSummaryVm>> getMyFeedbacks(
       @AccountRequest TAccountRequest accountRequest,
       @PageableDefault(size = 10) Pageable pageable) {
-    Page<FeedbackSummaryVm> feedbacks = feedbackService.getStudentFeedbacks(accountRequest.id(), pageable);
+    Page<FeedbackSummaryVm> feedbacks = feedbackService.getStudentFeedbacks(accountRequest.getId(), pageable);
     return ResponseEntity.ok(feedbacks);
   }
 
@@ -81,7 +81,7 @@ public class FeedbackController {
   public ResponseEntity<Boolean> canProvideFeedback(
       @AccountRequest TAccountRequest accountRequest,
       @PathVariable Long activityId) {
-    boolean canProvide = feedbackService.canStudentProvideFeedback(accountRequest.id(), activityId);
+    boolean canProvide = feedbackService.canStudentProvideFeedback(accountRequest.getId(), activityId);
     return ResponseEntity.ok(canProvide);
   }
 

@@ -1,4 +1,4 @@
-package com.winnguyen1905.Activity.config;
+package com.winnguyen1905.activity.config;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,8 +17,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 
-import com.winnguyen1905.Activity.auth.CustomUserDetails;
-import com.winnguyen1905.Activity.persistance.repository.AccountRepository;
+import com.winnguyen1905.activity.auth.CustomUserDetails;
+import com.winnguyen1905.activity.persistance.repository.AccountRepository;
 
 @Configuration
 public class AuthenticationManagerConfig {

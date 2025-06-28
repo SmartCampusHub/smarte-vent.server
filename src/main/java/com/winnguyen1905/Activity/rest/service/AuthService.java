@@ -1,4 +1,4 @@
-package com.winnguyen1905.Activity.rest.service;
+package com.winnguyen1905.activity.rest.service;
 
 import java.util.Optional;
 
@@ -8,18 +8,18 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.winnguyen1905.Activity.auth.CustomUserDetails;
-import com.winnguyen1905.Activity.common.annotation.TAccountRequest;
-import com.winnguyen1905.Activity.common.constant.AccountRole;
-import com.winnguyen1905.Activity.model.dto.ChangePasswordDto;
-import com.winnguyen1905.Activity.model.dto.LoginRequest;
-import com.winnguyen1905.Activity.model.dto.RegisterRequest;
-import com.winnguyen1905.Activity.model.viewmodel.AccountVm;
-import com.winnguyen1905.Activity.model.viewmodel.AuthResponse;
-import com.winnguyen1905.Activity.model.viewmodel.TokenPair;
-import com.winnguyen1905.Activity.persistance.entity.EAccountCredentials;
-import com.winnguyen1905.Activity.persistance.repository.AccountRepository;
-import com.winnguyen1905.Activity.utils.JwtUtils;
+import com.winnguyen1905.activity.auth.CustomUserDetails;
+import com.winnguyen1905.activity.common.annotation.TAccountRequest;
+import com.winnguyen1905.activity.common.constant.AccountRole;
+import com.winnguyen1905.activity.model.dto.ChangePasswordDto;
+import com.winnguyen1905.activity.model.dto.LoginRequest;
+import com.winnguyen1905.activity.model.dto.RegisterRequest;
+import com.winnguyen1905.activity.model.viewmodel.AccountVm;
+import com.winnguyen1905.activity.model.viewmodel.AuthResponse;
+import com.winnguyen1905.activity.model.viewmodel.TokenPair;
+import com.winnguyen1905.activity.persistance.entity.EAccountCredentials;
+import com.winnguyen1905.activity.persistance.repository.AccountRepository;
+import com.winnguyen1905.activity.utils.JwtUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,18 +36,18 @@ public class AuthService {
 
   public AuthResponse login(LoginRequest loginRequest) {
     CustomUserDetails userDetails = (CustomUserDetails) authenticationManager.authenticate(
-        new UsernamePasswordAuthenticationToken(loginRequest.identifyCode(), loginRequest.password())).getPrincipal();
+        new UsernamePasswordAuthenticationToken(loginRequest.getIdentifyCode(), loginRequest.getPassword())).getPrincipal();
 
     TokenPair tokenPair = jwtUtils.createTokenPair(userDetails);
     EAccountCredentials userCredentials = userRepository.findById(userDetails.id())
         .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-    // userCredentials.setRefreshToken(tokenPair.refreshToken());
+    // userCredentials.setRefreshToken(tokenPair.getRefreshToken());
     userRepository.save(userCredentials);
 
     return AuthResponse.builder()
-        .refreshToken(tokenPair.refreshToken())
-        .accessToken(tokenPair.accessToken())
+        .refreshToken(tokenPair.getRefreshToken())
+        .accessToken(tokenPair.getAccessToken())
         .account(AccountVm.builder()
             .identifyCode(userCredentials.getIdentifyCode())
             .role(userCredentials.getRole())
@@ -61,7 +61,7 @@ public class AuthService {
   public AccountVm register(RegisterRequest registerRequest) {
     validateRegisterRequest(registerRequest);
 
-    Optional<EAccountCredentials> user = userRepository.findByIdentifyCode(registerRequest.identifyCode());
+    Optional<EAccountCredentials> user = userRepository.findByIdentifyCode(registerRequest.getIdentifyCode());
 
     if (user.isPresent()) {
       throw new IllegalArgumentException("Student code is already taken");
@@ -84,21 +84,21 @@ public class AuthService {
   }
 
   private void validateRegisterRequest(RegisterRequest request) {
-    if (request == null || request.identifyCode() == null || request.password() == null) {
+    if (request == null || request.getIdentifyCode() == null || request.getPassword() == null) {
       throw new IllegalArgumentException("Student code and password are required");
     }
   }
 
   private EAccountCredentials createNewUser(RegisterRequest request) {
     return EAccountCredentials.builder()
-        .email(request.email())
-        .phone(request.phone())
-        .fullName(request.fullName())
+        .email(request.getEmail())
+        .phone(request.getPhone())
+        .fullName(request.getFullName())
         .isActive(true)
-        .major(request.major())
+        .major(request.getMajor())
         .role(AccountRole.STUDENT)
-        .identifyCode(request.identifyCode())
-        .password(passwordEncoder.encode(request.password()))
+        .identifyCode(request.getIdentifyCode())
+        .password(passwordEncoder.encode(request.getPassword()))
         .build();
   }
 
@@ -112,8 +112,8 @@ public class AuthService {
         .build();
     TokenPair tokenPair = jwtUtils.createTokenPair(userDetails);
     return AuthResponse.builder()
-        .refreshToken(tokenPair.refreshToken())
-        .accessToken(tokenPair.accessToken())
+        .refreshToken(tokenPair.getRefreshToken())
+        .accessToken(tokenPair.getAccessToken())
         .build();
   }
 
@@ -137,18 +137,18 @@ public class AuthService {
         .build();
 
     TokenPair tokenPair = jwtUtils.createTokenPair(userDetails);
-    // user.setRefreshToken(tokenPair.refreshToken());
+    // user.setRefreshToken(tokenPair.getRefreshToken());
     userRepository.save(user);
 
     return AuthResponse.builder()
-        .accessToken(tokenPair.accessToken())
+        .accessToken(tokenPair.getAccessToken())
         .refreshToken(refreshToken)
         .build();
   }
 
   public void changePassword(TAccountRequest accountRequest, ChangePasswordDto changePasswordDto) {
-    EAccountCredentials user = userRepository.findById(accountRequest.id())
-        .orElseThrow(() -> new UsernameNotFoundException("Not found user by id " + accountRequest.id()));
+    EAccountCredentials user = userRepository.findById(accountRequest.getId())
+        .orElseThrow(() -> new UsernameNotFoundException("Not found user by id " + accountRequest.getId()));
 
     if (!passwordEncoder.matches(changePasswordDto.getOldPassword(), user.getPassword())) {
       throw new IllegalArgumentException("Old password is not correct");

@@ -1,4 +1,4 @@
-package com.winnguyen1905.Activity.exception;
+package com.winnguyen1905.activity.exception;
 
 import java.util.ArrayList;
 import java.util.List;

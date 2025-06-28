@@ -1,21 +1,21 @@
-package com.winnguyen1905.Activity.model.dto;
+package com.winnguyen1905.activity.model.dto;
 
 import java.io.Serializable;
 import java.util.UUID;
 
-import com.winnguyen1905.Activity.common.constant.NotificationType;
-
+import com.winnguyen1905.activity.common.constant.NotificationType;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
 @Builder
-public record NotificationDto(
-        Long receiverId, String title, String content, NotificationType notificationType) implements AbstractModel {
-
-    @Builder
-    public NotificationDto(Long receiverId, String title, String content, NotificationType notificationType) {
-        this.receiverId = receiverId;
-        this.title = title;
-        this.content = content;
-        this.notificationType = notificationType;
-    }
+@NoArgsConstructor
+@AllArgsConstructor
+public class NotificationDto implements AbstractModel {
+    private Long receiverId;
+    private String title;
+    private String content;
+    private NotificationType notificationType;
 }

@@ -1,4 +1,4 @@
-package com.winnguyen1905.Activity.exception;
+package com.winnguyen1905.activity.exception;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -1,23 +1,23 @@
-package com.winnguyen1905.Activity.rest.service.impl;
+package com.winnguyen1905.activity.rest.service.impl;
 
-import com.winnguyen1905.Activity.common.annotation.TAccountRequest;
-import com.winnguyen1905.Activity.common.constant.AccountRole;
-import com.winnguyen1905.Activity.common.constant.ParticipationRole;
-import com.winnguyen1905.Activity.common.constant.ParticipationStatus;
-import com.winnguyen1905.Activity.model.dto.ParticipationSearchParams;
-import com.winnguyen1905.Activity.model.dto.JoinActivityRequest;
-import com.winnguyen1905.Activity.model.dto.ParticipationUpdateDto;
-import com.winnguyen1905.Activity.model.viewmodel.ActivityVm;
-import com.winnguyen1905.Activity.model.viewmodel.PagedResponse;
-import com.winnguyen1905.Activity.model.viewmodel.ParticipationDetailVm;
-import com.winnguyen1905.Activity.persistance.entity.EAccountCredentials;
-import com.winnguyen1905.Activity.persistance.entity.EActivity;
-import com.winnguyen1905.Activity.persistance.entity.EParticipationDetail;
-import com.winnguyen1905.Activity.persistance.repository.AccountRepository;
-import com.winnguyen1905.Activity.persistance.repository.ActivityRepository;
-import com.winnguyen1905.Activity.persistance.repository.ParticipationDetailRepository;
-import com.winnguyen1905.Activity.persistance.repository.specification.EParticipationDetailSpecification;
-import com.winnguyen1905.Activity.rest.service.ParticipantService;
+import com.winnguyen1905.activity.common.annotation.TAccountRequest;
+import com.winnguyen1905.activity.common.constant.AccountRole;
+import com.winnguyen1905.activity.common.constant.ParticipationRole;
+import com.winnguyen1905.activity.common.constant.ParticipationStatus;
+import com.winnguyen1905.activity.model.dto.ParticipationSearchParams;
+import com.winnguyen1905.activity.model.dto.JoinActivityRequest;
+import com.winnguyen1905.activity.model.dto.ParticipationUpdateDto;
+import com.winnguyen1905.activity.model.viewmodel.ActivityVm;
+import com.winnguyen1905.activity.model.viewmodel.PagedResponse;
+import com.winnguyen1905.activity.model.viewmodel.ParticipationDetailVm;
+import com.winnguyen1905.activity.persistance.entity.EAccountCredentials;
+import com.winnguyen1905.activity.persistance.entity.EActivity;
+import com.winnguyen1905.activity.persistance.entity.EParticipationDetail;
+import com.winnguyen1905.activity.persistance.repository.AccountRepository;
+import com.winnguyen1905.activity.persistance.repository.ActivityRepository;
+import com.winnguyen1905.activity.persistance.repository.ParticipationDetailRepository;
+import com.winnguyen1905.activity.persistance.repository.specification.EParticipationDetailSpecification;
+import com.winnguyen1905.activity.rest.service.ParticipantService;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.data.domain.Page;
@@ -40,18 +40,18 @@ public class ParticipantServiceImpl implements ParticipantService {
 
   @Override
   public void createParticipant(TAccountRequest accountRequest, ParticipationSearchParams participantDto) {
-    // EAccountCredentials account = accountRepository.findById(accountRequest.id())
+    // EAccountCredentials account = accountRepository.findById(accountRequest.getId())
     // .orElseThrow(() -> new RuntimeException("Account not found with id: " +
-    // accountRequest.id()));
+    // accountRequest.getId()));
 
-    // EActivity activity = activityRepository.findById(participantDto.activityId())
+    // EActivity activity = activityRepository.findById(participantDto.getActivityId())
     // .orElseThrow(() -> new RuntimeException("Activity not found with id: " +
-    // participantDto.activityId()));
+    // participantDto.getActivityId()));
 
     // // Check if the participant already exists
     // if
-    // (participantRepository.existsByParticipantIdAndActivityId(accountRequest.id(),
-    // participantDto.activityId())) {
+    // (participantRepository.existsByParticipantIdAndActivityId(accountRequest.getId(),
+    // participantDto.getActivityId())) {
     // throw new RuntimeException("Participant already exists for this activity");
     // }
 
@@ -116,11 +116,11 @@ public class ParticipantServiceImpl implements ParticipantService {
             () -> new RuntimeException("Participation detail not found with id: " + updateDto.getParticipationId()));
 
     Boolean isContributor = this.participantRepository.existsByParticipantIdAndActivityIdAndParticipationRole(
-        accountRequest.id(), participationDetail.getActivity().getId(), ParticipationRole.CONTRIBUTOR);
+        accountRequest.getId(), participationDetail.getActivity().getId(), ParticipationRole.CONTRIBUTOR);
 
     participationDetail.setParticipationStatus(updateDto.getStatus());
     participationDetail.setProcessedAt(Instant.now());
-    participationDetail.setProcessedBy(accountRequest.username());
+    participationDetail.setProcessedBy(accountRequest.getUsername());
     participationDetail.setVerifiedNote(updateDto.getVerifiedNote());
     participationDetail.setRejectionReason(updateDto.getRejectionReason());
     participantRepository.save(participationDetail);
@@ -193,11 +193,11 @@ public class ParticipantServiceImpl implements ParticipantService {
             () -> new RuntimeException("Participation detail not found with id: " + updateDto.getParticipationId()));
 
     Boolean isContributor = this.participantRepository.existsByParticipantIdAndActivityIdAndParticipationRole(
-        accountRequest.id(), participationDetail.getActivity().getId(), ParticipationRole.CONTRIBUTOR);
+        accountRequest.getId(), participationDetail.getActivity().getId(), ParticipationRole.CONTRIBUTOR);
 
     participationDetail.setParticipationStatus(updateDto.getStatus());
     participationDetail.setProcessedAt(Instant.now());
-    participationDetail.setProcessedBy(accountRequest.username());
+    participationDetail.setProcessedBy(accountRequest.getUsername());
     participationDetail.setRejectionReason(updateDto.getRejectionReason());
     participationDetail.setVerifiedNote(updateDto.getVerifiedNote());
     participantRepository.save(participationDetail);

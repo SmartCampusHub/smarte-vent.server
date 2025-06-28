@@ -1,7 +1,7 @@
-package com.winnguyen1905.Activity.model.dto;
+package com.winnguyen1905.activity.model.dto;
 
 import java.time.Instant;
-import com.winnguyen1905.Activity.common.constant.ScheduleStatus;
+import com.winnguyen1905.activity.common.constant.ScheduleStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

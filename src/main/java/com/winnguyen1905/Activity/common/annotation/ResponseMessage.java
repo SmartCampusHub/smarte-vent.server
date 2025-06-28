@@ -1,4 +1,4 @@
-package com.winnguyen1905.Activity.common.annotation;
+package com.winnguyen1905.activity.common.annotation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

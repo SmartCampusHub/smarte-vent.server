@@ -1,4 +1,4 @@
-package com.winnguyen1905.Activity.utils;
+package com.winnguyen1905.activity.utils;
 
 import java.util.List;
 import java.util.UUID;
@@ -6,7 +6,7 @@ import java.util.UUID;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.util.Pair;
 
-import com.winnguyen1905.Activity.common.constant.SystemConstant;
+import com.winnguyen1905.activity.common.constant.SystemConstant;
 
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Path;

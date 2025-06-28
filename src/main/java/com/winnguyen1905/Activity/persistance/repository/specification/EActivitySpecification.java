@@ -1,7 +1,7 @@
-package com.winnguyen1905.Activity.persistance.repository.specification;
+package com.winnguyen1905.activity.persistance.repository.specification;
 
-import com.winnguyen1905.Activity.model.dto.ActivitySearchRequest;
-import com.winnguyen1905.Activity.persistance.entity.EActivity;
+import com.winnguyen1905.activity.model.dto.ActivitySearchRequest;
+import com.winnguyen1905.activity.persistance.entity.EActivity;
 
 import jakarta.persistence.criteria.Predicate;
 
@@ -16,66 +16,66 @@ public class EActivitySpecification {
     return (root, query, criteriaBuilder) -> {
       List<Predicate> predicates = new ArrayList<>();
 
-      if (searchRequest.activityName() != null && !searchRequest.activityName().isBlank()) {
+      if (searchRequest.getActivityName() != null && !searchRequest.getActivityName().isBlank()) {
         predicates.add(criteriaBuilder.like(
             criteriaBuilder.lower(root.get("activityName")),
-            "%" + searchRequest.activityName().toLowerCase() + "%"));
+            "%" + searchRequest.getActivityName().toLowerCase() + "%"));
       }
 
-      if (searchRequest.activityCategory() != null) {
-        predicates.add(criteriaBuilder.equal(root.get("activityCategory"), searchRequest.activityCategory()));
+      if (searchRequest.getActivityCategory() != null) {
+        predicates.add(criteriaBuilder.equal(root.get("activityCategory"), searchRequest.getActivityCategory()));
       }
 
-      if (searchRequest.activityStatus() != null) {
-        predicates.add(criteriaBuilder.equal(root.get("status"), searchRequest.activityStatus()));
+      if (searchRequest.getActivityStatus() != null) {
+        predicates.add(criteriaBuilder.equal(root.get("status"), searchRequest.getActivityStatus()));
       }
 
-      if (searchRequest.organizationName() != null) {
-        predicates.add(criteriaBuilder.like(root.get("organization").get("name"), "%" + searchRequest.organizationName() + "%"));
+      if (searchRequest.getOrganizationName() != null) {
+        predicates.add(criteriaBuilder.like(root.get("organization").get("name"), "%" + searchRequest.getOrganizationName() + "%"));
       }
 
-      if (searchRequest.startDateFrom() != null) {
-        predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("startDate"), searchRequest.startDateFrom()));
+      if (searchRequest.getStartDateFrom() != null) {
+        predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("startDate"), searchRequest.getStartDateFrom()));
       }
 
-      if (searchRequest.startDateTo() != null) {
-        predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("startDate"), searchRequest.startDateTo()));
+      if (searchRequest.getStartDateTo() != null) {
+        predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("startDate"), searchRequest.getStartDateTo()));
       }
 
-      if (searchRequest.endDateFrom() != null) {
-        predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("endDate"), searchRequest.endDateFrom()));
+      if (searchRequest.getEndDateFrom() != null) {
+        predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("endDate"), searchRequest.getEndDateFrom()));
       }
 
-      if (searchRequest.endDateTo() != null) {
-        predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("endDate"), searchRequest.endDateTo()));
+      if (searchRequest.getEndDateTo() != null) {
+        predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("endDate"), searchRequest.getEndDateTo()));
       }
 
-      if (searchRequest.minAttendanceScoreUnit() != null) {
+      if (searchRequest.getMinAttendanceScoreUnit() != null) {
         predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("attendanceScoreUnit"),
-            searchRequest.minAttendanceScoreUnit()));
+            searchRequest.getMinAttendanceScoreUnit()));
       }
 
-      if (searchRequest.maxAttendanceScoreUnit() != null) {
+      if (searchRequest.getMaxAttendanceScoreUnit() != null) {
         predicates.add(
-            criteriaBuilder.lessThanOrEqualTo(root.get("attendanceScoreUnit"), searchRequest.maxAttendanceScoreUnit()));
+            criteriaBuilder.lessThanOrEqualTo(root.get("attendanceScoreUnit"), searchRequest.getMaxAttendanceScoreUnit()));
       }
 
-      if (searchRequest.minCapacityLimit() != null) {
-        predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("capacityLimit"), searchRequest.minCapacityLimit()));
+      if (searchRequest.getMinCapacityLimit() != null) {
+        predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("capacityLimit"), searchRequest.getMinCapacityLimit()));
       }
 
-      if (searchRequest.maxCapacityLimit() != null) {
-        predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("capacityLimit"), searchRequest.maxCapacityLimit()));
+      if (searchRequest.getMaxCapacityLimit() != null) {
+        predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("capacityLimit"), searchRequest.getMaxCapacityLimit()));
       }
 
-      if (searchRequest.isApproved() != null) {
-        predicates.add(criteriaBuilder.equal(root.get("isApproved"), searchRequest.isApproved()));
+      if (searchRequest.getIsApproved() != null) {
+        predicates.add(criteriaBuilder.equal(root.get("isApproved"), searchRequest.getIsApproved()));
       }
 
-      if (searchRequest.activityVenue() != null && !searchRequest.activityVenue().isBlank()) {
+      if (searchRequest.getActivityVenue() != null && !searchRequest.getActivityVenue().isBlank()) {
         predicates.add(criteriaBuilder.like(
             criteriaBuilder.lower(root.get("activityVenue")),
-            "%" + searchRequest.activityVenue().toLowerCase() + "%"));
+            "%" + searchRequest.getActivityVenue().toLowerCase() + "%"));
       }
 
       return criteriaBuilder.and(predicates.toArray(new Predicate[0]));

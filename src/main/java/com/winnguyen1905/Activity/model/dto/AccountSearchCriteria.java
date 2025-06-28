@@ -1,7 +1,7 @@
-package com.winnguyen1905.Activity.model.dto;
+package com.winnguyen1905.activity.model.dto;
 
-import com.winnguyen1905.Activity.common.constant.AccountRole;
-import com.winnguyen1905.Activity.common.constant.MajorType;
+import com.winnguyen1905.activity.common.constant.AccountRole;
+import com.winnguyen1905.activity.common.constant.MajorType;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

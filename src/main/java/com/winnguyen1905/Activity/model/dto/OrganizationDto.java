@@ -1,26 +1,19 @@
-package com.winnguyen1905.Activity.model.dto;
+package com.winnguyen1905.activity.model.dto;
 
-import com.winnguyen1905.Activity.common.constant.OrganizationType;
-
+import com.winnguyen1905.activity.common.constant.OrganizationType;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-public record OrganizationDto(
-    Long id,
-    String organizationName,
-    String representativePhone,
-    String representativeEmail,
-    OrganizationType organizationType) implements AbstractModel {
-  @Builder
-  public OrganizationDto(
-      Long id,
-      String organizationName,
-      String representativePhone,
-      String representativeEmail,
-      OrganizationType organizationType) {
-    this.id = id;
-    this.organizationName = organizationName;
-    this.representativePhone = representativePhone;
-    this.representativeEmail = representativeEmail;
-    this.organizationType = organizationType;
-  }
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class OrganizationDto implements AbstractModel {
+    private Long id;
+    private String organizationName;
+    private String representativePhone;
+    private String representativeEmail;
+    private OrganizationType organizationType;
 }

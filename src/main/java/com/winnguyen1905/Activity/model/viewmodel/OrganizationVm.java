@@ -1,27 +1,20 @@
-package com.winnguyen1905.Activity.model.viewmodel;
+package com.winnguyen1905.activity.model.viewmodel;
 
-import com.winnguyen1905.Activity.common.constant.OrganizationType;
-import com.winnguyen1905.Activity.model.dto.AbstractModel;
-
+import com.winnguyen1905.activity.common.constant.OrganizationType;
+import com.winnguyen1905.activity.model.dto.AbstractModel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-public record OrganizationVm(
-    Long id,
-    String organizationName,
-    String representativePhone,
-    String representativeEmail,
-    OrganizationType organizationType) implements AbstractModel {
-      @Builder
-      public OrganizationVm(
-          Long id,
-          String organizationName,
-          String representativePhone,
-          String representativeEmail,
-          OrganizationType organizationType) {
-        this.id = id;
-        this.organizationName = organizationName;
-        this.representativePhone = representativePhone;
-        this.representativeEmail = representativeEmail;
-        this.organizationType = organizationType;
-      }
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class OrganizationVm implements AbstractModel {
+    private Long id;
+    private String organizationName;
+    private String representativePhone;
+    private String representativeEmail;
+    private OrganizationType organizationType;
 }

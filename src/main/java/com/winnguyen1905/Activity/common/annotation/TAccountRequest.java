@@ -1,27 +1,20 @@
-package com.winnguyen1905.Activity.common.annotation;
+package com.winnguyen1905.activity.common.annotation;
 
 import java.io.Serializable;
 import java.util.UUID;
-
-import com.winnguyen1905.Activity.common.constant.AccountRole;
-import com.winnguyen1905.Activity.model.dto.AbstractModel;
-
+import com.winnguyen1905.activity.common.constant.AccountRole;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-public record TAccountRequest(
-    Long id,
-    String username,
-    AccountRole role,
-    UUID socketClientId) implements Serializable {
-  @Builder
-  public TAccountRequest(
-      Long id,
-      String username,
-      AccountRole role,
-      UUID socketClientId) {
-    this.id = id;
-    this.username = username;
-    this.role = role;
-    this.socketClientId = socketClientId;
-  }
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class TAccountRequest implements Serializable {
+    private Long id;
+    private String username;
+    private AccountRole role;
+    private UUID socketClientId;
 }

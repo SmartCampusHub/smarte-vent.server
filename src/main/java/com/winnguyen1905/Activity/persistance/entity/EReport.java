@@ -1,12 +1,12 @@
-package com.winnguyen1905.Activity.persistance.entity;
+package com.winnguyen1905.activity.persistance.entity;
 
 import java.time.Instant;
 
 import org.hibernate.annotations.CreationTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.winnguyen1905.Activity.common.constant.ReportStatus;
-import com.winnguyen1905.Activity.common.constant.ReportType;
+import com.winnguyen1905.activity.common.constant.ReportStatus;
+import com.winnguyen1905.activity.common.constant.ReportType;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

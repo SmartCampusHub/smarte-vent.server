@@ -1,16 +1,16 @@
-package com.winnguyen1905.Activity.rest.service;
+package com.winnguyen1905.activity.rest.service;
 
 import java.time.Instant;
 import java.util.List;
 
-import com.winnguyen1905.Activity.common.annotation.TAccountRequest;
-import com.winnguyen1905.Activity.common.constant.ActivityCategory;
-import com.winnguyen1905.Activity.common.constant.ActivityStatus;
-import com.winnguyen1905.Activity.model.dto.FeedbackCreateDto;
-import com.winnguyen1905.Activity.model.dto.FeedbackUpdateDto;
-import com.winnguyen1905.Activity.model.viewmodel.FeedbackDetailVm;
-import com.winnguyen1905.Activity.model.viewmodel.FeedbackSummaryVm;
-import com.winnguyen1905.Activity.model.dto.OrganizationResponseDto;
+import com.winnguyen1905.activity.common.annotation.TAccountRequest;
+import com.winnguyen1905.activity.common.constant.ActivityCategory;
+import com.winnguyen1905.activity.common.constant.ActivityStatus;
+import com.winnguyen1905.activity.model.dto.FeedbackCreateDto;
+import com.winnguyen1905.activity.model.dto.FeedbackUpdateDto;
+import com.winnguyen1905.activity.model.viewmodel.FeedbackDetailVm;
+import com.winnguyen1905.activity.model.viewmodel.FeedbackSummaryVm;
+import com.winnguyen1905.activity.model.dto.OrganizationResponseDto;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

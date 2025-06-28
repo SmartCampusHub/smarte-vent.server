@@ -1,7 +1,7 @@
-package com.winnguyen1905.Activity.model.dto;
+package com.winnguyen1905.activity.model.dto;
 
-import com.winnguyen1905.Activity.common.constant.ClassStatus;
-import com.winnguyen1905.Activity.persistance.entity.EAccountCredentials;
+import com.winnguyen1905.activity.common.constant.ClassStatus;
+import com.winnguyen1905.activity.persistance.entity.EAccountCredentials;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;

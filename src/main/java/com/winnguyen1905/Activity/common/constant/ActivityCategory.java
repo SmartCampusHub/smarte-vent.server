@@ -1,4 +1,4 @@
-package com.winnguyen1905.Activity.common.constant;
+package com.winnguyen1905.activity.common.constant;
 
 public enum ActivityCategory {
   STUDENT_ORGANIZATION("STUDENT_ORGANIZATION"), UNIVERSITY("UNIVERSITY"), THIRD_PARTY("THIRD_PARTY");

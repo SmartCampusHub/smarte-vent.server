@@ -1,4 +1,4 @@
-package com.winnguyen1905.Activity.rest.controller;
+package com.winnguyen1905.activity.rest.controller;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -11,17 +11,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.winnguyen1905.Activity.auth.CookieUtils;
-import com.winnguyen1905.Activity.common.annotation.AccountRequest;
-import com.winnguyen1905.Activity.common.annotation.TAccountRequest;
-import com.winnguyen1905.Activity.common.constant.SystemConstant;
-import com.winnguyen1905.Activity.exception.ResourceNotFoundException;
-import com.winnguyen1905.Activity.model.dto.ChangePasswordDto;
-import com.winnguyen1905.Activity.model.dto.LoginRequest;
-import com.winnguyen1905.Activity.model.dto.RegisterRequest;
-import com.winnguyen1905.Activity.model.viewmodel.AccountVm;
-import com.winnguyen1905.Activity.model.viewmodel.AuthResponse;
-import com.winnguyen1905.Activity.rest.service.AuthService;
+import com.winnguyen1905.activity.auth.CookieUtils;
+import com.winnguyen1905.activity.common.annotation.AccountRequest;
+import com.winnguyen1905.activity.common.annotation.TAccountRequest;
+import com.winnguyen1905.activity.common.constant.SystemConstant;
+import com.winnguyen1905.activity.exception.ResourceNotFoundException;
+import com.winnguyen1905.activity.model.dto.ChangePasswordDto;
+import com.winnguyen1905.activity.model.dto.LoginRequest;
+import com.winnguyen1905.activity.model.dto.RegisterRequest;
+import com.winnguyen1905.activity.model.viewmodel.AccountVm;
+import com.winnguyen1905.activity.model.viewmodel.AuthResponse;
+import com.winnguyen1905.activity.rest.service.AuthService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -40,7 +40,7 @@ public class AuthController {
         .ok()
         .header(
             HttpHeaders.SET_COOKIE, CookieUtils
-                .createCookie(SystemConstant.REFRESH_TOKEN, authResponse.refreshToken())
+                .createCookie(SystemConstant.REFRESH_TOKEN, authResponse.getRefreshToken())
                 .toString())
         .body(authResponse);
   }
@@ -60,7 +60,7 @@ public class AuthController {
     AuthResponse auth = this.authService.refreshToken(refreshToken);
     return ResponseEntity.ok()
         .header(HttpHeaders.SET_COOKIE,
-            CookieUtils.createCookie(SystemConstant.REFRESH_TOKEN, auth.refreshToken())
+            CookieUtils.createCookie(SystemConstant.REFRESH_TOKEN, auth.getRefreshToken())
                 .toString())
         .body(auth);
   }

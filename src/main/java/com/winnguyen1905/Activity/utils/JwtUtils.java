@@ -1,4 +1,4 @@
-package com.winnguyen1905.Activity.utils;
+package com.winnguyen1905.activity.utils;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -17,9 +17,9 @@ import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Component;
 
-import com.winnguyen1905.Activity.auth.CustomUserDetails;
-import com.winnguyen1905.Activity.common.constant.AccountRole;
-import com.winnguyen1905.Activity.model.viewmodel.TokenPair;
+import com.winnguyen1905.activity.auth.CustomUserDetails;
+import com.winnguyen1905.activity.common.constant.AccountRole;
+import com.winnguyen1905.activity.model.viewmodel.TokenPair;
 
 import lombok.RequiredArgsConstructor;
 

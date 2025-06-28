@@ -1,4 +1,4 @@
-package com.winnguyen1905.Activity.rest.controller;
+package com.winnguyen1905.activity.rest.controller;
 
 import java.time.Instant;
 
@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.winnguyen1905.Activity.model.dto.StatisticsFilterDto;
-import com.winnguyen1905.Activity.model.viewmodel.OrganizationStatisticsVm;
-import com.winnguyen1905.Activity.rest.service.OrganizationStatisticsService;
+import com.winnguyen1905.activity.model.dto.StatisticsFilterDto;
+import com.winnguyen1905.activity.model.viewmodel.OrganizationStatisticsVm;
+import com.winnguyen1905.activity.rest.service.OrganizationStatisticsService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -50,14 +50,14 @@ public class OrganizationStatisticsController {
 
     StatisticsFilterDto filter = new StatisticsFilterDto();
     if (timePeriod != null) {
-      filter.setTimePeriod(com.winnguyen1905.Activity.common.constant.TimePeriod.valueOf(timePeriod.toUpperCase()));
+      filter.setTimePeriod(com.winnguyen1905.activity.common.constant.TimePeriod.valueOf(timePeriod.toUpperCase()));
     }
     if (activityType != null) {
       filter.setActivityType(
-          com.winnguyen1905.Activity.common.constant.ActivityCategory.valueOf(activityType.toUpperCase()));
+          com.winnguyen1905.activity.common.constant.ActivityCategory.valueOf(activityType.toUpperCase()));
     }
     if (status != null) {
-      filter.setStatus(com.winnguyen1905.Activity.common.constant.ActivityStatus.valueOf(status.toUpperCase()));
+      filter.setStatus(com.winnguyen1905.activity.common.constant.ActivityStatus.valueOf(status.toUpperCase()));
     }
     filter.setStartDate(startDate);
     filter.setEndDate(endDate);

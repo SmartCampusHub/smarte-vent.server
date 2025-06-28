@@ -1,4 +1,15 @@
-package com.winnguyen1905.Activity.model.dto;
+package com.winnguyen1905.activity.model.dto;
 
-public record CheckJoinedActivityDto(Long activityId, Long accountId) implements AbstractModel {
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class CheckJoinedActivityDto implements AbstractModel {
+    private Long activityId;
+    private Long accountId;
 }

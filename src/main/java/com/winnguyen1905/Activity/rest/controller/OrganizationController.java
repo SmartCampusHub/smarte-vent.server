@@ -1,18 +1,18 @@
-package com.winnguyen1905.Activity.rest.controller;
+package com.winnguyen1905.activity.rest.controller;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.winnguyen1905.Activity.model.dto.OrganizationDto;
-import com.winnguyen1905.Activity.model.dto.OrganizationSearchRequest;
-import com.winnguyen1905.Activity.model.viewmodel.OrganizationVm;
-import com.winnguyen1905.Activity.model.viewmodel.PagedResponse;
-import com.winnguyen1905.Activity.rest.service.OrganizerService;
-import com.winnguyen1905.Activity.common.annotation.AccountRequest;
-import com.winnguyen1905.Activity.common.annotation.TAccountRequest;
-import com.winnguyen1905.Activity.common.constant.SystemConstant;
-import com.winnguyen1905.Activity.model.dto.ActivityDto;
+import com.winnguyen1905.activity.model.dto.OrganizationDto;
+import com.winnguyen1905.activity.model.dto.OrganizationSearchRequest;
+import com.winnguyen1905.activity.model.viewmodel.OrganizationVm;
+import com.winnguyen1905.activity.model.viewmodel.PagedResponse;
+import com.winnguyen1905.activity.rest.service.OrganizerService;
+import com.winnguyen1905.activity.common.annotation.AccountRequest;
+import com.winnguyen1905.activity.common.annotation.TAccountRequest;
+import com.winnguyen1905.activity.common.constant.SystemConstant;
+import com.winnguyen1905.activity.model.dto.ActivityDto;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

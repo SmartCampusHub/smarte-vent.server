@@ -1,4 +1,4 @@
-package com.winnguyen1905.Activity.rest.controller;
+package com.winnguyen1905.activity.rest.controller;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -9,16 +9,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.winnguyen1905.Activity.common.annotation.AccountRequest;
-import com.winnguyen1905.Activity.common.annotation.TAccountRequest;
-import com.winnguyen1905.Activity.common.constant.AccountRole;
-import com.winnguyen1905.Activity.common.constant.MajorType;
-import com.winnguyen1905.Activity.model.dto.AccountSearchCriteria;
-import com.winnguyen1905.Activity.model.dto.RegisterRequest;
-import com.winnguyen1905.Activity.model.dto.UpdateAccountDto;
-import com.winnguyen1905.Activity.model.viewmodel.AccountVm;
-import com.winnguyen1905.Activity.model.viewmodel.PagedResponse;
-import com.winnguyen1905.Activity.rest.service.AccountService;
+import com.winnguyen1905.activity.common.annotation.AccountRequest;
+import com.winnguyen1905.activity.common.annotation.TAccountRequest;
+import com.winnguyen1905.activity.common.constant.AccountRole;
+import com.winnguyen1905.activity.common.constant.MajorType;
+import com.winnguyen1905.activity.model.dto.AccountSearchCriteria;
+import com.winnguyen1905.activity.model.dto.RegisterRequest;
+import com.winnguyen1905.activity.model.dto.UpdateAccountDto;
+import com.winnguyen1905.activity.model.viewmodel.AccountVm;
+import com.winnguyen1905.activity.model.viewmodel.PagedResponse;
+import com.winnguyen1905.activity.rest.service.AccountService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

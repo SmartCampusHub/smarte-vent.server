@@ -1,6 +1,6 @@
-package com.winnguyen1905.Activity.model.dto;
+package com.winnguyen1905.activity.model.dto;
 
-import com.winnguyen1905.Activity.common.constant.ParticipationStatus;
+import com.winnguyen1905.activity.common.constant.ParticipationStatus;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;

@@ -1,4 +1,4 @@
-package com.winnguyen1905.Activity.rest.controller;
+package com.winnguyen1905.activity.rest.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -7,12 +7,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.winnguyen1905.Activity.common.annotation.AccountRequest;
-import com.winnguyen1905.Activity.common.annotation.TAccountRequest;
-import com.winnguyen1905.Activity.common.constant.SystemConstant;
-import com.winnguyen1905.Activity.model.dto.StatisticsFilterDto;
-import com.winnguyen1905.Activity.model.viewmodel.StudentStatisticsVm;
-import com.winnguyen1905.Activity.rest.service.StudentStatisticsService;
+import com.winnguyen1905.activity.common.annotation.AccountRequest;
+import com.winnguyen1905.activity.common.annotation.TAccountRequest;
+import com.winnguyen1905.activity.common.constant.SystemConstant;
+import com.winnguyen1905.activity.model.dto.StatisticsFilterDto;
+import com.winnguyen1905.activity.model.viewmodel.StudentStatisticsVm;
+import com.winnguyen1905.activity.rest.service.StudentStatisticsService;
 
 import lombok.RequiredArgsConstructor;
 @RestController

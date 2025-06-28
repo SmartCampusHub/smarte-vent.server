@@ -1,4 +1,4 @@
-package com.winnguyen1905.Activity.exception;
+package com.winnguyen1905.activity.exception;
 
 /**
  * Exception thrown when business logic validation fails

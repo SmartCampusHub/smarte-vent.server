@@ -1,39 +1,39 @@
-package com.winnguyen1905.Activity.rest.service.impl;
+package com.winnguyen1905.activity.rest.service.impl;
 
-import com.winnguyen1905.Activity.persistance.entity.EAccountCredentials;
-import com.winnguyen1905.Activity.persistance.entity.EActivity;
+import com.winnguyen1905.activity.persistance.entity.EAccountCredentials;
+import com.winnguyen1905.activity.persistance.entity.EActivity;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import com.winnguyen1905.Activity.common.annotation.TAccountRequest;
-import com.winnguyen1905.Activity.common.constant.ActivityStatus;
-import com.winnguyen1905.Activity.common.constant.ParticipationRole;
-import com.winnguyen1905.Activity.common.constant.ParticipationStatus;
-import com.winnguyen1905.Activity.exception.BadRequestException;
-import com.winnguyen1905.Activity.exception.ResourceAlreadyExistsException;
-import com.winnguyen1905.Activity.model.dto.ActivityDto;
-import com.winnguyen1905.Activity.model.dto.ActivityScheduleDto;
-import com.winnguyen1905.Activity.model.dto.ActivitySearchRequest;
-import com.winnguyen1905.Activity.model.dto.CheckJoinedActivityDto;
-import com.winnguyen1905.Activity.model.dto.JoinActivityRequest;
-import com.winnguyen1905.Activity.model.dto.ParticipationSearchParams;
-import com.winnguyen1905.Activity.model.viewmodel.ActivityScheduleVm;
-import com.winnguyen1905.Activity.model.viewmodel.ActivityVm;
-import com.winnguyen1905.Activity.model.viewmodel.CheckJoinedActivityVm;
-import com.winnguyen1905.Activity.model.viewmodel.OrganizationVm;
-import com.winnguyen1905.Activity.model.viewmodel.PagedResponse;
-import com.winnguyen1905.Activity.model.viewmodel.ParticipationDetailVm;
-import com.winnguyen1905.Activity.persistance.repository.AccountRepository;
-import com.winnguyen1905.Activity.persistance.repository.ActivityRepository;
-import com.winnguyen1905.Activity.persistance.repository.ActivityScheduleRepository;
-import com.winnguyen1905.Activity.persistance.repository.OrganizationRepository;
-import com.winnguyen1905.Activity.persistance.repository.ParticipationDetailRepository;
-import com.winnguyen1905.Activity.persistance.repository.specification.EActivitySpecification;
-import com.winnguyen1905.Activity.rest.service.ActivityService;
-import com.winnguyen1905.Activity.rest.service.EmailService;
+import com.winnguyen1905.activity.common.annotation.TAccountRequest;
+import com.winnguyen1905.activity.common.constant.ActivityStatus;
+import com.winnguyen1905.activity.common.constant.ParticipationRole;
+import com.winnguyen1905.activity.common.constant.ParticipationStatus;
+import com.winnguyen1905.activity.exception.BadRequestException;
+import com.winnguyen1905.activity.exception.ResourceAlreadyExistsException;
+import com.winnguyen1905.activity.model.dto.ActivityDto;
+import com.winnguyen1905.activity.model.dto.ActivityScheduleDto;
+import com.winnguyen1905.activity.model.dto.ActivitySearchRequest;
+import com.winnguyen1905.activity.model.dto.CheckJoinedActivityDto;
+import com.winnguyen1905.activity.model.dto.JoinActivityRequest;
+import com.winnguyen1905.activity.model.dto.ParticipationSearchParams;
+import com.winnguyen1905.activity.model.viewmodel.ActivityScheduleVm;
+import com.winnguyen1905.activity.model.viewmodel.ActivityVm;
+import com.winnguyen1905.activity.model.viewmodel.CheckJoinedActivityVm;
+import com.winnguyen1905.activity.model.viewmodel.OrganizationVm;
+import com.winnguyen1905.activity.model.viewmodel.PagedResponse;
+import com.winnguyen1905.activity.model.viewmodel.ParticipationDetailVm;
+import com.winnguyen1905.activity.persistance.repository.AccountRepository;
+import com.winnguyen1905.activity.persistance.repository.ActivityRepository;
+import com.winnguyen1905.activity.persistance.repository.ActivityScheduleRepository;
+import com.winnguyen1905.activity.persistance.repository.OrganizationRepository;
+import com.winnguyen1905.activity.persistance.repository.ParticipationDetailRepository;
+import com.winnguyen1905.activity.persistance.repository.specification.EActivitySpecification;
+import com.winnguyen1905.activity.rest.service.ActivityService;
+import com.winnguyen1905.activity.rest.service.EmailService;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -46,9 +46,9 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Comparator;
 
-import com.winnguyen1905.Activity.persistance.entity.EActivitySchedule;
-import com.winnguyen1905.Activity.persistance.entity.EParticipationDetail;
-import com.winnguyen1905.Activity.model.viewmodel.FeedbackDetailVm;
+import com.winnguyen1905.activity.persistance.entity.EActivitySchedule;
+import com.winnguyen1905.activity.persistance.entity.EParticipationDetail;
+import com.winnguyen1905.activity.model.viewmodel.FeedbackDetailVm;
 
 @Service
 @RequiredArgsConstructor
@@ -94,10 +94,10 @@ public class ActivityServiceImpl implements ActivityService {
         .registrationDeadline(activityDto.getRegistrationDeadline())
         .activityCategory(activityDto.getActivityCategory())
         .description(activityDto.getActivityDescription())
-        .organization(this.organizationRepository.findById(accountRequest.id())
+        .organization(this.organizationRepository.findById(accountRequest.getId())
             .orElseThrow(() -> new EntityNotFoundException("Not found organization")))
         .attendanceScoreUnit(activityDto.getAttendanceScoreUnit())
-        .createdById(accountRequest.id())
+        .createdById(accountRequest.getId())
         .build();
 
     activity = activityRepository.save(activity);
@@ -114,7 +114,7 @@ public class ActivityServiceImpl implements ActivityService {
             .activityDescription(scheduleDto.getActivityDescription())
             .status(scheduleDto.getStatus())
             .location(scheduleDto.getLocation())
-            .createdBy(accountRequest.username())
+            .createdBy(accountRequest.getUsername())
             .build();
         schedules.add(schedule);
       }
@@ -143,7 +143,7 @@ public class ActivityServiceImpl implements ActivityService {
     existingActivity.setActivityCategory(activityDto.getActivityCategory());
     existingActivity.setDescription(activityDto.getActivityDescription());
     existingActivity.setAttendanceScoreUnit(activityDto.getAttendanceScoreUnit());
-    existingActivity.setUpdatedById(accountRequest.id());
+    existingActivity.setUpdatedById(accountRequest.getId());
     existingActivity.setUpdatedDate(Instant.now());
     existingActivity.setShortDescription(activityDto.getShortDescription());
     existingActivity.setTags(activityDto.getTags());
@@ -176,7 +176,7 @@ public class ActivityServiceImpl implements ActivityService {
               .activityDescription(scheduleDto.getActivityDescription())
               .status(scheduleDto.getStatus())
               .location(scheduleDto.getLocation())
-              .createdBy(accountRequest.username())
+              .createdBy(accountRequest.getUsername())
               .build())
           .collect(Collectors.toList());
 
@@ -263,7 +263,7 @@ public class ActivityServiceImpl implements ActivityService {
   // validateAccountRequest(accountRequest);
 
   // List<EActivity> activities =
-  // activityRepository.findByUserId(accountRequest.id());
+  // activityRepository.findByUserId(accountRequest.getId());
   // List<ActivityVm> activityVms = activities.stream()
   // .map(activityMapper::toViewModel)
   // .toList();
@@ -337,13 +337,13 @@ public class ActivityServiceImpl implements ActivityService {
     if (accountRequest == null) {
       throw new BadRequestException("Account request cannot be null");
     }
-    if (accountRequest.id() == null) {
+    if (accountRequest.getId() == null) {
       throw new BadRequestException("Account ID is required");
     }
-    if (accountRequest.username() == null || accountRequest.username().trim().isEmpty()) {
+    if (accountRequest.getUsername() == null || accountRequest.getUsername().trim().isEmpty()) {
       throw new BadRequestException("Username is required");
     }
-    if (accountRequest.role() == null) {
+    if (accountRequest.getRole() == null) {
       throw new BadRequestException("Account role is required");
     }
   }
@@ -426,16 +426,16 @@ public class ActivityServiceImpl implements ActivityService {
   @Transactional
   public ParticipationDetailVm joinActivity(TAccountRequest accountRequest,
       JoinActivityRequest joinActivityRequest) {
-    EActivity activity = activityRepository.findById(joinActivityRequest.activityId())
+    EActivity activity = activityRepository.findById(joinActivityRequest.getActivityId())
         .orElseThrow(() -> new EntityNotFoundException("Not found activity"));
 
-    EAccountCredentials account = this.accountRepository.findById(accountRequest.id())
+    EAccountCredentials account = this.accountRepository.findById(accountRequest.getId())
         .orElseThrow(() -> new EntityNotFoundException("Not found account request"));
     EParticipationDetail participationDetails = participationDetailRepository.findByStudentIdAndActivityId(
-        accountRequest.id(),
-        joinActivityRequest.activityId()).orElse(null);
+        accountRequest.getId(),
+        joinActivityRequest.getActivityId()).orElse(null);
     Boolean x = participationDetailRepository.existsByParticipantIdAndActivityId(account.getId(),
-        joinActivityRequest.activityId());
+        joinActivityRequest.getActivityId());
 
     if (x)
       throw new ResourceAlreadyExistsException("You have already joined this activity");
@@ -447,7 +447,7 @@ public class ActivityServiceImpl implements ActivityService {
         .participant(account)
         .activity(activity)
         .participationStatus(ParticipationStatus.UNVERIFIED)
-        .participationRole(joinActivityRequest.role())
+        .participationRole(joinActivityRequest.getRole())
         .registeredAt(Instant.now())
         .build();
 
@@ -466,7 +466,7 @@ public class ActivityServiceImpl implements ActivityService {
     // }
     return ParticipationDetailVm.builder()
         .id(savedParticipationDetail.getId())
-        .studentId(accountRequest.id())
+        .studentId(accountRequest.getId())
         .activityId(savedParticipationDetail.getActivity().getId())
         .activityName(savedParticipationDetail.getActivity().getActivityName())
         .participationStatus(savedParticipationDetail.getParticipationStatus())
@@ -483,7 +483,7 @@ public class ActivityServiceImpl implements ActivityService {
   @Override
   public PagedResponse<ActivityVm> getJoinedActivities(TAccountRequest accountRequest, Pageable pageable) {
 
-    List<EParticipationDetail> particiList = participationDetailRepository.findAllByParticipantId(accountRequest.id());
+    List<EParticipationDetail> particiList = participationDetailRepository.findAllByParticipantId(accountRequest.getId());
     List<Long> ids = particiList.stream().map(EParticipationDetail::getActivity).map(EActivity::getId).toList();
     Page<EActivity> activityPage = activityRepository.findAllByIds(ids, pageable);
 
@@ -532,7 +532,7 @@ public class ActivityServiceImpl implements ActivityService {
   @Override
   public PagedResponse<ActivityVm> getMyActivityContributors(TAccountRequest accountRequest) {
     List<EParticipationDetail> participationDetails = participationDetailRepository
-        .findAllByParticipantIdAndParticipationRole(accountRequest.id(), ParticipationRole.CONTRIBUTOR);
+        .findAllByParticipantIdAndParticipationRole(accountRequest.getId(), ParticipationRole.CONTRIBUTOR);
 
     List<ActivityVm> activityVms = participationDetails.stream().map(EParticipationDetail::getActivity).toList()
         .stream()
@@ -609,12 +609,12 @@ public class ActivityServiceImpl implements ActivityService {
   public CheckJoinedActivityVm isJoinedActivity(TAccountRequest accountRequest,
       CheckJoinedActivityDto checkJoinedActivityDto) {
     // EActivity activity =
-    // activityRepository.findById(checkJoinedActivityDto.activityId())
+    // activityRepository.findById(checkJoinedActivityDto.getActivityId())
     // .orElseThrow(() -> new EntityNotFoundException("Not found activity"));
     // Boolean isJoined = ;
     EParticipationDetail participationDetail = participationDetailRepository.findByStudentIdAndActivityId(
-        accountRequest.id(),
-        checkJoinedActivityDto.activityId()).orElse(null);
+        accountRequest.getId(),
+        checkJoinedActivityDto.getActivityId()).orElse(null);
     if (participationDetail == null) {
       return CheckJoinedActivityVm.builder()
           .isJoined(false)

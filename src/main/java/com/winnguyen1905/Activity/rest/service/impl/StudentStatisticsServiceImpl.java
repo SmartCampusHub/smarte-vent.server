@@ -1,4 +1,4 @@
-package com.winnguyen1905.Activity.rest.service.impl;
+package com.winnguyen1905.activity.rest.service.impl;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -14,17 +14,17 @@ import java.util.stream.Collectors;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import com.winnguyen1905.Activity.common.annotation.TAccountRequest;
-import com.winnguyen1905.Activity.common.constant.ActivityCategory;
-import com.winnguyen1905.Activity.common.constant.ParticipationRole;
-import com.winnguyen1905.Activity.exception.ResourceNotFoundException;
-import com.winnguyen1905.Activity.model.viewmodel.ParticipationSummaryVm;
-import com.winnguyen1905.Activity.model.viewmodel.StudentStatisticsVm;
-import com.winnguyen1905.Activity.persistance.entity.EAccountCredentials;
-import com.winnguyen1905.Activity.persistance.entity.EParticipationDetail;
-import com.winnguyen1905.Activity.persistance.repository.AccountRepository;
-import com.winnguyen1905.Activity.persistance.repository.ParticipationDetailRepository;
-import com.winnguyen1905.Activity.rest.service.StudentStatisticsService;
+import com.winnguyen1905.activity.common.annotation.TAccountRequest;
+import com.winnguyen1905.activity.common.constant.ActivityCategory;
+import com.winnguyen1905.activity.common.constant.ParticipationRole;
+import com.winnguyen1905.activity.exception.ResourceNotFoundException;
+import com.winnguyen1905.activity.model.viewmodel.ParticipationSummaryVm;
+import com.winnguyen1905.activity.model.viewmodel.StudentStatisticsVm;
+import com.winnguyen1905.activity.persistance.entity.EAccountCredentials;
+import com.winnguyen1905.activity.persistance.entity.EParticipationDetail;
+import com.winnguyen1905.activity.persistance.repository.AccountRepository;
+import com.winnguyen1905.activity.persistance.repository.ParticipationDetailRepository;
+import com.winnguyen1905.activity.rest.service.StudentStatisticsService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -40,7 +40,7 @@ public class StudentStatisticsServiceImpl implements StudentStatisticsService {
 
     @Override
     public StudentStatisticsVm getMyStatistics(TAccountRequest accountRequest) {
-        Long studentId = accountRequest.id();
+        Long studentId = accountRequest.getId();
         return getStudentStatisticsById(studentId);
     }
 

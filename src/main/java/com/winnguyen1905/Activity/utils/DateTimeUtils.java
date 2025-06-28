@@ -1,4 +1,4 @@
-package com.winnguyen1905.Activity.utils;
+package com.winnguyen1905.activity.utils;
 
 import java.time.DayOfWeek;
 import java.time.Instant;

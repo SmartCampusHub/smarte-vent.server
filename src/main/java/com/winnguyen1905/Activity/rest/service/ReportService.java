@@ -1,11 +1,11 @@
-package com.winnguyen1905.Activity.rest.service;
+package com.winnguyen1905.activity.rest.service;
 
 import java.util.List;
 
-import com.winnguyen1905.Activity.common.annotation.TAccountRequest;
-import com.winnguyen1905.Activity.model.dto.AdminUpdateReport;
-import com.winnguyen1905.Activity.model.dto.ReportCreateDto;
-import com.winnguyen1905.Activity.model.viewmodel.ReportVm;
+import com.winnguyen1905.activity.common.annotation.TAccountRequest;
+import com.winnguyen1905.activity.model.dto.AdminUpdateReport;
+import com.winnguyen1905.activity.model.dto.ReportCreateDto;
+import com.winnguyen1905.activity.model.viewmodel.ReportVm;
 
 public interface ReportService {
   ReportVm createReport(ReportCreateDto reportDto, Long reporterId);
