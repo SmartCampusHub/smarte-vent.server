@@ -139,8 +139,8 @@ public class ActivitySchedulingServiceImpl implements ActivitySchedulingService 
     List<EActivity> todayActivities = activityRepository.findActivitiesStartingInRange(now, endOfDay);
 
     for (EActivity activity : todayActivities) {
-      // Only send notifications for confirmed activities
-      if (!ActivityStatus.COMPLETED.equals(activity.getStatus()) &&
+      // Notify if activity is published (upcoming) or already in progress
+      if (!ActivityStatus.PUBLISHED.equals(activity.getStatus()) &&
           !ActivityStatus.IN_PROGRESS.equals(activity.getStatus())) {
         continue;
       }
@@ -209,7 +209,8 @@ public class ActivitySchedulingServiceImpl implements ActivitySchedulingService 
 
     for (EActivity activity : oneDayActivities) {
       // Only send notifications for confirmed activities
-      if (!ActivityStatus.COMPLETED.equals(activity.getStatus())) {
+      if (!ActivityStatus.PUBLISHED.equals(activity.getStatus()) &&
+          !ActivityStatus.IN_PROGRESS.equals(activity.getStatus())) {
         continue;
       }
 
@@ -347,7 +348,8 @@ public class ActivitySchedulingServiceImpl implements ActivitySchedulingService 
 
     for (EActivity activity : upcomingActivities) {
       // Only send notifications for confirmed activities
-      if (!ActivityStatus.COMPLETED.equals(activity.getStatus())) {
+      if (!ActivityStatus.PUBLISHED.equals(activity.getStatus()) &&
+          !ActivityStatus.IN_PROGRESS.equals(activity.getStatus())) {
         continue;
       }
 
@@ -402,7 +404,8 @@ public class ActivitySchedulingServiceImpl implements ActivitySchedulingService 
 
     for (EActivitySchedule schedule : upcomingSchedules) {
       // Only send notifications for confirmed schedules
-      if (!ScheduleStatus.COMPLETED.equals(schedule.getStatus())) {
+      if (!ScheduleStatus.WAITING_TO_START.equals(schedule.getStatus()) &&
+          !ScheduleStatus.IN_PROGRESS.equals(schedule.getStatus())) {
         continue;
       }
 
@@ -477,9 +480,9 @@ public class ActivitySchedulingServiceImpl implements ActivitySchedulingService 
       notifyStatusChange(activity, oldStatus, ActivityStatus.COMPLETED.toString());
     }
 
-    // Find confirmed activities whose start date has passed but not yet marked as
-    // ongoing
-    List<EActivity> startedActivities = activityRepository.findByStatusAndStartDateBefore(ActivityStatus.COMPLETED,
+    // Find published activities whose start date has passed but not yet marked as
+    // in progress
+    List<EActivity> startedActivities = activityRepository.findByStatusAndStartDateBefore(ActivityStatus.PUBLISHED,
         now);
     for (EActivity activity : startedActivities) {
       // Update to ONGOING status
