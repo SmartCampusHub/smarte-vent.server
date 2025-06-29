@@ -50,126 +50,30 @@ public class ActivityStatisticsServiceImpl implements ActivityStatisticsService 
 
   @Override
   public ActivityStatisticsVm getActivityStatistics(Long activityId) {
-    Optional<EActivity> activityOpt = activityRepository.findById(activityId);
+    EActivity activity = fetchActivityOrThrow(activityId);
 
-    if (!activityOpt.isPresent()) {
-      throw new RuntimeException("Activity not found with ID: " + activityId);
-    }
+    ActivityStatisticsVm statistics = buildBaseStatistics(activity);
 
-    EActivity activity = activityOpt.get();
     List<EParticipationDetail> participations = activity.getParticipationDetails();
     List<EFeedback> feedbacks = activity.getFeedbacks();
 
-    // Basic activity details
-    ActivityStatisticsVm statistics = ActivityStatisticsVm.builder()
-        .activityId(activity.getId())
-        .activityName(activity.getActivityName())
-        .activityCategory(activity.getActivityCategory().name())
-        .activityStatus(activity.getStatus().name())
-        .createdDate(activity.getCreatedDate())
-        .startDate(activity.getStartDate())
-        .endDate(activity.getEndDate())
-        .build();
-
-    // Calculate participation statistics
-    int totalRegistrations = participations.size();
-    int confirmedParticipants = (int) participations.stream()
-        .filter(p -> p.getParticipationStatus() == ParticipationStatus.VERIFIED)
-        .count();
-    int actualAttendees = confirmedParticipants; // actualAttendees should be the same as confirmedParticipants
-
-    double participationRate = totalRegistrations > 0 ? (double) actualAttendees / totalRegistrations * 100 : 0;
-    double capacityUtilization = activity.getCapacityLimit() > 0
-        ? (double) actualAttendees / activity.getCapacityLimit() * 100
-        : 0;
-
-    statistics.setTotalRegistrations(totalRegistrations);
-    statistics.setConfirmedParticipants(confirmedParticipants);
-    statistics.setActualAttendees(actualAttendees);
-    statistics.setParticipationRate(participationRate);
-    statistics.setCapacityUtilization(capacityUtilization);
-
-    // Calculate feedback statistics
-    if (!feedbacks.isEmpty()) {
-      double averageRating = feedbacks.stream()
-          .mapToDouble(EFeedback::getRating)
-          .average()
-          .orElse(0);
-      if (averageRating == 0) {
-        averageRating = 0.0;
-      }
-      int highRatingCount = (int) feedbacks.stream()
-          .filter(f -> f.getRating() >= 8.0)
-          .count();
-
-      int midRatingCount = (int) feedbacks.stream()
-          .filter(f -> f.getRating() >= 4.0 && f.getRating() < 8.0)
-          .count();
-
-      int lowRatingCount = (int) feedbacks.stream()
-          .filter(f -> f.getRating() < 4.0)
-          .count();
-
-      statistics.setAverageRating(averageRating);
-      statistics.setFeedbackCount(feedbacks.size());
-      statistics.setHighRatingCount(highRatingCount);
-      statistics.setMidRatingCount(midRatingCount);
-      statistics.setLowRatingCount(lowRatingCount);
-    }
-
-    // Participant role breakdown
-    Map<ParticipationRole, Integer> roleBreakdown = new HashMap<>();
-    for (EParticipationDetail participation : participations) {
-      ParticipationRole role = participation.getParticipationRole();
-      roleBreakdown.put(role, roleBreakdown.getOrDefault(role, 0) + 1);
-    }
-    statistics.setParticipantsByRole(roleBreakdown);
-
-    // Participation status breakdown
-    Map<ParticipationStatus, Integer> statusBreakdown = new HashMap<>();
-    for (EParticipationDetail participation : participations) {
-      ParticipationStatus status = participation.getParticipationStatus();
-      statusBreakdown.put(status, statusBreakdown.getOrDefault(status, 0) + 1);
-    }
-    statistics.setParticipantsByStatus(statusBreakdown);
-
-    // Timeline statistics
-    if (activity.getStartDate() != null && activity.getEndDate() != null) {
-      long durationHours = Duration.between(activity.getStartDate(), activity.getEndDate()).toHours();
-      statistics.setDurationInHours(durationHours);
-    }
-
-    if (activity.getCreatedDate() != null && activity.getStartDate() != null) {
-      long daysBeforeStart = Duration.between(activity.getCreatedDate(), activity.getStartDate()).toDays();
-      statistics.setDaysBeforeStart(daysBeforeStart);
-    }
-
-    // Top participants
-    List<ParticipantScoreVm> topParticipants = participations.stream()
-        .filter(p -> p.getParticipationStatus() == ParticipationStatus.VERIFIED)
-        .map(this::mapToParticipantScoreVm)
-        .sorted((p1, p2) -> Double.compare(p2.getScore(), p1.getScore()))
-        .limit(10)
-        .collect(Collectors.toList());
-
-    statistics.setTopParticipants(topParticipants);
+    // Populate individual statistic groups
+    updateParticipationStatistics(statistics, participations, activity.getCapacityLimit());
+    updateFeedbackStatistics(statistics, feedbacks);
+    statistics.setParticipantsByRole(calculateRoleBreakdown(participations));
+    statistics.setParticipantsByStatus(calculateStatusBreakdown(participations));
+    setTimelineStatistics(statistics, activity);
+    statistics.setTopParticipants(calculateTopParticipants(participations));
 
     return statistics;
   }
 
   @Override
   public ActivityStatisticsVm getActivityStatisticsInTimeRange(Long activityId, Instant startDate, Instant endDate) {
-    // Similar to getActivityStatistics but filter participation and feedback data
-    // by date range
+    // Similar to getActivityStatistics but filter participation and feedback data within the provided range
     ActivityStatisticsVm statistics = getActivityStatistics(activityId);
 
-    Optional<EActivity> activityOpt = activityRepository.findById(activityId);
-    if (!activityOpt.isPresent()) {
-      throw new RuntimeException("Activity not found with ID: " + activityId);
-    }
-
-    EActivity activity = activityOpt.get();
-
+    EActivity activity = fetchActivityOrThrow(activityId);
     // Filter participations by registration date within the range
     List<EParticipationDetail> filteredParticipations = activity.getParticipationDetails().stream()
         .filter(p -> p.getRegisteredAt() != null &&
@@ -177,34 +81,10 @@ public class ActivityStatisticsServiceImpl implements ActivityStatisticsService 
             (p.getRegisteredAt().isBefore(endDate) || p.getRegisteredAt().equals(endDate)))
         .collect(Collectors.toList());
 
-    // Recalculate statistics based on filtered data
-    int totalRegistrations = filteredParticipations.size();
-    int confirmedParticipants = (int) filteredParticipations.stream()
-        .filter(p -> p.getParticipationStatus() == ParticipationStatus.VERIFIED)
-        .count();
-    int actualAttendees = confirmedParticipants; // actualAttendees should be the same as confirmedParticipants
-
-    double participationRate = totalRegistrations > 0 ? (double) actualAttendees / totalRegistrations * 100 : 0;
-
-    statistics.setTotalRegistrations(totalRegistrations);
-    statistics.setConfirmedParticipants(confirmedParticipants);
-    statistics.setActualAttendees(actualAttendees);
-    statistics.setParticipationRate(participationRate);
-
-    // Recalculate participant role and status breakdowns
-    Map<ParticipationRole, Integer> roleBreakdown = new HashMap<>();
-    Map<ParticipationStatus, Integer> statusBreakdown = new HashMap<>();
-
-    for (EParticipationDetail participation : filteredParticipations) {
-      ParticipationRole role = participation.getParticipationRole();
-      roleBreakdown.put(role, roleBreakdown.getOrDefault(role, 0) + 1);
-
-      ParticipationStatus status = participation.getParticipationStatus();
-      statusBreakdown.put(status, statusBreakdown.getOrDefault(status, 0) + 1);
-    }
-
-    statistics.setParticipantsByRole(roleBreakdown);
-    statistics.setParticipantsByStatus(statusBreakdown);
+    // Recalculate and populate stats for the filtered data
+    updateParticipationStatistics(statistics, filteredParticipations, activity.getCapacityLimit());
+    statistics.setParticipantsByRole(calculateRoleBreakdown(filteredParticipations));
+    statistics.setParticipantsByStatus(calculateStatusBreakdown(filteredParticipations));
 
     return statistics;
   }
@@ -1304,5 +1184,116 @@ public class ActivityStatisticsServiceImpl implements ActivityStatisticsService 
     }
 
     return score;
+  }
+
+  private EActivity fetchActivityOrThrow(Long activityId) {
+    Optional<EActivity> activityOpt = activityRepository.findById(activityId);
+
+    if (!activityOpt.isPresent()) {
+      throw new RuntimeException("Activity not found with ID: " + activityId);
+    }
+
+    return activityOpt.get();
+  }
+
+  private ActivityStatisticsVm buildBaseStatistics(EActivity activity) {
+    ActivityStatisticsVm statistics = ActivityStatisticsVm.builder()
+        .activityId(activity.getId())
+        .activityName(activity.getActivityName())
+        .activityCategory(activity.getActivityCategory().name())
+        .activityStatus(activity.getStatus().name())
+        .createdDate(activity.getCreatedDate())
+        .startDate(activity.getStartDate())
+        .endDate(activity.getEndDate())
+        .build();
+
+    return statistics;
+  }
+
+  private void updateParticipationStatistics(ActivityStatisticsVm statistics, List<EParticipationDetail> participations, Integer capacityLimit) {
+    int totalRegistrations = participations.size();
+    int confirmedParticipants = (int) participations.stream()
+        .filter(p -> p.getParticipationStatus() == ParticipationStatus.VERIFIED)
+        .count();
+    int actualAttendees = confirmedParticipants; // actualAttendees should be the same as confirmedParticipants
+
+    double participationRate = totalRegistrations > 0 ? (double) actualAttendees / totalRegistrations * 100 : 0;
+    double capacityUtilization = (capacityLimit != null && capacityLimit > 0)
+        ? (double) actualAttendees / capacityLimit * 100
+        : 0;
+
+    statistics.setTotalRegistrations(totalRegistrations);
+    statistics.setConfirmedParticipants(confirmedParticipants);
+    statistics.setActualAttendees(actualAttendees);
+    statistics.setParticipationRate(participationRate);
+    statistics.setCapacityUtilization(capacityUtilization);
+  }
+
+  private void updateFeedbackStatistics(ActivityStatisticsVm statistics, List<EFeedback> feedbacks) {
+    if (!feedbacks.isEmpty()) {
+      double averageRating = feedbacks.stream()
+          .mapToDouble(EFeedback::getRating)
+          .average()
+          .orElse(0);
+      if (averageRating == 0) {
+        averageRating = 0.0;
+      }
+      int highRatingCount = (int) feedbacks.stream()
+          .filter(f -> f.getRating() >= 8.0)
+          .count();
+
+      int midRatingCount = (int) feedbacks.stream()
+          .filter(f -> f.getRating() >= 4.0 && f.getRating() < 8.0)
+          .count();
+
+      int lowRatingCount = (int) feedbacks.stream()
+          .filter(f -> f.getRating() < 4.0)
+          .count();
+
+      statistics.setAverageRating(averageRating);
+      statistics.setFeedbackCount(feedbacks.size());
+      statistics.setHighRatingCount(highRatingCount);
+      statistics.setMidRatingCount(midRatingCount);
+      statistics.setLowRatingCount(lowRatingCount);
+    }
+  }
+
+  private Map<ParticipationRole, Integer> calculateRoleBreakdown(List<EParticipationDetail> participations) {
+    Map<ParticipationRole, Integer> roleBreakdown = new HashMap<>();
+    for (EParticipationDetail participation : participations) {
+      ParticipationRole role = participation.getParticipationRole();
+      roleBreakdown.put(role, roleBreakdown.getOrDefault(role, 0) + 1);
+    }
+    return roleBreakdown;
+  }
+
+  private Map<ParticipationStatus, Integer> calculateStatusBreakdown(List<EParticipationDetail> participations) {
+    Map<ParticipationStatus, Integer> statusBreakdown = new HashMap<>();
+    for (EParticipationDetail participation : participations) {
+      ParticipationStatus status = participation.getParticipationStatus();
+      statusBreakdown.put(status, statusBreakdown.getOrDefault(status, 0) + 1);
+    }
+    return statusBreakdown;
+  }
+
+  private void setTimelineStatistics(ActivityStatisticsVm statistics, EActivity activity) {
+    if (activity.getStartDate() != null && activity.getEndDate() != null) {
+      long durationHours = Duration.between(activity.getStartDate(), activity.getEndDate()).toHours();
+      statistics.setDurationInHours(durationHours);
+    }
+
+    if (activity.getCreatedDate() != null && activity.getStartDate() != null) {
+      long daysBeforeStart = Duration.between(activity.getCreatedDate(), activity.getStartDate()).toDays();
+      statistics.setDaysBeforeStart(daysBeforeStart);
+    }
+  }
+
+  private List<ParticipantScoreVm> calculateTopParticipants(List<EParticipationDetail> participations) {
+    return participations.stream()
+        .filter(p -> p.getParticipationStatus() == ParticipationStatus.VERIFIED)
+        .map(this::mapToParticipantScoreVm)
+        .sorted((p1, p2) -> Double.compare(p2.getScore(), p1.getScore()))
+        .limit(10)
+        .collect(Collectors.toList());
   }
 }
