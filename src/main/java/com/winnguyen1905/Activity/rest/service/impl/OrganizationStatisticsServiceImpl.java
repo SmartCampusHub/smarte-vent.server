@@ -45,126 +45,17 @@ public class OrganizationStatisticsServiceImpl implements OrganizationStatistics
 
   @Override
   public OrganizationStatisticsVm getOrganizationStatistics(Long organizationId) {
-    Optional<EOrganization> organizationOpt = organizationRepository.findById(organizationId);
-    if (!organizationOpt.isPresent()) {
-      throw new IllegalArgumentException("Organization not found: " + organizationId);
-    }
+    EOrganization organization = validateAndGetOrganization(organizationId);
 
-    EOrganization organization = organizationOpt.get();
+    OrganizationStatisticsVm statistics = buildBaseStatistics(organization);
 
-    OrganizationStatisticsVm statistics = OrganizationStatisticsVm.builder()
-        .organizationId(organization.getId())
-        .organizationName(organization.getName())
-        .organizationType(organization.getType() != null ? organization.getType().toString() : null)
-        .build();
-
-    // Activity statistics
-    Long totalActivities = activityRepository.countTotalActivitiesByOrganization(organizationId);
-    Long upcomingActivities = activityRepository.countUpcomingActivitiesByOrganization(organizationId);
-    Long ongoingActivities = activityRepository.countOngoingActivitiesByOrganization(organizationId);
-    Long completedActivities = activityRepository.countCompletedActivitiesByOrganization(organizationId);
-    Long canceledActivities = activityRepository.countActivitiesByStatusAndOrganization(organizationId,
-        ActivityStatus.CANCELLED);
-
-    statistics.setTotalActivities(totalActivities != null ? totalActivities : 0L);
-    statistics.setUpcomingActivities(upcomingActivities != null ? upcomingActivities : 0L);
-    statistics.setOngoingActivities(ongoingActivities != null ? ongoingActivities : 0L);
-    statistics.setCompletedActivities(completedActivities != null ? completedActivities : 0L);
-    statistics.setCanceledActivities(canceledActivities != null ? canceledActivities : 0L);
-
-    // Participation statistics
-    Long totalParticipants = activityRepository.countTotalParticipantsByOrganization(organizationId);
-    Double averageParticipantsPerActivity = activityRepository
-        .calculateAverageParticipantsPerActivityByOrganization(organizationId);
-    Double participationRate = activityRepository.calculateParticipationRateByOrganization(organizationId);
-
-    statistics.setTotalParticipants(totalParticipants != null ? totalParticipants : 0L);
-    statistics.setAverageParticipantsPerActivity(
-        averageParticipantsPerActivity != null ? averageParticipantsPerActivity : 0.0);
-    statistics.setParticipationRate(participationRate != null ? participationRate : 0.0);
-
-    // Performance metrics
-    Double averageRating = feedbackRepository.getAverageRatingForOrganization(organizationId);
-    Long totalFeedbacks = feedbackRepository.countTotalFeedbacksForOrganization(organizationId);
-
-    statistics.setAverageFeedbackRating(averageRating != null ? averageRating : 0.0);
-    statistics.setTotalFeedbacks(totalFeedbacks != null ? totalFeedbacks : 0L);
-
-    // Category breakdown
-    Map<String, Long> activitiesByCategory = new HashMap<>();
-    List<Object[]> activityCategoryData = activityRepository.getActivitiesByCategoryForOrganization(organizationId);
-    for (Object[] data : activityCategoryData) {
-      ActivityCategory category = (ActivityCategory) data[0];
-      Long count = (Long) data[1];
-      activitiesByCategory.put(category.toString(), count);
-    }
-    statistics.setActivitiesByCategory(activitiesByCategory);
-
-    Map<String, Long> participantsByCategory = new HashMap<>();
-    List<Object[]> participantCategoryData = activityRepository
-        .getParticipantsByCategoryForOrganization(organizationId);
-    for (Object[] data : participantCategoryData) {
-      ActivityCategory category = (ActivityCategory) data[0];
-      Long count = ((Number) data[1]).longValue();
-      participantsByCategory.put(category.toString(), count);
-    }
-    statistics.setParticipantsByCategory(participantsByCategory);
-
-    // Time-based metrics
-    Instant oneYearAgo = Instant.now().minus(365, ChronoUnit.DAYS);
-    Instant now = Instant.now();
-
-    Map<String, Long> activitiesByMonth = new HashMap<>();
-    List<Object[]> activityMonthData = activityRepository.getActivitiesByMonthForOrganization(organizationId,
-        oneYearAgo, now);
-    for (Object[] data : activityMonthData) {
-      Integer year = ((Number) data[0]).intValue();
-      Integer month = ((Number) data[1]).intValue();
-      Long count = (Long) data[2];
-      String monthKey = year + "-" + (month < 10 ? "0" + month : month);
-      activitiesByMonth.put(monthKey, count);
-    }
-    statistics.setActivitiesByMonth(activitiesByMonth);
-
-    Map<String, Long> participantsByMonth = new HashMap<>();
-    List<Object[]> participantMonthData = activityRepository.getParticipantsByMonthForOrganization(organizationId,
-        oneYearAgo, now);
-    for (Object[] data : participantMonthData) {
-      Integer year = ((Number) data[0]).intValue();
-      Integer month = ((Number) data[1]).intValue();
-      Long count = ((Number) data[2]).longValue();
-      String monthKey = year + "-" + (month < 10 ? "0" + month : month);
-      participantsByMonth.put(monthKey, count);
-    }
-    statistics.setParticipantsByMonth(participantsByMonth);
-
-    // Top activities
-    List<EActivity> topActivities = activityRepository.getTopActivitiesByParticipationForOrganization(
-        organizationId, PageRequest.of(0, TOP_ITEMS_COUNT));
-
-    List<ActivityStatisticsSummaryVm> topActivitiesVm = topActivities.stream()
-        .map(activity -> mapActivityToSummary(activity))
-        .collect(Collectors.toList());
-    statistics.setTopActivities(topActivitiesVm);
-
-    // Best rated activities
-    List<Object[]> bestRatedActivitiesData = feedbackRepository.getBestRatedActivitiesForOrganization(
-        organizationId, MIN_FEEDBACKS_FOR_RATING, PageRequest.of(0, TOP_ITEMS_COUNT));
-
-    List<ActivityStatisticsSummaryVm> bestRatedActivitiesVm = new ArrayList<>();
-    for (Object[] data : bestRatedActivitiesData) {
-      EActivity activity = (EActivity) data[0];
-      Double avgRating = (Double) data[1];
-
-      ActivityStatisticsSummaryVm summary = mapActivityToSummary(activity);
-      summary.setAverageRating(avgRating);
-
-      Long feedbackCount = feedbackRepository.countByActivityId(activity.getId());
-      summary.setFeedbackCount(feedbackCount);
-
-      bestRatedActivitiesVm.add(summary);
-    }
-    statistics.setBestRatedActivities(bestRatedActivitiesVm);
+    populateActivityStats(statistics, organizationId);
+    populateParticipationStats(statistics, organizationId);
+    populatePerformanceMetrics(statistics, organizationId);
+    populateCategoryBreakdown(statistics, organizationId);
+    populateTimeBasedMetrics(statistics, organizationId);
+    populateTopActivities(statistics, organizationId);
+    populateBestRatedActivities(statistics, organizationId);
 
     return statistics;
   }
@@ -279,5 +170,113 @@ public class OrganizationStatisticsServiceImpl implements OrganizationStatistics
     summary.setFeedbackCount(feedbackCount != null ? feedbackCount : 0L);
 
     return summary;
+  }
+
+  /* ===================== PRIVATE HELPER METHODS ===================== */
+
+  private EOrganization validateAndGetOrganization(Long organizationId) {
+    return organizationRepository.findById(organizationId)
+        .orElseThrow(() -> new IllegalArgumentException("Organization not found: " + organizationId));
+  }
+
+  private OrganizationStatisticsVm buildBaseStatistics(EOrganization organization) {
+    return OrganizationStatisticsVm.builder()
+        .organizationId(organization.getId())
+        .organizationName(organization.getName())
+        .organizationType(organization.getType() != null ? organization.getType().toString() : null)
+        .build();
+  }
+
+  private void populateActivityStats(OrganizationStatisticsVm statistics, Long organizationId) {
+    statistics.setTotalActivities(safeLong(activityRepository.countTotalActivitiesByOrganization(organizationId)));
+    statistics.setUpcomingActivities(safeLong(activityRepository.countUpcomingActivitiesByOrganization(organizationId)));
+    statistics.setOngoingActivities(safeLong(activityRepository.countOngoingActivitiesByOrganization(organizationId)));
+    statistics.setCompletedActivities(safeLong(activityRepository.countCompletedActivitiesByOrganization(organizationId)));
+    statistics.setCanceledActivities(safeLong(activityRepository.countActivitiesByStatusAndOrganization(organizationId, ActivityStatus.CANCELLED)));
+  }
+
+  private void populateParticipationStats(OrganizationStatisticsVm statistics, Long organizationId) {
+    statistics.setTotalParticipants(safeLong(activityRepository.countTotalParticipantsByOrganization(organizationId)));
+    statistics.setAverageParticipantsPerActivity(safeDouble(activityRepository.calculateAverageParticipantsPerActivityByOrganization(organizationId)));
+    statistics.setParticipationRate(safeDouble(activityRepository.calculateParticipationRateByOrganization(organizationId)));
+  }
+
+  private void populatePerformanceMetrics(OrganizationStatisticsVm statistics, Long organizationId) {
+    statistics.setAverageFeedbackRating(safeDouble(feedbackRepository.getAverageRatingForOrganization(organizationId)));
+    statistics.setTotalFeedbacks(safeLong(feedbackRepository.countTotalFeedbacksForOrganization(organizationId)));
+  }
+
+  private void populateCategoryBreakdown(OrganizationStatisticsVm statistics, Long organizationId) {
+    Map<String, Long> activitiesByCategory = new HashMap<>();
+    for (Object[] data : activityRepository.getActivitiesByCategoryForOrganization(organizationId)) {
+      activitiesByCategory.put(((ActivityCategory) data[0]).toString(), ((Number) data[1]).longValue());
+    }
+    statistics.setActivitiesByCategory(activitiesByCategory);
+
+    Map<String, Long> participantsByCategory = new HashMap<>();
+    for (Object[] data : activityRepository.getParticipantsByCategoryForOrganization(organizationId)) {
+      participantsByCategory.put(((ActivityCategory) data[0]).toString(), ((Number) data[1]).longValue());
+    }
+    statistics.setParticipantsByCategory(participantsByCategory);
+  }
+
+  private void populateTimeBasedMetrics(OrganizationStatisticsVm statistics, Long organizationId) {
+    Instant end = Instant.now();
+    Instant start = end.minus(365, ChronoUnit.DAYS);
+
+    Map<String, Long> activitiesByMonth = new HashMap<>();
+    for (Object[] data : activityRepository.getActivitiesByMonthForOrganization(organizationId, start, end)) {
+      String monthKey = buildMonthKey((Number) data[0], (Number) data[1]);
+      activitiesByMonth.put(monthKey, ((Number) data[2]).longValue());
+    }
+    statistics.setActivitiesByMonth(activitiesByMonth);
+
+    Map<String, Long> participantsByMonth = new HashMap<>();
+    for (Object[] data : activityRepository.getParticipantsByMonthForOrganization(organizationId, start, end)) {
+      String monthKey = buildMonthKey((Number) data[0], (Number) data[1]);
+      participantsByMonth.put(monthKey, ((Number) data[2]).longValue());
+    }
+    statistics.setParticipantsByMonth(participantsByMonth);
+  }
+
+  private void populateTopActivities(OrganizationStatisticsVm statistics, Long organizationId) {
+    List<EActivity> topActivities = activityRepository.getTopActivitiesByParticipationForOrganization(
+        organizationId, PageRequest.of(0, TOP_ITEMS_COUNT));
+
+    List<ActivityStatisticsSummaryVm> topActivitiesVm = topActivities.stream()
+        .map(this::mapActivityToSummary)
+        .collect(Collectors.toList());
+    statistics.setTopActivities(topActivitiesVm);
+  }
+
+  private void populateBestRatedActivities(OrganizationStatisticsVm statistics, Long organizationId) {
+    List<Object[]> bestRatedActivitiesData = feedbackRepository.getBestRatedActivitiesForOrganization(
+        organizationId, MIN_FEEDBACKS_FOR_RATING, PageRequest.of(0, TOP_ITEMS_COUNT));
+
+    List<ActivityStatisticsSummaryVm> bestRatedActivitiesVm = new ArrayList<>();
+    for (Object[] data : bestRatedActivitiesData) {
+      EActivity activity = (EActivity) data[0];
+      Double avgRating = (Double) data[1];
+
+      ActivityStatisticsSummaryVm summary = mapActivityToSummary(activity);
+      summary.setAverageRating(avgRating);
+      summary.setFeedbackCount(safeLong(feedbackRepository.countByActivityId(activity.getId())));
+
+      bestRatedActivitiesVm.add(summary);
+    }
+    statistics.setBestRatedActivities(bestRatedActivitiesVm);
+  }
+
+  private long safeLong(Number number) {
+    return number != null ? number.longValue() : 0L;
+  }
+
+  private double safeDouble(Number number) {
+    return number != null ? number.doubleValue() : 0.0;
+  }
+
+  private String buildMonthKey(Number year, Number month) {
+    int m = month.intValue();
+    return year + "-" + (m < 10 ? "0" + m : Integer.toString(m));
   }
 }
