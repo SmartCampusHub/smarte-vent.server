@@ -204,34 +204,7 @@ public class ActivityServiceImpl implements ActivityService {
     Page<EActivity> activities = activityRepository.findAll(activitySpecification, pageable);
 
     List<ActivityVm> activityVms = activities.getContent().stream()
-        .map(activity -> ActivityVm.builder()
-            .id(activity.getId())
-            .startDate(activity.getStartDate())
-            .endDate(activity.getEndDate())
-            .activityName(activity.getActivityName())
-            .description(activity.getDescription())
-            .createdDate(activity.getCreatedDate())
-            .activityVenue(activity.getVenue())
-            .capacityLimit(activity.getCapacityLimit())
-            .activityStatus(activity.getStatus()) // Updated to use getStatus()
-            .activityCategory(activity.getActivityCategory())
-            .tags(activity.getTags())
-            .currentParticipants(activity.getCurrentParticipants())
-            .address(activity.getAddress())
-            .latitude(activity.getLatitude())
-            .longitude(activity.getLongitude())
-            .fee(activity.getFee())
-            .isFeatured(activity.getIsFeatured())
-            .isApproved(activity.getIsApproved())
-            .organization(OrganizationVm.builder()
-                .id(activity.getOrganization().getId())
-                .organizationName(activity.getOrganization().getName())
-                .representativeEmail(activity.getOrganization().getEmail())
-                .representativePhone(activity.getOrganization().getPhone())
-                .build())
-            .likes(activity.getLikes())
-            .registrationDeadline(activity.getRegistrationDeadline())
-            .build())
+        .map(this::mapToActivityVm)
         .collect(Collectors.toList());
 
     return PagedResponse.<ActivityVm>builder()
@@ -415,13 +388,10 @@ public class ActivityServiceImpl implements ActivityService {
 
     EAccountCredentials account = this.accountRepository.findById(accountRequest.getId())
         .orElseThrow(() -> new EntityNotFoundException("Not found account request"));
-    EParticipationDetail participationDetails = participationDetailRepository.findByStudentIdAndActivityId(
-        accountRequest.getId(),
-        joinActivityRequest.getActivityId()).orElse(null);
-    Boolean x = participationDetailRepository.existsByParticipantIdAndActivityId(account.getId(),
+    boolean alreadyJoined = participationDetailRepository.existsByParticipantIdAndActivityId(account.getId(),
         joinActivityRequest.getActivityId());
 
-    if (x)
+    if (alreadyJoined)
       throw new ResourceAlreadyExistsException("You have already joined this activity");
 
     if (activity.getCurrentParticipants() == activity.getCapacityLimit())
@@ -472,34 +442,7 @@ public class ActivityServiceImpl implements ActivityService {
     Page<EActivity> activityPage = activityRepository.findAllByIds(ids, pageable);
 
     List<ActivityVm> activityVms = activityPage.getContent().stream()
-        .map(activity -> ActivityVm.builder()
-            .id(activity.getId())
-            .startDate(activity.getStartDate())
-            .endDate(activity.getEndDate())
-            .organization(OrganizationVm.builder()
-                .id(activity.getOrganization().getId())
-                .organizationName(activity.getOrganization().getName())
-                .representativeEmail(activity.getOrganization().getEmail())
-                .representativePhone(activity.getOrganization().getPhone())
-                .build())
-            .createdDate(activity.getCreatedDate())
-            .activityName(activity.getActivityName())
-            .description(activity.getDescription())
-            .activityVenue(activity.getVenue())
-            .capacityLimit(activity.getCapacityLimit())
-            .activityStatus(activity.getStatus()) // Updated to use getStatus()
-            .activityCategory(activity.getActivityCategory())
-            .tags(activity.getTags())
-            .currentParticipants(activity.getCurrentParticipants())
-            .address(activity.getAddress())
-            .latitude(activity.getLatitude())
-            .longitude(activity.getLongitude())
-            .fee(activity.getFee())
-            .isFeatured(activity.getIsFeatured())
-            .isApproved(activity.getIsApproved())
-            .likes(activity.getLikes())
-            .registrationDeadline(activity.getRegistrationDeadline())
-            .build())
+        .map(this::mapToActivityVm)
         .collect(Collectors.toList());
 
     return PagedResponse.<ActivityVm>builder()
@@ -520,33 +463,7 @@ public class ActivityServiceImpl implements ActivityService {
     List<ActivityVm> activityVms = participationDetails.stream().map(EParticipationDetail::getActivity).toList()
         .stream()
         .filter(activity -> activity.getIsApproved() == true)
-        .map(activity -> ActivityVm.builder().id(activity.getId())
-            .startDate(activity.getStartDate())
-            .endDate(activity.getEndDate())
-            .organization(OrganizationVm.builder()
-                .id(activity.getOrganization().getId())
-                .organizationName(activity.getOrganization().getName())
-                .representativeEmail(activity.getOrganization().getEmail())
-                .representativePhone(activity.getOrganization().getPhone())
-                .build())
-            .activityName(activity.getActivityName())
-            .description(activity.getDescription())
-            .createdDate(activity.getCreatedDate())
-            .activityVenue(activity.getVenue())
-            .capacityLimit(activity.getCapacityLimit())
-            .activityStatus(activity.getStatus()) // Updated to use getStatus()
-            .activityCategory(activity.getActivityCategory())
-            .tags(activity.getTags())
-            .currentParticipants(activity.getCurrentParticipants())
-            .address(activity.getAddress())
-            .latitude(activity.getLatitude())
-            .longitude(activity.getLongitude())
-            .fee(activity.getFee())
-            .isFeatured(activity.getIsFeatured())
-            .isApproved(activity.getIsApproved())
-            .likes(activity.getLikes())
-            .registrationDeadline(activity.getRegistrationDeadline())
-            .build())
+        .map(this::mapToActivityVm)
         .sorted(Comparator.comparing(ActivityVm::getStartDate)) // Sort by startDate
         .collect(Collectors.toList());
 
@@ -618,6 +535,42 @@ public class ActivityServiceImpl implements ActivityService {
         .verifiedNote(participationDetail.getVerifiedNote())
         .status(participationDetail.getParticipationStatus())
         .role(participationDetail.getParticipationRole())
+        .build();
+  }
+
+  /**
+   * Maps an {@link EActivity} entity to its {@link ActivityVm} view model.
+   * Centralising this logic keeps the service methods concise and guarantees a
+   * single representation of the view model across the class.
+   */
+  private ActivityVm mapToActivityVm(EActivity activity) {
+    return ActivityVm.builder()
+        .id(activity.getId())
+        .startDate(activity.getStartDate())
+        .endDate(activity.getEndDate())
+        .createdDate(activity.getCreatedDate())
+        .activityName(activity.getActivityName())
+        .description(activity.getDescription())
+        .activityVenue(activity.getVenue())
+        .organization(OrganizationVm.builder()
+            .id(activity.getOrganization().getId())
+            .organizationName(activity.getOrganization().getName())
+            .representativeEmail(activity.getOrganization().getEmail())
+            .representativePhone(activity.getOrganization().getPhone())
+            .build())
+        .capacityLimit(activity.getCapacityLimit())
+        .activityStatus(activity.getStatus())
+        .activityCategory(activity.getActivityCategory())
+        .tags(activity.getTags())
+        .currentParticipants(activity.getCurrentParticipants())
+        .address(activity.getAddress())
+        .latitude(activity.getLatitude())
+        .longitude(activity.getLongitude())
+        .fee(activity.getFee())
+        .isFeatured(activity.getIsFeatured())
+        .isApproved(activity.getIsApproved())
+        .likes(activity.getLikes())
+        .registrationDeadline(activity.getRegistrationDeadline())
         .build();
   }
 }
