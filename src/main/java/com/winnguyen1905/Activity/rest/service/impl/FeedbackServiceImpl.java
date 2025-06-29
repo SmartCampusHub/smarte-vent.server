@@ -54,54 +54,17 @@ public class FeedbackServiceImpl implements FeedbackService {
     @Override
     @Transactional
     public FeedbackDetailVm createFeedback(TAccountRequest accountRequest, FeedbackCreateDto feedbackDto) {
-        // Validate if activity exists
-        EActivity activity = activityRepository.findById(feedbackDto.getActivityId())
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Activity not found with id: " + feedbackDto.getActivityId()));
+        EActivity activity = fetchActivityOrThrow(feedbackDto.getActivityId());
 
-        // Validate if participation exists
-        Optional<EParticipationDetail> participation = participationDetailRepository
-                .findByStudentIdAndActivityId(accountRequest.getId(), feedbackDto.getActivityId());
+        EParticipationDetail participation = fetchParticipationOrThrow(accountRequest.getId(), activity.getId());
 
-        if (participation.isEmpty()) {
-            throw new ResourceNotFoundException("Participation not found with id: " + feedbackDto.getParticipationId());
-        }
+        validateStudentOwnership(participation, accountRequest.getId());
+        validateParticipationMatchesActivity(participation, activity);
+        ensureNoExistingFeedback(participation);
 
-        // Check if the participation belongs to the student
-        if (!participation.get().getParticipant().getId().equals(accountRequest.getId())) {
-            throw new BusinessLogicException("You can only provide feedback for your own participation");
-        }
+        EFeedback feedback = buildFeedbackEntity(feedbackDto, activity, participation);
 
-        // Check if the participation is for the specified activity
-        if (!participation.get().getActivity().getId().equals(activity.getId())) {
-            throw new BusinessLogicException("The participation is not for the specified activity");
-        }
-
-        // Check if the participation status is UNVERIFIED (previously verified to be
-        // attended)
-        // if (participation.getParticipationStatus() != ParticipationStatus.UNVERIFIED)
-        // {
-        // throw new BusinessLogicException("You can only provide feedback for
-        // activities you have attended");
-        // }
-
-        // Check if feedback already exists for this participation
-        if (!participation.get().getFeedbacks().isEmpty()) {
-            throw new BusinessLogicException("Feedback already exists for this participation");
-        }
-
-        // Create new feedback
-        EFeedback feedback = new EFeedback();
-        feedback.setActivity(activity);
-        feedback.setParticipation(participation.get());
-        feedback.setRating(feedbackDto.getRating());
-        feedback.setFeedbackDescription(feedbackDto.getFeedbackDescription());
-
-        // Save feedback
-        EFeedback savedFeedback = feedbackRepository.save(feedback);
-
-        // Return the view model
-        return mapToDetailVm(savedFeedback);
+        return mapToDetailVm(feedbackRepository.save(feedback));
     }
 
     @Override
@@ -118,21 +81,9 @@ public class FeedbackServiceImpl implements FeedbackService {
         EFeedback feedback = feedbackRepository.findById(feedbackDto.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Feedback not found with id: " + feedbackDto.getId()));
 
-        // // Update only non-null fields
-        // if (feedbackDto.getRating() != null) {
-        //     feedback.setRating(feedbackDto.getRating());
-        // }
+        applyUpdates(feedback, feedbackDto);
 
-        // if (feedbackDto.getFeedbackDescription() != null) {
-        //     feedback.setFeedbackDescription(feedbackDto.getFeedbackDescription());
-        // }
-
-        feedback.setOrganizationResponse(feedbackDto.getOrganizationResponse());
-
-        // Save updated feedback
-        EFeedback updatedFeedback = feedbackRepository.save(feedback);
-
-        return mapToDetailVm(updatedFeedback);
+        return mapToDetailVm(feedbackRepository.save(feedback));
     }
 
     @Override
@@ -340,5 +291,74 @@ public class FeedbackServiceImpl implements FeedbackService {
                 .respondedAt(feedback.getRespondedAt())
                 .hasResponse(feedback.getOrganizationResponse() != null)
                 .build();
+    }
+
+    // Helper methods ------------------------------------------------------------------------------
+
+    /**
+     * Fetches an activity or throws {@link ResourceNotFoundException}.
+     */
+    private EActivity fetchActivityOrThrow(Long activityId) {
+        return activityRepository.findById(activityId)
+                .orElseThrow(() -> new ResourceNotFoundException("Activity not found with id: " + activityId));
+    }
+
+    /**
+     * Fetches a participation or throws {@link ResourceNotFoundException}.
+     */
+    private EParticipationDetail fetchParticipationOrThrow(Long studentId, Long activityId) {
+        return participationDetailRepository
+                .findByStudentIdAndActivityId(studentId, activityId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        String.format("Participation not found for student %d in activity %d", studentId, activityId)));
+    }
+
+    /**
+     * Ensures the given participation belongs to the provided student.
+     */
+    private void validateStudentOwnership(EParticipationDetail participation, Long studentId) {
+        if (!participation.getParticipant().getId().equals(studentId)) {
+            throw new BusinessLogicException("You can only provide feedback for your own participation");
+        }
+    }
+
+    /**
+     * Validates the participation is associated with the provided activity.
+     */
+    private void validateParticipationMatchesActivity(EParticipationDetail participation, EActivity activity) {
+        if (!participation.getActivity().getId().equals(activity.getId())) {
+            throw new BusinessLogicException("The participation is not for the specified activity");
+        }
+    }
+
+    /**
+     * Ensures the participation has no existing feedback.
+     */
+    private void ensureNoExistingFeedback(EParticipationDetail participation) {
+        if (participation.getFeedbacks() != null && !participation.getFeedbacks().isEmpty()) {
+            throw new BusinessLogicException("Feedback already exists for this participation");
+        }
+    }
+
+    /**
+     * Builds a new {@link EFeedback} entity from the given DTO.
+     */
+    private EFeedback buildFeedbackEntity(FeedbackCreateDto dto, EActivity activity, EParticipationDetail participation) {
+        EFeedback feedback = new EFeedback();
+        feedback.setActivity(activity);
+        feedback.setParticipation(participation);
+        feedback.setRating(dto.getRating());
+        feedback.setFeedbackDescription(dto.getFeedbackDescription());
+        return feedback;
+    }
+
+    /**
+     * Applies partial updates to the feedback entity based on provided data.
+     */
+    private void applyUpdates(EFeedback feedback, FeedbackUpdateDto dto) {
+        // Currently, FeedbackUpdateDto supports updating organization response only.
+        if (dto.getOrganizationResponse() != null) {
+            feedback.setOrganizationResponse(dto.getOrganizationResponse());
+        }
     }
 }
