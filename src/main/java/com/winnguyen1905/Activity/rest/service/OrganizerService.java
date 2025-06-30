@@ -13,12 +13,18 @@ import org.aspectj.weaver.ast.Or;
 import org.springframework.data.domain.Pageable;
 
 public interface OrganizerService {
-    void createOrganizer(TAccountRequest accountRequest, OrganizationDto organizerDto);
-    void updateOrganizer(TAccountRequest accountRequest, OrganizationDto organizerDto);
-    void deleteOrganizer(TAccountRequest accountRequest, Long id);
+  void createOrganizer(TAccountRequest accountRequest, OrganizationDto organizerDto);
 
-    PagedResponse<OrganizationVm> getAllOrganizers(OrganizationSearchRequest organizationSearchRequest, Pageable pageable);
-    OrganizationVm getOrganizerById(Long id);
-    void deleteOrganizerById(Long id);
-    PagedResponse<OrganizationVm> getAllOrganizersByPage(int page, int size);
+  void updateOrganizer(TAccountRequest accountRequest, OrganizationDto organizerDto);
+
+  void deleteOrganizer(TAccountRequest accountRequest, Long id);
+
+  PagedResponse<OrganizationVm> getAllOrganizers(OrganizationSearchRequest organizationSearchRequest,
+      Pageable pageable);
+
+  OrganizationVm getOrganizerById(Long id);
+
+  void deleteOrganizerById(Long id);
+
+  PagedResponse<OrganizationVm> getAllOrganizersByPage(int page, int size);
 }
