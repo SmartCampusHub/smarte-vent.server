@@ -35,6 +35,7 @@ import com.winnguyen1905.activity.persistance.repository.ActivityRepository;
 import com.winnguyen1905.activity.persistance.repository.FeedbackRepository;
 import com.winnguyen1905.activity.persistance.repository.ParticipationDetailRepository;
 import com.winnguyen1905.activity.rest.service.FeedbackService;
+import com.winnguyen1905.activity.rest.service.AuthorizationService;
 
 @Service
 public class FeedbackServiceImpl implements FeedbackService {
@@ -50,6 +51,9 @@ public class FeedbackServiceImpl implements FeedbackService {
 
     @Autowired
     private AccountRepository accountRepository;
+
+    @Autowired
+    private AuthorizationService authorizationService;
 
     @Override
     @Transactional
@@ -238,10 +242,38 @@ public class FeedbackServiceImpl implements FeedbackService {
         EFeedback feedback = feedbackRepository.findById(feedbackId)
                 .orElseThrow(() -> new ResourceNotFoundException("Feedback not found with id: " + feedbackId));
 
+        // TODO: Add authorization check - this method needs TAccountRequest parameter
+        // For now, this is a security vulnerability that needs to be fixed by updating the interface
+        
         // TODO: Check if feedback already has a response
         // if (feedback.getOrganizationResponse() != null) {
         //     throw new BusinessLogicException("This feedback already has an organization response");
         // }
+
+        // Add organization response
+        feedback.setOrganizationResponse(responseDto.getResponse());
+        feedback.setRespondedAt(Instant.now());
+
+        // Save updated feedback
+        EFeedback updatedFeedback = feedbackRepository.save(feedback);
+
+        return mapToDetailVm(updatedFeedback);
+    }
+
+    /**
+     * Authorization-aware version of addOrganizationResponse
+     */
+    public FeedbackDetailVm addOrganizationResponse(Long feedbackId, OrganizationResponseDto responseDto, TAccountRequest accountRequest) {
+        EFeedback feedback = feedbackRepository.findById(feedbackId)
+                .orElseThrow(() -> new ResourceNotFoundException("Feedback not found with id: " + feedbackId));
+
+        // Authorization check: Only admins or the organization that owns the activity can respond to feedback
+        authorizationService.validateFeedbackResponseAccess(feedback.getActivity().getId(), accountRequest);
+
+        // Check if feedback already has a response
+        if (feedback.getOrganizationResponse() != null && !feedback.getOrganizationResponse().trim().isEmpty()) {
+            throw new BusinessLogicException("This feedback already has an organization response");
+        }
 
         // Add organization response
         feedback.setOrganizationResponse(responseDto.getResponse());

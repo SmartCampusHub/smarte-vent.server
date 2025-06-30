@@ -23,7 +23,9 @@ import com.winnguyen1905.activity.persistance.repository.ActivityRepository;
 import com.winnguyen1905.activity.persistance.repository.FeedbackRepository;
 import com.winnguyen1905.activity.persistance.repository.OrganizationRepository;
 import com.winnguyen1905.activity.rest.service.OrganizationStatisticsService;
+import com.winnguyen1905.activity.rest.service.AuthorizationService;
 import com.winnguyen1905.activity.utils.DateTimeUtils;
+import com.winnguyen1905.activity.common.annotation.TAccountRequest;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,6 +44,7 @@ public class OrganizationStatisticsServiceImpl implements OrganizationStatistics
   private final ActivityRepository activityRepository;
   private final FeedbackRepository feedbackRepository;
   private final OrganizationRepository organizationRepository;
+  private final AuthorizationService authorizationService;
 
   // Configuration constants
   private static final int TOP_ITEMS_COUNT = 5;
@@ -62,6 +65,16 @@ public class OrganizationStatisticsServiceImpl implements OrganizationStatistics
     
     log.debug("Successfully generated statistics for organization ID: {}", organizationId);
     return statistics;
+  }
+
+  /**
+   * Authorization-aware version of getOrganizationStatistics
+   */
+  public OrganizationStatisticsVm getOrganizationStatistics(Long organizationId, TAccountRequest accountRequest) {
+    // Authorization check: Only admins or the organization itself can view statistics
+    authorizationService.validateOrganizationAccess(organizationId, accountRequest);
+    
+    return getOrganizationStatistics(organizationId);
   }
 
   @Override

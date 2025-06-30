@@ -9,5 +9,5 @@ import com.winnguyen1905.activity.persistance.entity.EOrganization;
 
 @Repository
 public interface RepresentativeOrganizerRepository
-    extends JpaRepository<EOrganization, Long>, JpaSpecificationExecutor<EOrganization> { 
+    extends JpaRepository<EOrganization, Long>, JpaSpecificationExecutor<EOrganization> {
 }

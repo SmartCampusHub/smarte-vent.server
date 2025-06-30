@@ -33,6 +33,7 @@ import com.winnguyen1905.activity.persistance.repository.OrganizationRepository;
 import com.winnguyen1905.activity.persistance.repository.ParticipationDetailRepository;
 import com.winnguyen1905.activity.persistance.repository.specification.EActivitySpecification;
 import com.winnguyen1905.activity.rest.service.ActivityService;
+import com.winnguyen1905.activity.rest.service.AuthorizationService;
 import com.winnguyen1905.activity.rest.service.EmailService;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -60,9 +61,13 @@ public class ActivityServiceImpl implements ActivityService {
   private final OrganizationRepository organizationRepository;
   private final ActivityScheduleRepository activityScheduleRepository;
   private final ParticipationDetailRepository participationDetailRepository;
+  private final AuthorizationService authorizationService;
 
   @Override
   public void createActivity(TAccountRequest accountRequest, ActivityDto activityDto) {
+    // Authorization check: Only organizations can create activities
+    authorizationService.requireOrganization(accountRequest);
+    
     validateActivityDto(activityDto);
     validateAccountRequest(accountRequest);
 
@@ -123,6 +128,9 @@ public class ActivityServiceImpl implements ActivityService {
     validateActivityDto(activityDto);
     validateAccountRequest(accountRequest);
 
+    // Authorization check: Only admins or the organization that owns the activity can update it
+    authorizationService.validateActivityModificationAccess(activityDto.getId(), accountRequest);
+
     EActivity existingActivity = activityRepository.findById(activityDto.getId())
         .orElseThrow(() -> new RuntimeException("Activity not found"));
 
@@ -176,6 +184,9 @@ public class ActivityServiceImpl implements ActivityService {
 
   @Override
   public void deleteActivity(TAccountRequest accountRequest, Long activityId) {
+    // Authorization check: Only admins or the organization that owns the activity can delete it
+    authorizationService.validateActivityModificationAccess(activityId, accountRequest);
+    
     validateDeleteRequest(accountRequest, activityId);
     activityRepository.deleteById(activityId);
   }
@@ -479,6 +490,9 @@ public class ActivityServiceImpl implements ActivityService {
 
   @Override
   public void approveActivity(TAccountRequest accountRequest, Long activityId) {
+    // Authorization check: Only admins can approve activities
+    authorizationService.requireAdmin(accountRequest);
+    
     EActivity activity = activityRepository.findById(activityId)
         .orElseThrow(() -> new EntityNotFoundException("Not found activity"));
     if (activity.getIsApproved() == true) {
@@ -492,6 +506,9 @@ public class ActivityServiceImpl implements ActivityService {
 
   @Override
   public void disapproveActivity(TAccountRequest accountRequest, Long activityId) {
+    // Authorization check: Only admins can disapprove activities
+    authorizationService.requireAdmin(accountRequest);
+    
     EActivity activity = activityRepository.findById(activityId)
         .orElseThrow(() -> new EntityNotFoundException("Not found activity"));
     if (activity.getIsApproved() == false) {

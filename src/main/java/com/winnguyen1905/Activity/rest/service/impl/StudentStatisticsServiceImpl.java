@@ -24,6 +24,7 @@ import com.winnguyen1905.activity.persistance.entity.EParticipationDetail;
 import com.winnguyen1905.activity.persistance.repository.AccountRepository;
 import com.winnguyen1905.activity.persistance.repository.ParticipationDetailRepository;
 import com.winnguyen1905.activity.rest.service.StudentStatisticsService;
+import com.winnguyen1905.activity.rest.service.AuthorizationService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,6 +42,7 @@ public class StudentStatisticsServiceImpl implements StudentStatisticsService {
 
     private final ParticipationDetailRepository participationDetailRepository;
     private final AccountRepository accountRepository;
+    private final AuthorizationService authorizationService;
 
     // Configuration constants
     private static final int RECENT_ACTIVITIES_LIMIT = 5;
@@ -58,8 +60,8 @@ public class StudentStatisticsServiceImpl implements StudentStatisticsService {
     public StudentStatisticsVm getStudentStatistics(TAccountRequest accountRequest, Long studentId) {
         log.debug("Retrieving statistics for student: {} requested by: {}", studentId, accountRequest.getId());
         
-        // TODO: Implement permission checks
-        // Only administrators or organization managers should be allowed to view other students' statistics
+        // Authorization check: Only admins or the student themselves can view student statistics
+        authorizationService.validateStudentStatisticsAccess(studentId, accountRequest);
         
         return getStudentStatisticsById(studentId);
     }

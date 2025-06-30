@@ -21,6 +21,7 @@ import com.winnguyen1905.activity.persistance.entity.EReport;
 import com.winnguyen1905.activity.persistance.repository.AccountRepository;
 import com.winnguyen1905.activity.persistance.repository.ReportRepository;
 import com.winnguyen1905.activity.rest.service.ReportService;
+import com.winnguyen1905.activity.rest.service.AuthorizationService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,6 +39,7 @@ public class ReportServiceImpl implements ReportService {
 
   private final ReportRepository reportRepository;
   private final AccountRepository accountRepository;
+  private final AuthorizationService authorizationService;
 
   private static final String REPORT_NOT_FOUND = "Report not found with ID: %d";
   private static final String REPORTER_NOT_FOUND = "Reporter not found with ID: %d";
@@ -167,6 +169,9 @@ public class ReportServiceImpl implements ReportService {
   public ReportVm updateReport(TAccountRequest accountRequest, AdminUpdateReport adminUpdateReport) {
     log.info("Updating report ID: {} by admin: {}", 
              adminUpdateReport.getReportId(), accountRequest.getId());
+    
+    // Authorization check: Only admins can update reports
+    authorizationService.requireAdmin(accountRequest);
     
     validateAdminUpdateData(adminUpdateReport);
     

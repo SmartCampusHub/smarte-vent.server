@@ -20,6 +20,7 @@ import com.winnguyen1905.activity.persistance.repository.ActivityRepository;
 import com.winnguyen1905.activity.persistance.repository.ParticipationDetailRepository;
 import com.winnguyen1905.activity.persistance.repository.specification.EParticipationDetailSpecification;
 import com.winnguyen1905.activity.rest.service.ParticipantService;
+import com.winnguyen1905.activity.rest.service.AuthorizationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -47,6 +48,7 @@ public class ParticipantServiceImpl implements ParticipantService {
   private final AccountRepository accountRepository;
   private final ActivityRepository activityRepository;
   private final ParticipationDetailRepository participationDetailRepository;
+  private final AuthorizationService authorizationService;
 
   private static final String PARTICIPATION_NOT_FOUND = "Participation detail not found with ID: %d";
   private static final String ACCOUNT_NOT_FOUND = "Account not found with ID: %d";
@@ -158,7 +160,8 @@ public class ParticipantServiceImpl implements ParticipantService {
     
     EParticipationDetail participationDetail = findParticipationById(updateDto.getParticipationId());
     
-    validateUserPermission(accountRequest.getId(), participationDetail);
+    // Authorization check: Only admins or contributors to the specific activity can verify participants
+    authorizationService.validateParticipationVerificationAccess(participationDetail.getActivity().getId(), accountRequest);
     
     updateParticipationStatus(participationDetail, updateDto, accountRequest.getUsername());
     
@@ -186,7 +189,8 @@ public class ParticipantServiceImpl implements ParticipantService {
     
     EParticipationDetail participationDetail = findParticipationById(updateDto.getParticipationId());
     
-    validateUserPermission(accountRequest.getId(), participationDetail);
+    // Authorization check: Only admins or contributors to the specific activity can reject participants
+    authorizationService.validateParticipationVerificationAccess(participationDetail.getActivity().getId(), accountRequest);
     
     updateParticipationStatus(participationDetail, updateDto, accountRequest.getUsername());
     
@@ -269,20 +273,8 @@ public class ParticipantServiceImpl implements ParticipantService {
   }
 
   /**
-   * Validates user permission to modify the participation.
-   *
-   * @param userId The user ID performing the action
-   * @param participationDetail The participation detail to check
-   * @throws BadRequestException if the user doesn't have permission
+   * Note: validateUserPermission method removed - authorization is now handled by AuthorizationService
    */
-  private void validateUserPermission(Long userId, EParticipationDetail participationDetail) {
-    boolean isContributor = participationDetailRepository.existsByParticipantIdAndActivityIdAndParticipationRole(
-        userId, participationDetail.getActivity().getId(), ParticipationRole.CONTRIBUTOR);
-    
-    if (!isContributor) {
-      throw new BadRequestException(UNAUTHORIZED_ACCESS);
-    }
-  }
 
   /**
    * Updates participation status and related fields.

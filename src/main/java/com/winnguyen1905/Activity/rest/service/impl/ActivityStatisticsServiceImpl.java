@@ -35,6 +35,8 @@ import com.winnguyen1905.activity.persistance.repository.ActivityRepository;
 import com.winnguyen1905.activity.persistance.repository.FeedbackRepository;
 import com.winnguyen1905.activity.persistance.repository.ParticipationDetailRepository;
 import com.winnguyen1905.activity.rest.service.ActivityStatisticsService;
+import com.winnguyen1905.activity.rest.service.AuthorizationService;
+import com.winnguyen1905.activity.common.annotation.TAccountRequest;
 
 @Service
 public class ActivityStatisticsServiceImpl implements ActivityStatisticsService {
@@ -47,6 +49,9 @@ public class ActivityStatisticsServiceImpl implements ActivityStatisticsService 
 
   @Autowired
   private ParticipationDetailRepository participationDetailRepository;
+
+  @Autowired
+  private AuthorizationService authorizationService;
 
   @Override
   public ActivityStatisticsVm getActivityStatistics(Long activityId) {
@@ -66,6 +71,16 @@ public class ActivityStatisticsServiceImpl implements ActivityStatisticsService 
     statistics.setTopParticipants(calculateTopParticipants(participations));
 
     return statistics;
+  }
+
+  /**
+   * Authorization-aware version of getActivityStatistics
+   */
+  public ActivityStatisticsVm getActivityStatistics(Long activityId, TAccountRequest accountRequest) {
+    // Authorization check: Only admins or activity organization can view detailed statistics
+    authorizationService.validateActivityAccess(activityId, accountRequest);
+    
+    return getActivityStatistics(activityId);
   }
 
   @Override

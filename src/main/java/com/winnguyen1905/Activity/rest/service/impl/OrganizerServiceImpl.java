@@ -11,6 +11,7 @@ import com.winnguyen1905.activity.persistance.entity.EOrganization;
 import com.winnguyen1905.activity.persistance.repository.RepresentativeOrganizerRepository;
 import com.winnguyen1905.activity.persistance.repository.specification.OrganizationSpecification;
 import com.winnguyen1905.activity.rest.service.OrganizerService;
+import com.winnguyen1905.activity.rest.service.AuthorizationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -36,6 +37,7 @@ import org.springframework.util.StringUtils;
 public class OrganizerServiceImpl implements OrganizerService {
 
   private final RepresentativeOrganizerRepository organizerRepository;
+  private final AuthorizationService authorizationService;
 
   private static final String ORGANIZER_NOT_FOUND = "Organizer not found with ID: %d";
 
@@ -71,6 +73,9 @@ public class OrganizerServiceImpl implements OrganizerService {
   public void updateOrganizer(TAccountRequest accountRequest, OrganizationDto organizerDto) {
     log.info("Updating organizer with ID: {} for account: {}", organizerDto.getId(), accountRequest.getId());
     
+    // Authorization check: Only admins or the organization itself can update organization data
+    authorizationService.validateOrganizationOwnership(organizerDto.getId(), accountRequest);
+    
     validateOrganizerDataForUpdate(organizerDto);
     
     EOrganization organizer = findOrganizerById(organizerDto.getId());
@@ -92,6 +97,9 @@ public class OrganizerServiceImpl implements OrganizerService {
   @Override
   public void deleteOrganizer(TAccountRequest accountRequest, Long organizerId) {
     log.info("Deleting organizer with ID: {} for account: {}", organizerId, accountRequest.getId());
+    
+    // Authorization check: Only admins or the organization itself can delete organization data
+    authorizationService.validateOrganizationOwnership(organizerId, accountRequest);
     
     validateOrganizerExists(organizerId);
     
