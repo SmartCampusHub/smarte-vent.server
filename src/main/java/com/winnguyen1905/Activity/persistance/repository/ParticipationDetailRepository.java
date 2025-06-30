@@ -105,4 +105,9 @@ public interface ParticipationDetailRepository
   Optional<EParticipationDetail> findByStudentIdAndActivityIdForFeedback(
       @Param("studentId") Long studentId, 
       @Param("activityId") Long activityId);
+
+  Boolean existsByActivityIdAndParticipantIdAndStatus(Long activityId, Long participantId,
+      ParticipationStatus status);
+
+  List<EParticipationDetail> findByActivityIdAndStatus(Long activityId, ParticipationStatus status);
 }
