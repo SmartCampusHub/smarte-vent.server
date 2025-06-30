@@ -22,20 +22,20 @@ management:
 spring:
   mail:
     host: smtp.gmail.com
-    port: 465
-    username: winnnguyen1905.game@gmail.com
-    password: 111111111111
+    port: 587
+    username: ${MAIL_USERNAME:winnnguyen1905.game@gmail.com}
+    password: ${MAIL_PASSWORD:your_app_password_here}
     properties:
       mail:
-        transport:
-          protocol: smtp
         smtp:
           auth: true
-          socketFactory:
-            port: 465
-            class: javax.net.ssl.SSLSocketFactory
-        smtps:
-          quitwait: false
+          starttls:
+            enable: true
+            required: true
+          connectiontimeout: 5000
+          timeout: 3000
+          writetimeout: 5000
+    test-connection: false
   application:
     name: ACTIVITY-GROUP3
   main:
