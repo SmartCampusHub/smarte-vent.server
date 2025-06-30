@@ -180,12 +180,14 @@ public interface ActivityScheduleRepository extends JpaRepository<EActivitySched
   Long getScheduleCountByPeriod(@Param("startDate") Instant startDate, @Param("endDate") Instant endDate);
 
   /**
-   * Get schedule duration statistics
+   * Get schedule duration statistics (average / min / max hours) using native SQL for compatibility.
+   * Works with MySQL & MariaDB; adjust TIMESTAMPDIFF for other dialects if needed.
+   * Returns a single row: [avgHours, minHours, maxHours]
    */
-  @Query("SELECT AVG(EXTRACT(EPOCH FROM (s.endTime - s.startTime))/3600), " +
-         "MIN(EXTRACT(EPOCH FROM (s.endTime - s.startTime))/3600), " +
-         "MAX(EXTRACT(EPOCH FROM (s.endTime - s.startTime))/3600) " +
-         "FROM EActivitySchedule s WHERE s.activity.id = :activityId")
+  @Query(value = "SELECT AVG(TIMESTAMPDIFF(SECOND, start_time, end_time))/3600                 AS avg_hours, " +
+                 "MIN(TIMESTAMPDIFF(SECOND, start_time, end_time))/3600                 AS min_hours, " +
+                 "MAX(TIMESTAMPDIFF(SECOND, start_time, end_time))/3600                 AS max_hours " +
+                 "FROM event_schedule WHERE activity_id = :activityId", nativeQuery = true)
   List<Object[]> getScheduleDurationStatistics(@Param("activityId") Long activityId);
 
   /**
@@ -273,10 +275,10 @@ public interface ActivityScheduleRepository extends JpaRepository<EActivitySched
   Optional<EActivitySchedule> findCurrentActiveScheduleForActivity(@Param("activityId") Long activityId, @Param("currentTime") Instant currentTime);
 
   /**
-   * Get total duration of all schedules for an activity (in hours)
+   * Get total duration of all schedules for an activity (in hours) using native SQL.
    */
-  @Query("SELECT COALESCE(SUM(EXTRACT(EPOCH FROM (s.endTime - s.startTime))/3600), 0) " +
-         "FROM EActivitySchedule s WHERE s.activity.id = :activityId")
+  @Query(value = "SELECT COALESCE(SUM(TIMESTAMPDIFF(SECOND, start_time, end_time))/3600, 0) " +
+                 "FROM event_schedule WHERE activity_id = :activityId", nativeQuery = true)
   Double getTotalDurationHoursForActivity(@Param("activityId") Long activityId);
 
   /**
