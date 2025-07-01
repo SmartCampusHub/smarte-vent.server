@@ -20,7 +20,8 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Service for handling Socket.IO events related to messaging and notifications.
@@ -33,15 +34,11 @@ public class SocketEventHandlerService {
 
   private final SocketIOServer socketIOServer;
   private final SocketIOService socketIOService;
+  private final SocketCacheService socketCacheService;
   private final AccountRepository accountRepository;
   private final ActivityRepository activityRepository;
   private final ParticipationDetailRepository participationDetailRepository;
   private final NotificationService notificationService;
-
-  // Maps to track user states
-  private final Map<Long, UserStatusDto.UserStatus> userStatusMap = new ConcurrentHashMap<>();
-  private final Map<Long, Instant> userLastSeenMap = new ConcurrentHashMap<>();
-  private final Map<String, Long> typingUsers = new ConcurrentHashMap<>(); // sessionId -> userId
 
   // Event constants
   private static final String USER_ID_PARAM = "userId";
@@ -197,14 +194,12 @@ public class SocketEventHandlerService {
 
       messageDto.setTimestamp(Instant.now());
 
-      // Get all participants of the activity
-      List<EParticipationDetail> participants = participationDetailRepository
-          .findByActivityIdAndStatus(messageDto.getActivityId(), ParticipationStatus.VERIFIED);
-
+      // Get all participants of the activity (with Redis caching)
+      Set<Long> participantIds = getCachedActivityParticipants(messageDto.getActivityId());
+      
       // Send to all participants except sender
       int deliveredCount = 0;
-      for (EParticipationDetail participant : participants) {
-        Long participantId = participant.getParticipant().getId();
+      for (Long participantId : participantIds) {
         if (!participantId.equals(senderId)) {
           boolean delivered = socketIOService.sendNotification(
               participantId,
@@ -220,7 +215,7 @@ public class SocketEventHandlerService {
           "messageId", messageDto.getMessageId(),
           "activityId", messageDto.getActivityId(),
           "deliveredToCount", deliveredCount,
-          "totalParticipants", participants.size() - 1,
+          "totalParticipants", participantIds.size() - 1,
           "timestamp", Instant.now()));
 
       log.debug("Activity message sent in activity {} by user {} to {} participants",
@@ -255,15 +250,14 @@ public class SocketEventHandlerService {
       announcementDto.setTimestamp(Instant.now());
       announcementDto.setMessageType(ActivityChatMessageDto.MessageType.ANNOUNCEMENT);
 
-      // Get all participants
-      List<EParticipationDetail> participants = participationDetailRepository
-          .findByActivityIdAndStatus(announcementDto.getActivityId(), ParticipationStatus.VERIFIED);
+      // Get all participants (with Redis caching)
+      Set<Long> participantIds = getCachedActivityParticipants(announcementDto.getActivityId());
 
       // Send to all participants
       int deliveredCount = 0;
-      for (EParticipationDetail participant : participants) {
+      for (Long participantId : participantIds) {
         boolean delivered = socketIOService.sendNotification(
-            participant.getParticipant().getId(),
+            participantId,
             "activity_announcement_received",
             announcementDto);
         if (delivered)
@@ -271,12 +265,12 @@ public class SocketEventHandlerService {
       }
 
       // Also send as regular notification
-      for (EParticipationDetail participant : participants) {
+      for (Long participantId : participantIds) {
         NotificationDto notification = NotificationDto.builder()
             .title("New Announcement: " + activity.getActivityName())
             .content(announcementDto.getContent())
             .notificationType(NotificationType.ACTIVITY)
-            .receiverId(participant.getParticipant().getId())
+            .receiverId(participantId)
             .build();
 
         try {
@@ -290,7 +284,7 @@ public class SocketEventHandlerService {
           "messageId", announcementDto.getMessageId(),
           "activityId", announcementDto.getActivityId(),
           "deliveredToCount", deliveredCount,
-          "totalParticipants", participants.size(),
+          "totalParticipants", participantIds.size(),
           "timestamp", Instant.now()));
 
       log.info("Activity announcement sent in activity {} by organizer {} to {} participants",
@@ -313,17 +307,18 @@ public class SocketEventHandlerService {
       }
 
       typingDto.setIsTyping(true);
-      typingUsers.put(client.getSessionId().toString(), userId);
+      socketCacheService.setUserTyping(client.getSessionId().toString(), userId, 
+          typingDto.getActivityId() != null ? typingDto.getActivityId() : typingDto.getReceiverId(), 
+          typingDto.getActivityId() == null);
 
       if (typingDto.getActivityId() != null) {
-        // Activity chat typing
-        List<EParticipationDetail> participants = participationDetailRepository
-            .findByActivityIdAndStatus(typingDto.getActivityId(), ParticipationStatus.VERIFIED);
+        // Activity chat typing (with Redis caching)
+        Set<Long> participantIds = getCachedActivityParticipants(typingDto.getActivityId());
 
-        for (EParticipationDetail participant : participants) {
-          if (!participant.getParticipant().getId().equals(userId)) {
+        for (Long participantId : participantIds) {
+          if (!participantId.equals(userId)) {
             socketIOService.sendNotification(
-                participant.getParticipant().getId(),
+                participantId,
                 "user_typing_in_activity",
                 typingDto);
           }
@@ -352,17 +347,16 @@ public class SocketEventHandlerService {
       }
 
       typingDto.setIsTyping(false);
-      typingUsers.remove(client.getSessionId().toString());
+      socketCacheService.removeUserTyping(client.getSessionId().toString());
 
       if (typingDto.getActivityId() != null) {
-        // Activity chat typing
-        List<EParticipationDetail> participants = participationDetailRepository
-            .findByActivityIdAndStatus(typingDto.getActivityId(), ParticipationStatus.VERIFIED);
+        // Activity chat typing (with Redis caching)
+        Set<Long> participantIds = getCachedActivityParticipants(typingDto.getActivityId());
 
-        for (EParticipationDetail participant : participants) {
-          if (!participant.getParticipant().getId().equals(userId)) {
+        for (Long participantId : participantIds) {
+          if (!participantId.equals(userId)) {
             socketIOService.sendNotification(
-                participant.getParticipant().getId(),
+                participantId,
                 "user_stopped_typing_in_activity",
                 typingDto);
           }
@@ -390,8 +384,8 @@ public class SocketEventHandlerService {
         return;
       }
 
-      userStatusMap.put(userId, statusDto.getStatus());
-      userLastSeenMap.put(userId, Instant.now());
+      socketCacheService.setUserStatus(userId, statusDto.getStatus());
+      socketCacheService.updateLastSeen(userId, Instant.now());
 
       // Broadcast status update to relevant users (friends, activity participants,
       // etc.)
@@ -411,7 +405,7 @@ public class SocketEventHandlerService {
     try {
       Long userId = getUserIdFromClient(client);
       if (userId != null) {
-        userLastSeenMap.put(userId, Instant.now());
+        socketCacheService.updateLastSeen(userId, Instant.now());
 
         // Send heartbeat response
         client.sendEvent("heartbeat_ack", Map.of(
@@ -600,13 +594,59 @@ public class SocketEventHandlerService {
    * Gets current user status.
    */
   public UserStatusDto.UserStatus getUserStatus(Long userId) {
-    return userStatusMap.getOrDefault(userId, UserStatusDto.UserStatus.OFFLINE);
+    return socketCacheService.getUserStatus(userId);
   }
 
   /**
    * Gets user's last seen timestamp.
    */
   public Instant getUserLastSeen(Long userId) {
-    return userLastSeenMap.get(userId);
+    return socketCacheService.getLastSeen(userId);
+  }
+
+  // ==================== HELPER METHODS ====================
+
+  /**
+   * Gets cached activity participants with fallback to database.
+   *
+   * @param activityId The activity ID
+   * @return Set of participant user IDs
+   */
+  private Set<Long> getCachedActivityParticipants(Long activityId) {
+    try {
+      // Try to get from cache first
+      Set<Long> cachedParticipants = socketCacheService.getActivityParticipants(activityId);
+      
+      if (!cachedParticipants.isEmpty()) {
+        log.debug("Retrieved {} participants from cache for activity {}", cachedParticipants.size(), activityId);
+        return cachedParticipants;
+      }
+      
+      // Cache miss - fetch from database
+      List<EParticipationDetail> participants = participationDetailRepository
+          .findByActivityIdAndStatus(activityId, ParticipationStatus.VERIFIED);
+      
+      Set<Long> participantIds = participants.stream()
+          .map(p -> p.getParticipant().getId())
+          .collect(Collectors.toSet());
+      
+      // Cache the result for future use
+      if (!participantIds.isEmpty()) {
+        socketCacheService.cacheActivityParticipants(activityId, participantIds);
+        log.debug("Cached {} participants for activity {} from database", participantIds.size(), activityId);
+      }
+      
+      return participantIds;
+    } catch (Exception e) {
+      log.error("Failed to get activity participants for activity {}: {}", activityId, e.getMessage());
+      
+      // Fallback to direct database query
+      List<EParticipationDetail> participants = participationDetailRepository
+          .findByActivityIdAndStatus(activityId, ParticipationStatus.VERIFIED);
+      
+      return participants.stream()
+          .map(p -> p.getParticipant().getId())
+          .collect(Collectors.toSet());
+    }
   }
 }

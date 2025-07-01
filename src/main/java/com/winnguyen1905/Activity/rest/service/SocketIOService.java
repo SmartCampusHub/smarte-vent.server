@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -22,6 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class SocketIOService {
 
     private final SocketIOServer socketIOServer;
+    private final SocketCacheService socketCacheService;
     private final Map<Long, SocketIOClient> userSocketMap = new ConcurrentHashMap<>();
 
     // Configuration constants
@@ -132,15 +134,24 @@ public class SocketIOService {
             return false;
         }
 
+        // Check local connection first
         SocketIOClient client = userSocketMap.get(userId);
-        if (client != null && client.isChannelOpen()) {
-            return true;
-        } else if (client != null) {
+        boolean locallyConnected = client != null && client.isChannelOpen();
+        
+        if (!locallyConnected && client != null) {
             // Clean up stale connection
             removeUserFromMap(userId);
         }
         
-        return false;
+        // Also check Redis cache for distributed deployment support
+        boolean cacheConnected = socketCacheService.isUserOnline(userId);
+        
+        // If user is in cache but not locally connected, they might be connected to another instance
+        if (!locallyConnected && cacheConnected) {
+            log.debug("User {} is online in cache but not locally connected (distributed deployment)", userId);
+        }
+        
+        return locallyConnected || cacheConnected;
     }
 
     /**
@@ -151,7 +162,10 @@ public class SocketIOService {
     public int getConnectedUserCount() {
         // Clean up any stale connections before counting
         cleanupStaleConnections();
-        return userSocketMap.size();
+        
+        // Use Redis cache for distributed count
+        Set<Long> onlineUsers = socketCacheService.getOnlineUsers();
+        return onlineUsers.size();
     }
 
     /**
@@ -159,9 +173,11 @@ public class SocketIOService {
      *
      * @return Set of connected user IDs
      */
-    public java.util.Set<Long> getConnectedUserIds() {
+    public Set<Long> getConnectedUserIds() {
         cleanupStaleConnections();
-        return java.util.Set.copyOf(userSocketMap.keySet());
+        
+        // Use Redis cache for distributed user list
+        return socketCacheService.getOnlineUsers();
     }
 
     /**
@@ -242,6 +258,9 @@ public class SocketIOService {
                 existingClient.disconnect();
             }
             
+            // Add to Redis cache as online user
+            socketCacheService.addOnlineUser(userId, sessionId);
+            
             log.info("User {} connected with session {}", userId, sessionId);
         } catch (NumberFormatException e) {
             log.warn(INVALID_USER_ID_FORMAT, userIdParam);
@@ -269,7 +288,13 @@ public class SocketIOService {
         userSocketMap.entrySet().removeIf(entry -> {
             boolean matches = entry.getValue().getSessionId().toString().equals(sessionId);
             if (matches) {
-                log.debug("Removed user {} with session {}", entry.getKey(), sessionId);
+                Long userId = entry.getKey();
+                
+                // Remove from Redis cache
+                socketCacheService.removeOnlineUser(userId);
+                socketCacheService.removeSessionMapping(sessionId);
+                
+                log.debug("Removed user {} with session {} from both local and Redis cache", userId, sessionId);
             }
             return matches;
         });

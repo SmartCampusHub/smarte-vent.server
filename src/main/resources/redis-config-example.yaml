@@ -1,0 +1,57 @@
+# Redis Configuration for SocketIO Caching
+# Add this to your application.yaml file
+
+spring:
+  data:
+    redis:
+      # Redis server connection
+      host: localhost
+      port: 6379
+      password: # Leave empty if no password
+      database: 0
+      timeout: 2000ms
+      
+      # Connection pool settings
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+          max-wait: -1ms
+        shutdown-timeout: 100ms
+
+# SocketIO specific configuration
+socket:
+  host: 0.0.0.0
+  port: 9092
+
+# Redis cache configuration
+cache:
+  redis:
+    # Default TTL for cache entries
+    default-ttl: 3600s
+    # Enable Redis cache statistics
+    enable-statistics: true
+    
+# Example for different environments:
+---
+spring:
+  config:
+    activate:
+      on-profile: production
+  data:
+    redis:
+      host: redis-production-host
+      port: 6379
+      password: ${REDIS_PASSWORD}
+      ssl: true
+      
+---
+spring:
+  config:
+    activate:
+      on-profile: docker
+  data:
+    redis:
+      host: redis
+      port: 6379 
