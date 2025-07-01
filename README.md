@@ -132,13 +132,52 @@ The Activity Management System is designed for educational institutions and orga
 
 ## 🚀 Installation & Setup
 
-### 1. Clone the Repository
+### 🐳 Docker Setup (Recommended)
+
+For the easiest setup with all dependencies included:
+
+```bash
+# 1. Clone the repository
+git clone <repository-url>
+cd smarte-vent-backend
+
+# 2. Copy environment template
+cp docker/env-template .env
+
+# 3. Configure your email settings in .env
+# Edit MAIL_USERNAME and MAIL_PASSWORD
+
+# 4. Start the complete stack
+docker-compose --profile dev up -d
+
+# 5. Access the application
+# API: http://localhost:8080
+# SocketIO: http://localhost:9092
+# phpMyAdmin: http://localhost:8082
+# Redis Commander: http://localhost:8081
+```
+
+The Docker setup includes:
+- ✅ **Spring Boot Application** with optimized JVM settings
+- ✅ **MySQL 8.0** with automatic initialization
+- ✅ **Redis 7** with persistence and SocketIO optimization
+- ✅ **phpMyAdmin** for database management
+- ✅ **Redis Commander** for cache management
+- ✅ **Nginx** reverse proxy (production profile)
+
+📖 **See [DOCKER_USAGE.md](DOCKER_USAGE.md) for complete Docker documentation**
+
+### 🛠 Manual Setup (Alternative)
+
+If you prefer to run services manually:
+
+#### 1. Clone the Repository
 ```bash
 git clone <repository-url>
 cd smarte-vent-backend
 ```
 
-### 2. Database Setup
+#### 2. Database Setup
 ```sql
 -- Create database
 CREATE DATABASE activity_management;
@@ -149,7 +188,7 @@ GRANT ALL PRIVILEGES ON activity_management.* TO 'activity_user'@'localhost';
 FLUSH PRIVILEGES;
 ```
 
-### 3. Redis Setup
+#### 3. Redis Setup
 ```bash
 # Using Docker
 docker run --name redis -p 6379:6379 -d redis:7-alpine
@@ -160,7 +199,7 @@ docker run --name redis -p 6379:6379 -d redis:7-alpine
 # Linux: sudo apt-get install redis-server
 ```
 
-### 4. Environment Configuration
+#### 4. Environment Configuration
 Create `.env` file in the project root:
 ```bash
 # Database Configuration
@@ -186,7 +225,7 @@ SOCKET_HOST=0.0.0.0
 SOCKET_PORT=9092
 ```
 
-### 5. Build and Run
+#### 5. Build and Run
 ```bash
 # Install dependencies
 mvn clean install
@@ -624,24 +663,43 @@ mvn spring-boot:run -Dspring-boot.run.profiles=dev
 mvn spring-boot:run -Dspring-boot.run.jvmArguments="-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005"
 ```
 
+### Docker Development Commands
+```bash
+# View application logs
+docker-compose logs -f app
+
+# Restart application after code changes
+docker-compose build app && docker-compose restart app
+
+# Access MySQL database
+docker-compose exec mysql mysql -u root -prootpassword activity
+
+# Access Redis CLI
+docker-compose exec redis redis-cli
+
+# Check all service health
+docker-compose ps
+```
+
 ### Testing Email Configuration
 ```bash
-# Test endpoint
+# Test endpoint (Docker)
+curl -X POST "http://localhost:8080/api/test/send-email?to=test@example.com"
+
+# Test endpoint (Manual setup)
 curl -X POST "http://localhost:8080/api/test/send-email?to=test@example.com"
 ```
 
 ### Monitoring Redis Cache
 ```bash
-# Connect to Redis CLI
+# Docker setup
+docker-compose exec redis redis-cli keys "socket:*"
+docker-compose exec redis redis-cli SMEMBERS socket:online:users
+
+# Manual setup
 redis-cli
-
-# View all SocketIO keys
 KEYS socket:*
-
-# Check online users
 SMEMBERS socket:online:users
-
-# View cache statistics
 INFO memory
 ```
 

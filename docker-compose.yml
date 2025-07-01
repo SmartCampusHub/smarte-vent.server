@@ -1,36 +1,170 @@
 version: '3.8'
 
 services:
-  # app:
-    # build:
-    #   context: .
-    #   dockerfile: Dockerfile
-    # ports:
-    #   - "8080:8080"  # Map container port 8080 to host port 8080
-    # environment:
-    #   - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/activity?allowPublicKeyRetrieval=true&useSSL=false
-    #   - SPRING_DATASOURCE_USERNAME=root
-    #   - SPRING_DATASOURCE_PASSWORD=rootpassword
-    # depends_on:
-    #   - mysql
-    # networks:
-    #   - app-network
+  # Spring Boot Application
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"  # Spring Boot app
+      - "9092:9092"  # SocketIO port
+    environment:
+      # Database Configuration
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/activity?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=rootpassword
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_JPA_SHOW_SQL=false
+      
+      # Redis Configuration
+      - SPRING_DATA_REDIS_HOST=redis
+      - SPRING_DATA_REDIS_PORT=6379
+      - SPRING_DATA_REDIS_PASSWORD=
+      - SPRING_DATA_REDIS_DATABASE=0
+      
+      # Email Configuration (set these in .env file)
+      - MAIL_USERNAME=${MAIL_USERNAME:-}
+      - MAIL_PASSWORD=${MAIL_PASSWORD:-}
+      - SPRING_MAIL_HOST=smtp.gmail.com
+      - SPRING_MAIL_PORT=587
+      - SPRING_MAIL_USERNAME=${MAIL_USERNAME:-}
+      - SPRING_MAIL_PASSWORD=${MAIL_PASSWORD:-}
+      
+      # SocketIO Configuration
+      - SOCKET_HOST=0.0.0.0
+      - SOCKET_PORT=9092
+      
+      # JWT Configuration  
+      - JWT_SECRET=${JWT_SECRET:-your-default-jwt-secret-key-change-in-production}
+      - JWT_EXPIRATION=86400
+      
+      # Spring Profiles
+      - SPRING_PROFILES_ACTIVE=docker
+      
+      # Logging
+      - LOGGING_LEVEL_ROOT=INFO
+      - LOGGING_LEVEL_COM_WINNGUYEN1905=DEBUG
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - app-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
 
+  # MySQL Database
   mysql:
     image: mysql:8.0
     ports:
-      - "3306:3306"  # Expose MySQL port to the host (optional)
+      - "3306:3306"
     environment:
       - MYSQL_ROOT_PASSWORD=rootpassword
       - MYSQL_DATABASE=activity
+      - MYSQL_USER=activity_user
+      - MYSQL_PASSWORD=activity_pass
     volumes:
-      - mysql-data:/var/lib/mysql  # Persist MySQL data
+      - mysql-data:/var/lib/mysql
+      - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     networks:
       - app-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpassword"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+
+  # Redis Cache & Session Store
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+      - ./docker/redis/redis.conf:/etc/redis/redis.conf:ro
+    networks:
+      - app-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    command: redis-server /etc/redis/redis.conf
+
+  # Redis Commander (Redis Management UI)
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    ports:
+      - "8081:8081"
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+      - HTTP_USER=admin
+      - HTTP_PASSWORD=admin
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - app-network
+    restart: unless-stopped
+    profiles: ["dev", "debug"]
+
+  # phpMyAdmin (MySQL Management UI)
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    ports:
+      - "8082:80"
+    environment:
+      - PMA_HOST=mysql
+      - PMA_PORT=3306
+      - PMA_USER=root
+      - PMA_PASSWORD=rootpassword
+      - MYSQL_ROOT_PASSWORD=rootpassword
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - app-network
+    restart: unless-stopped
+    profiles: ["dev", "debug"]
+
+  # Nginx (Load Balancer / Reverse Proxy)
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./docker/nginx/ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - app
+    networks:
+      - app-network
+    restart: unless-stopped
+    profiles: ["prod"]
 
 networks:
   app-network:
     driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.20.0.0/16
 
 volumes:
   mysql-data:
+    driver: local
+  redis-data:
+    driver: local

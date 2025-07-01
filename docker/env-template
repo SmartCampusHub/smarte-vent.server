@@ -1,0 +1,88 @@
+# Activity Management System - Environment Configuration
+# Copy this file to .env and update the values
+
+# ==============================================
+# DATABASE CONFIGURATION
+# ==============================================
+DB_URL=jdbc:mysql://mysql:3306/activity?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
+DB_USERNAME=root
+DB_PASSWORD=rootpassword
+
+# ==============================================
+# EMAIL CONFIGURATION
+# ==============================================
+# Gmail Configuration (Generate App Password)
+# 1. Enable 2FA on your Google account
+# 2. Go to Google Account Settings > Security > 2-Step Verification > App passwords
+# 3. Generate app password for "Mail"
+MAIL_USERNAME=your-email@gmail.com
+MAIL_PASSWORD=your-16-character-app-password
+
+# ==============================================
+# REDIS CONFIGURATION
+# ==============================================
+REDIS_HOST=redis
+REDIS_PORT=6379
+REDIS_PASSWORD=
+REDIS_DATABASE=0
+
+# ==============================================
+# JWT CONFIGURATION
+# ==============================================
+# Generate a strong secret key for JWT tokens
+# You can use: openssl rand -base64 32
+JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
+JWT_EXPIRATION=86400
+
+# ==============================================
+# SOCKETIO CONFIGURATION
+# ==============================================
+SOCKET_HOST=0.0.0.0
+SOCKET_PORT=9092
+
+# ==============================================
+# SPRING PROFILES
+# ==============================================
+SPRING_PROFILES_ACTIVE=docker
+
+# ==============================================
+# LOGGING CONFIGURATION
+# ==============================================
+LOGGING_LEVEL_ROOT=INFO
+LOGGING_LEVEL_COM_WINNGUYEN1905=DEBUG
+
+# ==============================================
+# DEVELOPMENT TOOLS (Optional)
+# ==============================================
+# Redis Commander credentials
+REDIS_COMMANDER_USER=admin
+REDIS_COMMANDER_PASSWORD=admin
+
+# phpMyAdmin settings (already configured in docker-compose.yml)
+PMA_HOST=mysql
+PMA_USER=root
+PMA_PASSWORD=rootpassword
+
+# ==============================================
+# PRODUCTION SETTINGS (For production deployment)
+# ==============================================
+# Uncomment and configure for production
+
+# SSL Certificate paths (for Nginx HTTPS)
+# SSL_CERT_PATH=./docker/nginx/ssl/cert.pem
+# SSL_KEY_PATH=./docker/nginx/ssl/key.pem
+
+# Production database settings
+# PROD_DB_URL=jdbc:mysql://production-mysql:3306/activity
+# PROD_DB_USERNAME=activity_user
+# PROD_DB_PASSWORD=strong-production-password
+
+# Production Redis settings
+# PROD_REDIS_HOST=production-redis
+# PROD_REDIS_PASSWORD=strong-redis-password
+
+# Production email settings (use production SMTP server)
+# PROD_MAIL_HOST=smtp.your-domain.com
+# PROD_MAIL_PORT=587
+# PROD_MAIL_USERNAME=noreply@your-domain.com
+# PROD_MAIL_PASSWORD=production-email-password 
