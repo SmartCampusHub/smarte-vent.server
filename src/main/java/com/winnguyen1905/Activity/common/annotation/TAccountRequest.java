@@ -13,8 +13,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TAccountRequest implements Serializable {
-    private Long id;
-    private String username;
-    private AccountRole role;
-    private UUID socketClientId;
+  private Long id;
+  private String username;
+  private AccountRole role;
+  private UUID socketClientId;
 }
