@@ -23,18 +23,34 @@ import com.winnguyen1905.activity.model.viewmodel.AccountVm;
 import com.winnguyen1905.activity.model.viewmodel.AuthResponse;
 import com.winnguyen1905.activity.rest.service.AuthService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("auth")
 @RequiredArgsConstructor
+@Tag(name = "Authentication", description = "Authentication and user management endpoints")
 public class AuthController {
 
   private final AuthService authService;
 
   @PostMapping("/login")
-  public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest loginRequest) {
+  @Operation(summary = "Login to the system", description = "Authenticate a user and return access and refresh tokens")
+  @ApiResponses(value = {
+    @ApiResponse(responseCode = "200", description = "Successful login", 
+                 content = @Content(schema = @Schema(implementation = AuthResponse.class))),
+    @ApiResponse(responseCode = "401", description = "Invalid credentials"),
+    @ApiResponse(responseCode = "400", description = "Invalid input")
+  })
+  public ResponseEntity<AuthResponse> login(
+      @Parameter(description = "Login credentials", required = true) @RequestBody LoginRequest loginRequest) {
     AuthResponse authResponse = this.authService.login(loginRequest);
     return ResponseEntity
         .ok()
@@ -46,13 +62,29 @@ public class AuthController {
   }
 
   @PostMapping("/register")
-  public ResponseEntity<AccountVm> register(@RequestBody RegisterRequest registerRequest) {
+  @Operation(summary = "Register a new user", description = "Create a new user account")
+  @ApiResponses(value = {
+    @ApiResponse(responseCode = "201", description = "User registered successfully", 
+                 content = @Content(schema = @Schema(implementation = AccountVm.class))),
+    @ApiResponse(responseCode = "400", description = "Invalid input data"),
+    @ApiResponse(responseCode = "409", description = "User already exists")
+  })
+  public ResponseEntity<AccountVm> register(
+      @Parameter(description = "Registration details", required = true) @RequestBody RegisterRequest registerRequest) {
     AccountVm accountVm = authService.register(registerRequest);
     return ResponseEntity.status(HttpStatus.CREATED).body(accountVm);
   }
 
   @PostMapping("/refresh")
+  @Operation(summary = "Refresh access token", description = "Get a new access token using a refresh token")
+  @ApiResponses(value = {
+    @ApiResponse(responseCode = "200", description = "Token refreshed successfully", 
+                 content = @Content(schema = @Schema(implementation = AuthResponse.class))),
+    @ApiResponse(responseCode = "400", description = "Invalid refresh token"),
+    @ApiResponse(responseCode = "404", description = "Refresh token not found")
+  })
   public ResponseEntity<AuthResponse> getAuthenticationResultByRefreshToken(
+      @Parameter(description = "Refresh token from cookie", required = true) 
       @CookieValue(name = "refresh_token", defaultValue = "") String refreshToken) {
     if (refreshToken.isEmpty()) {
       throw new ResourceNotFoundException("Not found refresh token");
@@ -66,7 +98,14 @@ public class AuthController {
   }
 
   @PostMapping("/logout")
-  public ResponseEntity<Void> logout(@CookieValue(name = "refresh_token", defaultValue = "") String refreshToken) {
+  @Operation(summary = "Logout the user", description = "Invalidate the user's refresh token")
+  @ApiResponses(value = {
+    @ApiResponse(responseCode = "200", description = "Successfully logged out"),
+    @ApiResponse(responseCode = "404", description = "Refresh token not found")
+  })
+  public ResponseEntity<Void> logout(
+      @Parameter(description = "Refresh token from cookie") 
+      @CookieValue(name = "refresh_token", defaultValue = "") String refreshToken) {
     if (refreshToken.isEmpty()) {
       throw new ResourceNotFoundException("Not found refresh token");
     }
@@ -77,8 +116,15 @@ public class AuthController {
   }
 
   @PostMapping("/change-password")
-  public ResponseEntity<Void> changePassword(@AccountRequest TAccountRequest accountRequest,
-      @RequestBody ChangePasswordDto changePasswordDto) {
+  @Operation(summary = "Change password", description = "Change the password for the current user")
+  @ApiResponses(value = {
+    @ApiResponse(responseCode = "200", description = "Password changed successfully"),
+    @ApiResponse(responseCode = "400", description = "Invalid password data"),
+    @ApiResponse(responseCode = "401", description = "Invalid current password")
+  })
+  public ResponseEntity<Void> changePassword(
+      @Parameter(description = "Account request context", hidden = true) @AccountRequest TAccountRequest accountRequest,
+      @Parameter(description = "Password change details", required = true) @RequestBody ChangePasswordDto changePasswordDto) {
     this.authService.changePassword(accountRequest, changePasswordDto);
     return ResponseEntity.ok().build();
   }
