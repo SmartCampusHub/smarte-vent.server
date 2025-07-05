@@ -3,8 +3,6 @@ package com.winnguyen1905.activity.scheduling;
 import com.winnguyen1905.activity.common.constant.ActivityStatus;
 import com.winnguyen1905.activity.common.constant.NotificationType;
 import com.winnguyen1905.activity.common.constant.ScheduleStatus;
-import com.winnguyen1905.activity.model.dto.NotificationDto;
-import com.winnguyen1905.activity.model.dto.SocketNotificationDto;
 import com.winnguyen1905.activity.persistance.entity.EAccountCredentials;
 import com.winnguyen1905.activity.persistance.entity.EActivity;
 import com.winnguyen1905.activity.persistance.entity.EActivitySchedule;
@@ -12,11 +10,14 @@ import com.winnguyen1905.activity.persistance.entity.EParticipationDetail;
 import com.winnguyen1905.activity.persistance.repository.ActivityRepository;
 import com.winnguyen1905.activity.persistance.repository.ActivityScheduleRepository;
 import com.winnguyen1905.activity.persistance.repository.ParticipationDetailRepository;
+import com.winnguyen1905.activity.rest.model.dto.NotificationDto;
+import com.winnguyen1905.activity.websocket.dto.SocketNotificationDto;
 import com.winnguyen1905.activity.rest.service.ActivitySchedulingService;
 import com.winnguyen1905.activity.rest.service.EmailService;
 import com.winnguyen1905.activity.rest.service.NotificationService;
-import com.winnguyen1905.activity.rest.service.SocketIOService;
+import com.winnguyen1905.activity.websocket.service.SocketIOService;
 import com.winnguyen1905.activity.utils.EmailTemplateUtil;
+import com.winnguyen1905.activity.websocket.SocketIoGateway;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,6 +41,7 @@ public class ActivitySchedulingServiceImpl implements ActivitySchedulingService 
   private final NotificationService notificationService;
   private final EmailService emailService;
   private final SocketIOService socketIOService;
+  private final SocketIoGateway socketIoGateway;
 
   /**
    * Checks every 5 seconds for activities that have ended (end date < current
@@ -77,8 +79,9 @@ public class ActivitySchedulingServiceImpl implements ActivitySchedulingService 
         }
       }
 
-      // Notify participants about status change
+      // Notify participants about status change using both old and new methods
       notifyStatusChange(activity, oldStatus, ActivityStatus.COMPLETED.toString());
+      socketIoGateway.broadcastActivityStatusChange(activity, ActivityStatus.valueOf(oldStatus), ActivityStatus.COMPLETED);
     }
   }
 
@@ -119,8 +122,9 @@ public class ActivitySchedulingServiceImpl implements ActivitySchedulingService 
       log.info("Updated activity {} (ID: {}) from {} to IN_PROGRESS",
           activity.getActivityName(), activity.getId(), oldStatus);
 
-      // Notify participants about status change
+      // Notify participants about status change using both old and new methods
       notifyStatusChange(activity, oldStatus, ActivityStatus.IN_PROGRESS.toString());
+      socketIoGateway.broadcastActivityStatusChange(activity, ActivityStatus.valueOf(oldStatus), ActivityStatus.IN_PROGRESS);
     }
   }
 
@@ -162,8 +166,9 @@ public class ActivitySchedulingServiceImpl implements ActivitySchedulingService 
       for (EParticipationDetail detail : participants) {
         EAccountCredentials participant = detail.getParticipant();
 
-        // Send socket notification if user is connected
+        // Send socket notification if user is connected (using both old and new methods)
         socketIOService.sendNotification(participant.getId(), "activity_today", socketNotification);
+        socketIoGateway.sendActivityReminder(activity, 0L);
 
         // Send regular notification
         NotificationDto notification = NotificationDto.builder()
@@ -231,8 +236,9 @@ public class ActivitySchedulingServiceImpl implements ActivitySchedulingService 
       for (EParticipationDetail detail : participants) {
         EAccountCredentials participant = detail.getParticipant();
 
-        // Send socket notification if user is connected
+        // Send socket notification if user is connected (using both old and new methods)  
         socketIOService.sendNotification(participant.getId(), "activity_one_day", socketNotification);
+        socketIoGateway.sendActivityReminder(activity, 1L);
 
         // Send regular notification
         NotificationDto notification = NotificationDto.builder()
@@ -300,8 +306,9 @@ public class ActivitySchedulingServiceImpl implements ActivitySchedulingService 
       for (EParticipationDetail detail : participants) {
         EAccountCredentials participant = detail.getParticipant();
 
-        // Send socket notification if user is connected
+        // Send socket notification if user is connected (using both old and new methods)
         socketIOService.sendNotification(participant.getId(), "activity_three_days", socketNotification);
+        socketIoGateway.sendActivityReminder(activity, 3L);
 
         // Send regular notification
         NotificationDto notification = NotificationDto.builder()
