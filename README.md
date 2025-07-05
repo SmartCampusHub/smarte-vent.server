@@ -401,6 +401,55 @@ DELETE /api/reports/{id}       - Delete report
 
 ## 🔄 Real-time Features
 
+### SocketIO Integration
+All real-time features have been reorganized under the **websocket** package for better maintainability:
+
+```
+src/main/java/com/winnguyen1905/activity/websocket/
+├── config/SocketIOConfig.java          # Server configuration
+├── service/                            # Core services
+│   ├── SocketIOService.java           # Connection management
+│   ├── SocketCacheService.java        # Redis caching
+│   ├── SocketEventHandlerService.java # Event processing
+│   └── impl/SocketCacheServiceImpl.java
+├── dto/                               # Data transfer objects
+│   ├── SocketNotificationDto.java    # Notifications
+│   ├── ActivityChatMessageDto.java   # Activity messages
+│   ├── UserStatusDto.java            # User presence
+│   └── [other socket DTOs]
+├── frontend-examples/                 # Client libraries
+│   └── ActivitySocketClient.js       # JavaScript client
+├── SocketIoGateway.java              # Main orchestrator
+└── documentation/                     # Complete docs
+    ├── socket-events-documentation.md
+    ├── SOCKET_IMPLEMENTATION_SUMMARY.md
+    └── SOCKETIO_GATEWAY_DOCUMENTATION.md
+```
+
+### JavaScript Client Library
+Use the comprehensive `ActivitySocketClient.js` for frontend integration:
+
+```javascript
+// Initialize client
+const client = new ActivitySocketClient('http://localhost:9092', userId);
+
+// Join activity room
+client.joinActivityRoom(activityId);
+
+// Listen for updates
+client.on('activityStatusChanged', (data) => {
+    console.log('Activity status changed:', data);
+});
+
+// Send messages
+client.broadcastToActivity({
+    activityId,
+    senderId: userId,
+    content: 'Hello everyone!',
+    messageType: 'TEXT'
+});
+```
+
 ### SocketIO Events
 
 #### Connection Events
