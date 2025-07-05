@@ -13,11 +13,19 @@ import com.winnguyen1905.activity.model.dto.StatisticsFilterDto;
 import com.winnguyen1905.activity.model.viewmodel.StatisticsVm;
 import com.winnguyen1905.activity.rest.service.StatisticsService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("statistics")
+@Tag(name = "Statistics", description = "Operations for retrieving activity statistics data")
 public class StatisticsController {
 
     private final StatisticsService statisticsService;
@@ -26,7 +34,14 @@ public class StatisticsController {
      * Get overall statistics without filtering
      */
     @GetMapping
-    public ResponseEntity<StatisticsVm> getStatistics(@AccountRequest TAccountRequest accountRequest) {
+    @Operation(summary = "Get overall statistics", description = "Get overall statistics without filtering")
+    @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "Statistics retrieved successfully", 
+                  content = @Content(schema = @Schema(implementation = StatisticsVm.class))),
+      @ApiResponse(responseCode = "401", description = "Unauthorized")
+    })
+    public ResponseEntity<StatisticsVm> getStatistics(
+        @Parameter(description = "Account request context", hidden = true) @AccountRequest TAccountRequest accountRequest) {
         StatisticsVm statistics = statisticsService.getActivityStatistics(accountRequest);
         return ResponseEntity.ok(statistics);
     }
@@ -35,9 +50,15 @@ public class StatisticsController {
      * Get filtered statistics with custom filters
      */
     @GetMapping("/filter")
+    @Operation(summary = "Get filtered statistics", description = "Get statistics filtered by custom criteria")
+    @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "Statistics retrieved successfully", 
+                  content = @Content(schema = @Schema(implementation = StatisticsVm.class))),
+      @ApiResponse(responseCode = "401", description = "Unauthorized")
+    })
     public ResponseEntity<StatisticsVm> getFilteredStatistics(
-            @AccountRequest TAccountRequest accountRequest,
-            @ModelAttribute StatisticsFilterDto filterDto) {
+            @Parameter(description = "Account request context", hidden = true) @AccountRequest TAccountRequest accountRequest,
+            @Parameter(description = "Statistics filter criteria") @ModelAttribute StatisticsFilterDto filterDto) {
         StatisticsVm statistics = statisticsService.getFilteredActivityStatistics(accountRequest, filterDto);
         return ResponseEntity.ok(statistics);
     }
@@ -46,7 +67,14 @@ public class StatisticsController {
      * Get statistics for activities in the last day
      */
     @GetMapping("/daily")
-    public ResponseEntity<StatisticsVm> getDailyStatistics(@AccountRequest TAccountRequest accountRequest) {
+    @Operation(summary = "Get daily statistics", description = "Get statistics for activities in the last day")
+    @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "Daily statistics retrieved successfully", 
+                  content = @Content(schema = @Schema(implementation = StatisticsVm.class))),
+      @ApiResponse(responseCode = "401", description = "Unauthorized")
+    })
+    public ResponseEntity<StatisticsVm> getDailyStatistics(
+        @Parameter(description = "Account request context", hidden = true) @AccountRequest TAccountRequest accountRequest) {
         StatisticsFilterDto filterDto = StatisticsFilterDto.builder()
                 .timePeriod(TimePeriod.DAY)
                 .build();
@@ -58,7 +86,14 @@ public class StatisticsController {
      * Get statistics for activities in the last week
      */
     @GetMapping("/weekly")
-    public ResponseEntity<StatisticsVm> getWeeklyStatistics(@AccountRequest TAccountRequest accountRequest) {
+    @Operation(summary = "Get weekly statistics", description = "Get statistics for activities in the last week")
+    @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "Weekly statistics retrieved successfully", 
+                  content = @Content(schema = @Schema(implementation = StatisticsVm.class))),
+      @ApiResponse(responseCode = "401", description = "Unauthorized")
+    })
+    public ResponseEntity<StatisticsVm> getWeeklyStatistics(
+        @Parameter(description = "Account request context", hidden = true) @AccountRequest TAccountRequest accountRequest) {
         StatisticsFilterDto filterDto = StatisticsFilterDto.builder()
                 .timePeriod(TimePeriod.WEEK)
                 .build();
@@ -70,7 +105,14 @@ public class StatisticsController {
      * Get statistics for activities in the last month
      */
     @GetMapping("/monthly")
-    public ResponseEntity<StatisticsVm> getMonthlyStatistics(@AccountRequest TAccountRequest accountRequest) {
+    @Operation(summary = "Get monthly statistics", description = "Get statistics for activities in the last month")
+    @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "Monthly statistics retrieved successfully", 
+                  content = @Content(schema = @Schema(implementation = StatisticsVm.class))),
+      @ApiResponse(responseCode = "401", description = "Unauthorized")
+    })
+    public ResponseEntity<StatisticsVm> getMonthlyStatistics(
+        @Parameter(description = "Account request context", hidden = true) @AccountRequest TAccountRequest accountRequest) {
         StatisticsFilterDto filterDto = StatisticsFilterDto.builder()
                 .timePeriod(TimePeriod.MONTH)
                 .build();
@@ -82,7 +124,14 @@ public class StatisticsController {
      * Get statistics for activities in the last quarter
      */
     @GetMapping("/quarterly")
-    public ResponseEntity<StatisticsVm> getQuarterlyStatistics(@AccountRequest TAccountRequest accountRequest) {
+    @Operation(summary = "Get quarterly statistics", description = "Get statistics for activities in the last quarter")
+    @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "Quarterly statistics retrieved successfully", 
+                  content = @Content(schema = @Schema(implementation = StatisticsVm.class))),
+      @ApiResponse(responseCode = "401", description = "Unauthorized")
+    })
+    public ResponseEntity<StatisticsVm> getQuarterlyStatistics(
+        @Parameter(description = "Account request context", hidden = true) @AccountRequest TAccountRequest accountRequest) {
         StatisticsFilterDto filterDto = StatisticsFilterDto.builder()
                 .timePeriod(TimePeriod.QUARTER)
                 .build();
@@ -94,7 +143,14 @@ public class StatisticsController {
      * Get statistics for activities in the last year
      */
     @GetMapping("/yearly")
-    public ResponseEntity<StatisticsVm> getYearlyStatistics(@AccountRequest TAccountRequest accountRequest) {
+    @Operation(summary = "Get yearly statistics", description = "Get statistics for activities in the last year")
+    @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "Yearly statistics retrieved successfully", 
+                  content = @Content(schema = @Schema(implementation = StatisticsVm.class))),
+      @ApiResponse(responseCode = "401", description = "Unauthorized")
+    })
+    public ResponseEntity<StatisticsVm> getYearlyStatistics(
+        @Parameter(description = "Account request context", hidden = true) @AccountRequest TAccountRequest accountRequest) {
         StatisticsFilterDto filterDto = StatisticsFilterDto.builder()
                 .timePeriod(TimePeriod.YEAR)
                 .build();

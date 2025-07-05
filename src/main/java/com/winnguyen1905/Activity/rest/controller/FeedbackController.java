@@ -30,12 +30,21 @@ import com.winnguyen1905.activity.model.viewmodel.FeedbackDetailVm;
 import com.winnguyen1905.activity.model.viewmodel.FeedbackSummaryVm;
 import com.winnguyen1905.activity.rest.service.FeedbackService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("feedbacks")
+@Tag(name = "Feedback Management", description = "Operations for managing activity and organization feedback")
 public class FeedbackController {
 
   @Autowired
@@ -50,9 +59,17 @@ public class FeedbackController {
    * @return The created feedback
    */
   @PostMapping
+  @Operation(summary = "Create feedback", description = "Create feedback for an activity")
+  @ApiResponses(value = {
+    @ApiResponse(responseCode = "201", description = "Feedback created successfully", 
+                content = @Content(schema = @Schema(implementation = FeedbackDetailVm.class))),
+    @ApiResponse(responseCode = "400", description = "Invalid input data"),
+    @ApiResponse(responseCode = "401", description = "Unauthorized"),
+    @ApiResponse(responseCode = "404", description = "Activity not found")
+  })
   public ResponseEntity<FeedbackDetailVm> createFeedback(
-      @AccountRequest TAccountRequest accountRequest,
-      @RequestBody FeedbackCreateDto feedbackDto) {
+      @Parameter(description = "Account request context", hidden = true) @AccountRequest TAccountRequest accountRequest,
+      @Parameter(description = "Feedback data", required = true) @RequestBody FeedbackCreateDto feedbackDto) {
     FeedbackDetailVm createdFeedback = feedbackService.createFeedback(accountRequest, feedbackDto);
     return new ResponseEntity<>(createdFeedback, HttpStatus.CREATED);
   }
@@ -64,9 +81,15 @@ public class FeedbackController {
    * @return Page of feedback summaries
    */
   @GetMapping("/my-feedbacks")
+  @Operation(summary = "Get my feedbacks", description = "Get all feedbacks provided by the current student")
+  @ApiResponses(value = {
+    @ApiResponse(responseCode = "200", description = "Feedbacks retrieved successfully", 
+                content = @Content(schema = @Schema(implementation = Page.class))),
+    @ApiResponse(responseCode = "401", description = "Unauthorized")
+  })
   public ResponseEntity<Page<FeedbackSummaryVm>> getMyFeedbacks(
-      @AccountRequest TAccountRequest accountRequest,
-      @PageableDefault(size = 10) Pageable pageable) {
+      @Parameter(description = "Account request context", hidden = true) @AccountRequest TAccountRequest accountRequest,
+      @Parameter(description = "Pagination parameters") @PageableDefault(size = 10) Pageable pageable) {
     Page<FeedbackSummaryVm> feedbacks = feedbackService.getStudentFeedbacks(accountRequest.getId(), pageable);
     return ResponseEntity.ok(feedbacks);
   }
@@ -78,9 +101,16 @@ public class FeedbackController {
    * @return True if the student can provide feedback, false otherwise
    */
   @GetMapping("/can-provide/{activityId}")
+  @Operation(summary = "Check if can provide feedback", description = "Check if the current student can provide feedback for an activity")
+  @ApiResponses(value = {
+    @ApiResponse(responseCode = "200", description = "Check completed successfully", 
+                content = @Content(schema = @Schema(implementation = Boolean.class))),
+    @ApiResponse(responseCode = "401", description = "Unauthorized"),
+    @ApiResponse(responseCode = "404", description = "Activity not found")
+  })
   public ResponseEntity<Boolean> canProvideFeedback(
-      @AccountRequest TAccountRequest accountRequest,
-      @PathVariable Long activityId) {
+      @Parameter(description = "Account request context", hidden = true) @AccountRequest TAccountRequest accountRequest,
+      @Parameter(description = "ID of the activity to check", required = true) @PathVariable Long activityId) {
     boolean canProvide = feedbackService.canStudentProvideFeedback(accountRequest.getId(), activityId);
     return ResponseEntity.ok(canProvide);
   }
@@ -92,9 +122,17 @@ public class FeedbackController {
    * @return The updated feedback
    */
   @PostMapping("/update")
+  @Operation(summary = "Update feedback", description = "Update a feedback provided by the current student")
+  @ApiResponses(value = {
+    @ApiResponse(responseCode = "200", description = "Feedback updated successfully", 
+                content = @Content(schema = @Schema(implementation = FeedbackDetailVm.class))),
+    @ApiResponse(responseCode = "400", description = "Invalid input data"),
+    @ApiResponse(responseCode = "401", description = "Unauthorized"),
+    @ApiResponse(responseCode = "404", description = "Feedback not found")
+  })
   public ResponseEntity<FeedbackDetailVm> updateFeedback(
-      @AccountRequest TAccountRequest accountRequest,
-      @Valid @RequestBody FeedbackUpdateDto feedbackDto) {
+      @Parameter(description = "Account request context", hidden = true) @AccountRequest TAccountRequest accountRequest,
+      @Parameter(description = "Updated feedback data", required = true) @Valid @RequestBody FeedbackUpdateDto feedbackDto) {
     FeedbackDetailVm updatedFeedback = feedbackService.updateFeedback(accountRequest, feedbackDto);
     return ResponseEntity.ok(updatedFeedback);
   }
@@ -106,7 +144,14 @@ public class FeedbackController {
    * @return No content response
    */
   @DeleteMapping("/{feedbackId}")
-  public ResponseEntity<Void> deleteFeedback(@PathVariable Long feedbackId) {
+  @Operation(summary = "Delete feedback", description = "Delete a feedback provided by the current student")
+  @ApiResponses(value = {
+    @ApiResponse(responseCode = "204", description = "Feedback deleted successfully"),
+    @ApiResponse(responseCode = "401", description = "Unauthorized"),
+    @ApiResponse(responseCode = "404", description = "Feedback not found")
+  })
+  public ResponseEntity<Void> deleteFeedback(
+      @Parameter(description = "ID of the feedback to delete", required = true) @PathVariable Long feedbackId) {
     feedbackService.deleteFeedback(feedbackId);
     return ResponseEntity.noContent().build();
   }
@@ -121,9 +166,15 @@ public class FeedbackController {
    * @return Page of feedback summaries
    */
   @GetMapping("/activity/{activityId}")
+  @Operation(summary = "Get activity feedbacks", description = "Get all feedbacks for a specific activity")
+  @ApiResponses(value = {
+    @ApiResponse(responseCode = "200", description = "Feedbacks retrieved successfully", 
+                content = @Content(schema = @Schema(implementation = Page.class))),
+    @ApiResponse(responseCode = "404", description = "Activity not found")
+  })
   public ResponseEntity<Page<FeedbackSummaryVm>> getActivityFeedbacks(
-      @PathVariable Long activityId,
-      @PageableDefault(size = 10) Pageable pageable) {
+      @Parameter(description = "ID of the activity", required = true) @PathVariable Long activityId,
+      @Parameter(description = "Pagination parameters") @PageableDefault(size = 10) Pageable pageable) {
     Page<FeedbackSummaryVm> feedbacks = feedbackService.getActivityFeedbacks(activityId, pageable);
     return ResponseEntity.ok(feedbacks);
   }
@@ -135,7 +186,14 @@ public class FeedbackController {
    * @return The average rating
    */
   @GetMapping("/activity/{activityId}/average-rating")
-  public ResponseEntity<Double> getActivityAverageRating(@PathVariable Long activityId) {
+  @Operation(summary = "Get activity average rating", description = "Get the average rating for a specific activity")
+  @ApiResponses(value = {
+    @ApiResponse(responseCode = "200", description = "Average rating retrieved successfully", 
+                content = @Content(schema = @Schema(implementation = Double.class))),
+    @ApiResponse(responseCode = "404", description = "Activity not found")
+  })
+  public ResponseEntity<Double> getActivityAverageRating(
+      @Parameter(description = "ID of the activity", required = true) @PathVariable Long activityId) {
     Double averageRating = feedbackService.getAverageRatingForActivity(activityId);
     return ResponseEntity.ok(averageRating != null ? averageRating : 0.0);
   }
@@ -150,9 +208,15 @@ public class FeedbackController {
    * @return Page of feedback summaries
    */
   @GetMapping("/organization/{organizationId}")
+  @Operation(summary = "Get organization feedbacks", description = "Get all feedbacks for a specific organization")
+  @ApiResponses(value = {
+    @ApiResponse(responseCode = "200", description = "Feedbacks retrieved successfully", 
+                content = @Content(schema = @Schema(implementation = Page.class))),
+    @ApiResponse(responseCode = "404", description = "Organization not found")
+  })
   public ResponseEntity<Page<FeedbackSummaryVm>> getOrganizationFeedbacks(
-      @PathVariable Long organizationId,
-      @PageableDefault(size = 10) Pageable pageable) {
+      @Parameter(description = "ID of the organization", required = true) @PathVariable Long organizationId,
+      @Parameter(description = "Pagination parameters") @PageableDefault(size = 10) Pageable pageable) {
     Page<FeedbackSummaryVm> feedbacks = feedbackService.getOrganizationFeedbacks(organizationId, pageable);
     return ResponseEntity.ok(feedbacks);
   }
@@ -164,7 +228,14 @@ public class FeedbackController {
    * @return The average rating
    */
   @GetMapping("/organization/{organizationId}/average-rating")
-  public ResponseEntity<Double> getOrganizationAverageRating(@PathVariable Long organizationId) {
+  @Operation(summary = "Get organization average rating", description = "Get the average rating for a specific organization")
+  @ApiResponses(value = {
+    @ApiResponse(responseCode = "200", description = "Average rating retrieved successfully", 
+                content = @Content(schema = @Schema(implementation = Double.class))),
+    @ApiResponse(responseCode = "404", description = "Organization not found")
+  })
+  public ResponseEntity<Double> getOrganizationAverageRating(
+      @Parameter(description = "ID of the organization", required = true) @PathVariable Long organizationId) {
     Double averageRating = feedbackService.getAverageRatingForOrganization(organizationId);
     return ResponseEntity.ok(averageRating != null ? averageRating : 0.0);
   }
@@ -176,7 +247,14 @@ public class FeedbackController {
    * @return List of category and average rating pairs
    */
   @GetMapping("/organization/{organizationId}/rating-by-category")
-  public ResponseEntity<List<Object[]>> getOrganizationRatingByCategory(@PathVariable Long organizationId) {
+  @Operation(summary = "Get organization rating by category", description = "Get the average rating by category for a specific organization")
+  @ApiResponses(value = {
+    @ApiResponse(responseCode = "200", description = "Category ratings retrieved successfully", 
+                content = @Content(array = @ArraySchema(schema = @Schema(implementation = Object[].class)))),
+    @ApiResponse(responseCode = "404", description = "Organization not found")
+  })
+  public ResponseEntity<List<Object[]>> getOrganizationRatingByCategory(
+      @Parameter(description = "ID of the organization", required = true) @PathVariable Long organizationId) {
     List<Object[]> ratingsByCategory = feedbackService.getAverageRatingByCategoryForOrganization(organizationId);
     return ResponseEntity.ok(ratingsByCategory);
   }
@@ -190,9 +268,18 @@ public class FeedbackController {
    * @return List of year, month, and average rating triples
    */
   @GetMapping("/organization/{organizationId}/rating-trend")
+  @Operation(summary = "Get organization rating trend", description = "Get the rating trend by month for a specific organization")
+  @ApiResponses(value = {
+    @ApiResponse(responseCode = "200", description = "Rating trend retrieved successfully", 
+                content = @Content(array = @ArraySchema(schema = @Schema(implementation = Object[].class)))),
+    @ApiResponse(responseCode = "400", description = "Invalid date range"),
+    @ApiResponse(responseCode = "404", description = "Organization not found")
+  })
   public ResponseEntity<List<Object[]>> getOrganizationRatingTrend(
-      @PathVariable Long organizationId,
+      @Parameter(description = "ID of the organization", required = true) @PathVariable Long organizationId,
+      @Parameter(description = "Start date for the trend analysis", required = true) 
       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant startDate,
+      @Parameter(description = "End date for the trend analysis", required = true) 
       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant endDate) {
     List<Object[]> ratingTrend = feedbackService.getRatingTrendByMonthForOrganization(organizationId, startDate,
         endDate);
@@ -206,7 +293,14 @@ public class FeedbackController {
    * @return List of keywords
    */
   @GetMapping("/organization/{organizationId}/keyword-analysis")
-  public ResponseEntity<List<String>> getOrganizationKeywordAnalysis(@PathVariable Long organizationId) {
+  @Operation(summary = "Get organization keyword analysis", description = "Get the keyword analysis from feedback for a specific organization")
+  @ApiResponses(value = {
+    @ApiResponse(responseCode = "200", description = "Keywords retrieved successfully", 
+                content = @Content(array = @ArraySchema(schema = @Schema(implementation = String.class)))),
+    @ApiResponse(responseCode = "404", description = "Organization not found")
+  })
+  public ResponseEntity<List<String>> getOrganizationKeywordAnalysis(
+      @Parameter(description = "ID of the organization", required = true) @PathVariable Long organizationId) {
     List<String> keywords = feedbackService.getKeywordAnalysis(organizationId);
     return ResponseEntity.ok(keywords);
   }
@@ -220,10 +314,16 @@ public class FeedbackController {
    * @return List of activity and average rating pairs
    */
   @GetMapping("/organization/{organizationId}/best-activities")
+  @Operation(summary = "Get organization best activities", description = "Get the best rated activities for a specific organization")
+  @ApiResponses(value = {
+    @ApiResponse(responseCode = "200", description = "Best activities retrieved successfully", 
+                content = @Content(array = @ArraySchema(schema = @Schema(implementation = Object[].class)))),
+    @ApiResponse(responseCode = "404", description = "Organization not found")
+  })
   public ResponseEntity<List<Object[]>> getOrganizationBestActivities(
-      @PathVariable Long organizationId,
-      @RequestParam(defaultValue = "3") Long minFeedbacks,
-      @PageableDefault(size = 5) Pageable pageable) {
+      @Parameter(description = "ID of the organization", required = true) @PathVariable Long organizationId,
+      @Parameter(description = "Minimum number of feedbacks required", example = "3") @RequestParam(defaultValue = "3") Long minFeedbacks,
+      @Parameter(description = "Pagination parameters") @PageableDefault(size = 5) Pageable pageable) {
     List<Object[]> bestActivities = feedbackService.getBestRatedActivitiesForOrganization(organizationId,
         minFeedbacks, pageable);
     return ResponseEntity.ok(bestActivities);
@@ -243,12 +343,23 @@ public class FeedbackController {
    * @return Page of feedback summaries
    */
   @GetMapping("/filter")
+  @Operation(summary = "Filter feedbacks", description = "Get filtered feedbacks based on various criteria")
+  @ApiResponses(value = {
+    @ApiResponse(responseCode = "200", description = "Feedbacks filtered successfully", 
+                content = @Content(schema = @Schema(implementation = Page.class)))
+  })
   public ResponseEntity<Page<FeedbackSummaryVm>> getFilteredFeedbacks(
+      @Parameter(description = "Start date for filtering") 
       @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant startDate,
+      @Parameter(description = "End date for filtering") 
       @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant endDate,
+      @Parameter(description = "Activity category for filtering") 
       @RequestParam(required = false) ActivityCategory category,
+      @Parameter(description = "Activity status for filtering") 
       @RequestParam(required = false) ActivityStatus status,
+      @Parameter(description = "Organization ID for filtering") 
       @RequestParam(required = false) Long organizationId,
+      @Parameter(description = "Pagination parameters") 
       @PageableDefault(size = 10) Pageable pageable) {
     Page<FeedbackSummaryVm> feedbacks = feedbackService.getFilteredFeedbacks(startDate, endDate, category, status,
         organizationId, pageable);
@@ -264,7 +375,14 @@ public class FeedbackController {
    * @return The feedback details
    */
   @GetMapping("/{feedbackId}")
-  public ResponseEntity<FeedbackDetailVm> getFeedbackById(@PathVariable Long feedbackId) {
+  @Operation(summary = "Get feedback by ID", description = "Get detailed information about a specific feedback")
+  @ApiResponses(value = {
+    @ApiResponse(responseCode = "200", description = "Feedback found", 
+                content = @Content(schema = @Schema(implementation = FeedbackDetailVm.class))),
+    @ApiResponse(responseCode = "404", description = "Feedback not found")
+  })
+  public ResponseEntity<FeedbackDetailVm> getFeedbackById(
+      @Parameter(description = "ID of the feedback to retrieve", required = true) @PathVariable Long feedbackId) {
     FeedbackDetailVm feedback = feedbackService.getFeedbackById(feedbackId);
     return ResponseEntity.ok(feedback);
   }
@@ -277,9 +395,16 @@ public class FeedbackController {
    * @return The updated feedback
    */
   @PostMapping("/{feedbackId}/respond")
+  @Operation(summary = "Respond to feedback", description = "Add organization response to a feedback")
+  @ApiResponses(value = {
+    @ApiResponse(responseCode = "200", description = "Response added successfully", 
+                content = @Content(schema = @Schema(implementation = FeedbackDetailVm.class))),
+    @ApiResponse(responseCode = "400", description = "Invalid response data"),
+    @ApiResponse(responseCode = "404", description = "Feedback not found")
+  })
   public ResponseEntity<FeedbackDetailVm> respondToFeedback(
-      @PathVariable Long feedbackId,
-      @Valid @RequestBody OrganizationResponseDto responseDto) {
+      @Parameter(description = "ID of the feedback to respond to", required = true) @PathVariable Long feedbackId,
+      @Parameter(description = "Organization response data", required = true) @Valid @RequestBody OrganizationResponseDto responseDto) {
     FeedbackDetailVm updatedFeedback = feedbackService.addOrganizationResponse(feedbackId, responseDto);
     return ResponseEntity.ok(updatedFeedback);
   }
