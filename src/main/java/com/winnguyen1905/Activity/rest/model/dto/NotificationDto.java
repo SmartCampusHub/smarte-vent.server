@@ -14,8 +14,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class NotificationDto implements AbstractModel {
-    private Long receiverId;
-    private String title;
-    private String content;
-    private NotificationType notificationType;
+  private Long receiverId;
+  private String title;
+  private String content;
+  private NotificationType notificationType;
 }

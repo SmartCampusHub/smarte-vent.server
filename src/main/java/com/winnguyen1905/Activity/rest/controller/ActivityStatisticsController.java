@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.winnguyen1905.activity.model.viewmodel.ActivityComparativeAnalysisVm;
-import com.winnguyen1905.activity.model.viewmodel.ActivityStatisticsVm;
-import com.winnguyen1905.activity.model.viewmodel.ActivityTimeSeriesVm;
-import com.winnguyen1905.activity.model.viewmodel.SimilarActivityMetricsVm;
+import com.winnguyen1905.activity.rest.model.viewmodel.ActivityComparativeAnalysisVm;
+import com.winnguyen1905.activity.rest.model.viewmodel.ActivityStatisticsVm;
+import com.winnguyen1905.activity.rest.model.viewmodel.ActivityTimeSeriesVm;
+import com.winnguyen1905.activity.rest.model.viewmodel.SimilarActivityMetricsVm;
 import com.winnguyen1905.activity.rest.service.ActivityStatisticsService;
 
 @RestController
