@@ -1,7 +1,7 @@
 package com.winnguyen1905.activity.persistance.repository.specification;
 
-import com.winnguyen1905.activity.model.dto.ActivitySearchRequest;
 import com.winnguyen1905.activity.persistance.entity.EActivity;
+import com.winnguyen1905.activity.rest.model.dto.ActivitySearchRequest;
 
 import jakarta.persistence.criteria.Predicate;
 

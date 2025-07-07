@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.winnguyen1905.activity.common.annotation.AccountRequest;
 import com.winnguyen1905.activity.common.annotation.TAccountRequest;
 import com.winnguyen1905.activity.common.constant.SystemConstant;
-import com.winnguyen1905.activity.model.dto.StatisticsFilterDto;
-import com.winnguyen1905.activity.model.viewmodel.StudentStatisticsVm;
+import com.winnguyen1905.activity.rest.model.dto.StatisticsFilterDto;
+import com.winnguyen1905.activity.rest.model.viewmodel.StudentStatisticsVm;
 import com.winnguyen1905.activity.rest.service.StudentStatisticsService;
 
 import lombok.RequiredArgsConstructor;
