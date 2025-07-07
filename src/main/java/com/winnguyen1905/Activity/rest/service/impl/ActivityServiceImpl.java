@@ -16,8 +16,7 @@ import com.winnguyen1905.activity.exception.BadRequestException;
 import com.winnguyen1905.activity.exception.ResourceAlreadyExistsException;
 import com.winnguyen1905.activity.model.dto.ActivityDto;
 import com.winnguyen1905.activity.model.dto.ActivityScheduleDto;
-import com.winnguyen1905.activity.model.dto.ActivitySearchRequest;
-import com.winnguyen1905.activity.model.dto.CheckJoinedActivityDto;
+    import com.winnguyen1905.activity.model.dto.CheckJoinedActivityDto;
 import com.winnguyen1905.activity.model.dto.JoinActivityRequest;
 import com.winnguyen1905.activity.model.dto.ParticipationSearchParams;
 import com.winnguyen1905.activity.model.viewmodel.ActivityScheduleVm;
@@ -32,6 +31,7 @@ import com.winnguyen1905.activity.persistance.repository.ActivityScheduleReposit
 import com.winnguyen1905.activity.persistance.repository.OrganizationRepository;
 import com.winnguyen1905.activity.persistance.repository.ParticipationDetailRepository;
 import com.winnguyen1905.activity.persistance.repository.specification.EActivitySpecification;
+import com.winnguyen1905.activity.model.dto.ActivitySearchRequest;
 import com.winnguyen1905.activity.rest.service.ActivityService;
 import com.winnguyen1905.activity.rest.service.AuthorizationService;
 import com.winnguyen1905.activity.rest.service.EmailService;

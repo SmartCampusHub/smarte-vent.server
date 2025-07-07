@@ -274,7 +274,7 @@ public class SocketEventHandlerService {
             .build();
 
         try {
-          notificationService.sendNotification(null, notification);
+          notificationService.sendNotification(notification);
         } catch (Exception e) {
           log.error("Failed to send announcement notification: {}", e.getMessage());
         }

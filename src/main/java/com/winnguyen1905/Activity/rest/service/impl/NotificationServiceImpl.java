@@ -4,12 +4,12 @@ import com.winnguyen1905.activity.common.annotation.TAccountRequest;
 import com.winnguyen1905.activity.exception.ResourceNotFoundException;
 import com.winnguyen1905.activity.exception.BadRequestException;
 import com.winnguyen1905.activity.model.dto.NotificationDto;
-import com.winnguyen1905.activity.model.viewmodel.NotificationVm;
 import com.winnguyen1905.activity.model.viewmodel.PagedResponse;
 import com.winnguyen1905.activity.persistance.entity.EAccountCredentials;
 import com.winnguyen1905.activity.persistance.entity.ENotification;
 import com.winnguyen1905.activity.persistance.repository.AccountRepository;
 import com.winnguyen1905.activity.persistance.repository.NotificationRepository;
+import com.winnguyen1905.activity.model.viewmodel.NotificationVm;
 import com.winnguyen1905.activity.rest.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -48,7 +48,7 @@ public class NotificationServiceImpl implements NotificationService {
    * @throws ResourceNotFoundException if the receiver is not found
    */
   @Override
-  public void sendNotification(TAccountRequest accountRequest, NotificationDto notificationDto) {
+  public void sendNotification(NotificationDto notificationDto) {
     log.info("Sending notification to receiver ID: {}", notificationDto.getReceiverId());
     
     validateNotificationData(notificationDto);
