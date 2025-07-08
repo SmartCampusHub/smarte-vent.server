@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.winnguyen1905.activity.common.annotation.AccountRequest;
 import com.winnguyen1905.activity.common.annotation.TAccountRequest;
 import com.winnguyen1905.activity.common.constant.TimePeriod;
-import com.winnguyen1905.activity.rest.model.dto.StatisticsFilterDto;
-import com.winnguyen1905.activity.rest.model.viewmodel.StatisticsVm;
+import com.winnguyen1905.activity.model.dto.StatisticsFilterDto;
+import com.winnguyen1905.activity.model.viewmodel.StatisticsVm;
 import com.winnguyen1905.activity.rest.service.StatisticsService;
 
 import io.swagger.v3.oas.annotations.Operation;
