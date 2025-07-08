@@ -89,6 +89,41 @@ The Activity Management System is designed for educational institutions and orga
 - **Jackson** - JSON processing
 - **Swagger** - API documentation
 
+## 📦 Package Structure
+
+The application follows a clean layered architecture with proper separation of concerns:
+
+```
+src/main/java/com/winnguyen1905/activity/
+├── auth/                           # Authentication & Authorization
+├── common/                         # Common utilities, constants, annotations
+├── config/                         # Spring configuration classes
+├── exception/                      # Custom exception handling
+├── model/                          # Data Transfer Objects & View Models
+│   ├── dto/                       # Data Transfer Objects
+│   └── viewmodel/                 # Response View Models
+├── persistence/                    # Data layer
+│   ├── entity/                    # JPA entities
+│   ├── repository/                # Spring Data repositories
+│   └── specification/             # JPA specifications for complex queries
+├── rest/                          # REST API layer
+│   ├── controller/                # REST controllers
+│   └── service/                   # Business logic services
+├── scheduling/                    # Scheduled tasks & automation
+├── utils/                         # Utility classes
+└── websocket/                     # Real-time communication
+    ├── config/                    # SocketIO configuration
+    ├── dto/                       # WebSocket-specific DTOs
+    └── service/                   # WebSocket event handling
+```
+
+### Recent Package Structure Updates
+- ✅ **Unified Model Package**: All DTOs and ViewModels moved to `model.dto` and `model.viewmodel`
+- ✅ **Fixed Import Statements**: Corrected all references from `rest.model.*` to `model.*`
+- ✅ **Added Missing DTOs**: Created `AccountSearchCriteria`, `ActivitySearchRequest`, `AdminUpdateAccount`, `ChangePasswordDto`
+- ✅ **Added Missing ViewModels**: Created `NotificationVm`, `OrganizationStatisticsVm`
+- ✅ **Consistent Package Naming**: All classes now follow the standardized package structure
+
 ## 🏗 Architecture
 
 ```
