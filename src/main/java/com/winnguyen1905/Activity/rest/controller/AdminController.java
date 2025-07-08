@@ -2,8 +2,8 @@ package com.winnguyen1905.activity.rest.controller;
 
 import com.winnguyen1905.activity.common.annotation.AccountRequest;
 import com.winnguyen1905.activity.common.annotation.TAccountRequest;
-import com.winnguyen1905.activity.rest.model.dto.AdminUpdateAccount;
-import com.winnguyen1905.activity.rest.model.viewmodel.AccountVm;
+import com.winnguyen1905.activity.model.dto.AdminUpdateAccount;
+import com.winnguyen1905.activity.model.viewmodel.AccountVm;
 import com.winnguyen1905.activity.rest.service.AccountService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
