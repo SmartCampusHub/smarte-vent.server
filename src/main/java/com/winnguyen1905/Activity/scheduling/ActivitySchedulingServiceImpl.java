@@ -10,7 +10,7 @@ import com.winnguyen1905.activity.persistance.entity.EParticipationDetail;
 import com.winnguyen1905.activity.persistance.repository.ActivityRepository;
 import com.winnguyen1905.activity.persistance.repository.ActivityScheduleRepository;
 import com.winnguyen1905.activity.persistance.repository.ParticipationDetailRepository;
-import com.winnguyen1905.activity.rest.model.dto.NotificationDto;
+import com.winnguyen1905.activity.model.dto.NotificationDto;
 import com.winnguyen1905.activity.websocket.dto.SocketNotificationDto;
 import com.winnguyen1905.activity.rest.service.ActivitySchedulingService;
 import com.winnguyen1905.activity.rest.service.EmailService;
@@ -81,7 +81,8 @@ public class ActivitySchedulingServiceImpl implements ActivitySchedulingService 
 
       // Notify participants about status change using both old and new methods
       notifyStatusChange(activity, oldStatus, ActivityStatus.COMPLETED.toString());
-      socketIoGateway.broadcastActivityStatusChange(activity, ActivityStatus.valueOf(oldStatus), ActivityStatus.COMPLETED);
+      socketIoGateway.broadcastActivityStatusChange(activity, ActivityStatus.valueOf(oldStatus),
+          ActivityStatus.COMPLETED);
     }
   }
 
@@ -124,7 +125,8 @@ public class ActivitySchedulingServiceImpl implements ActivitySchedulingService 
 
       // Notify participants about status change using both old and new methods
       notifyStatusChange(activity, oldStatus, ActivityStatus.IN_PROGRESS.toString());
-      socketIoGateway.broadcastActivityStatusChange(activity, ActivityStatus.valueOf(oldStatus), ActivityStatus.IN_PROGRESS);
+      socketIoGateway.broadcastActivityStatusChange(activity, ActivityStatus.valueOf(oldStatus),
+          ActivityStatus.IN_PROGRESS);
     }
   }
 
@@ -166,7 +168,8 @@ public class ActivitySchedulingServiceImpl implements ActivitySchedulingService 
       for (EParticipationDetail detail : participants) {
         EAccountCredentials participant = detail.getParticipant();
 
-        // Send socket notification if user is connected (using both old and new methods)
+        // Send socket notification if user is connected (using both old and new
+        // methods)
         socketIOService.sendNotification(participant.getId(), "activity_today", socketNotification);
         socketIoGateway.sendActivityReminder(activity, 0L);
 
@@ -180,7 +183,7 @@ public class ActivitySchedulingServiceImpl implements ActivitySchedulingService 
             .build();
 
         try {
-          notificationService.sendNotification(null, notification);
+          notificationService.sendNotification(notification);
         } catch (Exception e) {
           log.error("Failed to send notification to participant {}: {}", participant.getId(), e.getMessage());
         }
@@ -236,7 +239,8 @@ public class ActivitySchedulingServiceImpl implements ActivitySchedulingService 
       for (EParticipationDetail detail : participants) {
         EAccountCredentials participant = detail.getParticipant();
 
-        // Send socket notification if user is connected (using both old and new methods)  
+        // Send socket notification if user is connected (using both old and new
+        // methods)
         socketIOService.sendNotification(participant.getId(), "activity_one_day", socketNotification);
         socketIoGateway.sendActivityReminder(activity, 1L);
 
@@ -250,7 +254,7 @@ public class ActivitySchedulingServiceImpl implements ActivitySchedulingService 
             .build();
 
         try {
-          notificationService.sendNotification(null, notification);
+          notificationService.sendNotification(notification);
         } catch (Exception e) {
           log.error("Failed to send notification to participant {}: {}", participant.getId(), e.getMessage());
         }
@@ -306,7 +310,8 @@ public class ActivitySchedulingServiceImpl implements ActivitySchedulingService 
       for (EParticipationDetail detail : participants) {
         EAccountCredentials participant = detail.getParticipant();
 
-        // Send socket notification if user is connected (using both old and new methods)
+        // Send socket notification if user is connected (using both old and new
+        // methods)
         socketIOService.sendNotification(participant.getId(), "activity_three_days", socketNotification);
         socketIoGateway.sendActivityReminder(activity, 3L);
 
@@ -320,7 +325,7 @@ public class ActivitySchedulingServiceImpl implements ActivitySchedulingService 
             .build();
 
         try {
-          notificationService.sendNotification(null, notification);
+          notificationService.sendNotification(notification);
         } catch (Exception e) {
           log.error("Failed to send notification to participant {}: {}", participant.getId(), e.getMessage());
         }
@@ -375,7 +380,7 @@ public class ActivitySchedulingServiceImpl implements ActivitySchedulingService 
             .build();
 
         try {
-          notificationService.sendNotification(null, notification);
+          notificationService.sendNotification(notification);
         } catch (Exception e) {
           log.error("Failed to send notification to participant {}: {}", participant.getId(), e.getMessage());
         }
@@ -432,7 +437,7 @@ public class ActivitySchedulingServiceImpl implements ActivitySchedulingService 
             .build();
 
         try {
-          notificationService.sendNotification(null, notification);
+          notificationService.sendNotification(notification);
         } catch (Exception e) {
           log.error("Failed to send notification to participant {}: {}", participant.getId(), e.getMessage());
         }
@@ -563,7 +568,7 @@ public class ActivitySchedulingServiceImpl implements ActivitySchedulingService 
             .build();
 
         try {
-          notificationService.sendNotification(null, notification);
+          notificationService.sendNotification(notification);
         } catch (Exception e) {
           log.error("Failed to send notification to participant {}: {}", participant.getId(), e.getMessage());
         }
@@ -600,7 +605,7 @@ public class ActivitySchedulingServiceImpl implements ActivitySchedulingService 
           .build();
 
       try {
-        notificationService.sendNotification(null, notification);
+        notificationService.sendNotification(notification);
       } catch (Exception e) {
         log.error("Failed to send notification to participant {}: {}", participant.getId(), e.getMessage());
       }

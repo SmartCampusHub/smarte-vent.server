@@ -21,10 +21,10 @@ import com.winnguyen1905.activity.persistance.entity.EAccountCredentials;
 import com.winnguyen1905.activity.persistance.entity.EParticipationDetail;
 import com.winnguyen1905.activity.persistance.repository.AccountRepository;
 import com.winnguyen1905.activity.persistance.repository.ParticipationDetailRepository;
-import com.winnguyen1905.activity.rest.service.StudentStatisticsService;
-import com.winnguyen1905.activity.rest.model.viewmodel.ParticipationSummaryVm;
-import com.winnguyen1905.activity.rest.model.viewmodel.StudentStatisticsVm;
+import com.winnguyen1905.activity.model.viewmodel.ParticipationSummaryVm;
+import com.winnguyen1905.activity.model.viewmodel.StudentStatisticsVm;
 import com.winnguyen1905.activity.rest.service.AuthorizationService;
+import com.winnguyen1905.activity.rest.service.StudentStatisticsService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -92,7 +92,7 @@ public class StudentStatisticsServiceImpl implements StudentStatisticsService {
             .activitiesByCategory(getActivitiesByCategory(studentId))
             .recentActivities(getRecentActivities(studentId))
             .monthlyParticipationTrend(getMonthlyParticipationTrend(studentId, trendPeriod))
-            .build();
+            .build(); 
     }
 
     /**
