@@ -33,7 +33,7 @@ public class NotificationController {
 
   @GetMapping("/send")
   public ResponseEntity<Void> sendNotification(@AccountRequest TAccountRequest accountRequest) {
-    notificationService.sendNotification(accountRequest, null);
+    notificationService.sendNotification(null);
     return ResponseEntity.ok().build();
   }
 
