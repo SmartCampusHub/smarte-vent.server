@@ -15,31 +15,31 @@ import org.springframework.security.oauth2.server.resource.web.BearerTokenAuthen
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.winnguyen1905.activity.rest.model.viewmodel.RestResponse;
+import com.winnguyen1905.activity.model.viewmodel.RestResponse;
 
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Component("authenticationEntryPoint")
 public class CustomServerAuthenticationEntryPoint implements AuthenticationEntryPoint {
-    private final ObjectMapper objectMapper;
-    private final AuthenticationEntryPoint delegate = new BearerTokenAuthenticationEntryPoint();
+  private final ObjectMapper objectMapper;
+  private final AuthenticationEntryPoint delegate = new BearerTokenAuthenticationEntryPoint();
 
-    @Override
-    public void commence(HttpServletRequest request, HttpServletResponse response, 
-            AuthenticationException authException) throws IOException, ServletException {
-        
-        delegate.commence(request, response, authException);
-        response.setStatus(HttpStatus.UNAUTHORIZED.value());
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+  @Override
+  public void commence(HttpServletRequest request, HttpServletResponse response,
+      AuthenticationException authException) throws IOException, ServletException {
 
-        RestResponse<Object> res = RestResponse.builder()
-            .statusCode(HttpStatus.UNAUTHORIZED.value())
-            .message("Authentication failed, please check your token")
-            .error(Optional.ofNullable(authException.getCause())
-                .map(Throwable::getMessage)
-                .orElse(authException.getMessage()))
-            .build();
-        objectMapper.writeValue(response.getOutputStream(), res);
-    }
+    delegate.commence(request, response, authException);
+    response.setStatus(HttpStatus.UNAUTHORIZED.value());
+    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+
+    RestResponse<Object> res = RestResponse.builder()
+        .statusCode(HttpStatus.UNAUTHORIZED.value())
+        .message("Authentication failed, please check your token")
+        .error(Optional.ofNullable(authException.getCause())
+            .map(Throwable::getMessage)
+            .orElse(authException.getMessage()))
+        .build();
+    objectMapper.writeValue(response.getOutputStream(), res);
+  }
 }
