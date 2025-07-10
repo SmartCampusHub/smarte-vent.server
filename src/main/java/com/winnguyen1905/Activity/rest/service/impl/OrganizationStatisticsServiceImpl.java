@@ -15,14 +15,14 @@ import com.winnguyen1905.activity.common.constant.ActivityCategory;
 import com.winnguyen1905.activity.common.constant.TimePeriod;
 import com.winnguyen1905.activity.exception.ResourceNotFoundException;
 import com.winnguyen1905.activity.model.dto.StatisticsFilterDto;
-import com.winnguyen1905.activity.model.viewmodel.ActivityStatisticsSummaryVm;
-import com.winnguyen1905.activity.model.viewmodel.OrganizationStatisticsVm;
 import com.winnguyen1905.activity.persistance.entity.EActivity;
 import com.winnguyen1905.activity.persistance.entity.EOrganization;
 import com.winnguyen1905.activity.persistance.repository.ActivityRepository;
 import com.winnguyen1905.activity.persistance.repository.FeedbackRepository;
 import com.winnguyen1905.activity.persistance.repository.OrganizationRepository;
 import com.winnguyen1905.activity.rest.service.OrganizationStatisticsService;
+import com.winnguyen1905.activity.model.viewmodel.ActivityStatisticsSummaryVm;
+import com.winnguyen1905.activity.model.viewmodel.OrganizationStatisticsVm;
 import com.winnguyen1905.activity.rest.service.AuthorizationService;
 import com.winnguyen1905.activity.utils.DateTimeUtils;
 import com.winnguyen1905.activity.common.annotation.TAccountRequest;
@@ -199,7 +199,7 @@ public class OrganizationStatisticsServiceImpl implements OrganizationStatistics
   /**
    * Populates performance-related metrics.
    */
-  private void populatePerformanceMetrics(OrganizationStatisticsVm statistics, Long organizationId) {
+  private void populatePerformanceMetrics(OrganizationStatisticsVm   statistics, Long organizationId) {
     statistics.setAverageFeedbackRating(safeDoubleValue(
         feedbackRepository.getAverageRatingForOrganization(organizationId)));
     statistics.setTotalFeedbacks(safeLongValue(
