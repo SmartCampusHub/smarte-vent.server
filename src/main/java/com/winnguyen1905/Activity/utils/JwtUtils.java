@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 
 import com.winnguyen1905.activity.auth.CustomUserDetails;
 import com.winnguyen1905.activity.common.constant.AccountRole;
-import com.winnguyen1905.activity.rest.model.viewmodel.TokenPair;
+import com.winnguyen1905.activity.model.viewmodel.TokenPair;
 
 import lombok.RequiredArgsConstructor;
 

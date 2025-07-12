@@ -1,6 +1,6 @@
 package com.winnguyen1905.activity.websocket.dto;
 
-import com.winnguyen1905.activity.rest.model.dto.AbstractModel;
+import com.winnguyen1905.activity.model.dto.AbstractModel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
